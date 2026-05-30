@@ -806,11 +806,11 @@ function renderAll(projects, flux, engs) {
   // Engagements
   document.getElementById('engList').innerHTML = engs.map(e=>`
     <div class="eng-item">
-      <span style="font-weight:600;color:var(--navy)">${e.projet}</span>
-      <span style="color:var(--txt2)">${e.nature}</span>
-      <span style="text-align:right;font-weight:600">${e.montant} M</span>
-      <span style="color:var(--txt2);font-size:10px">${e.date}</span>
-      <span><span class="dot ${dotCls(e.statut)}"></span>${badge(e.statut)}</span>
+      <span class="eng-projet">${e.projet}</span>
+      <span class="eng-nature">${e.nature}</span>
+      <span class="eng-montant">${e.montant} M</span>
+      <span class="eng-date">${e.date}</span>
+      <span class="eng-statut"><span class="dot ${dotCls(e.statut)}"></span>${badge(e.statut)}</span>
     </div>`).join('');
 
   initCharts(projects, flux);
