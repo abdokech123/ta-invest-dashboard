@@ -1251,12 +1251,20 @@ function renderProjectFiche(p, idx) {
     }
   });
 
-  // Engagements filtrés pour ce projet
-  const projNom = p.name.split('–')[0].trim().split(' ').slice(0,2).join(' ');
-  const engsProj = currentEngs.filter(e =>
-    e.projet.toLowerCase().includes(projNom.toLowerCase().split(' ')[0]) ||
-    projNom.toLowerCase().includes(e.projet.toLowerCase().split(' ')[0])
-  );
+  // Engagements filtrés pour ce projet — filtre précis multi-format
+  const pFull  = p.name.toLowerCase().trim();
+  const pShort = pFull.split(/[–\-]/)[0].trim();          // "saraya villas"
+  const pWord1 = pShort.split(' ')[0];                    // "saraya" ou "projet"
+  const pWord2 = pShort.split(' ')[1] || '';              // "villas" ou "b"
+  const engsProj = currentEngs.filter(e => {
+    const en = e.projet.toLowerCase().trim();
+    const ew1 = en.split(' ')[0];
+    const ew2 = en.split(' ')[1] || '';
+    return en === pShort ||                               // match exact
+           en === pFull  ||                               // match complet
+           (pWord1 === ew1 && pWord2 === ew2) ||          // même mots clés
+           (pWord1 !== 'projet' && en.includes(pWord1));  // mot clé unique hors "projet"
+  });
   const el = document.getElementById('projEngList');
   if(engsProj.length > 0){
     el.innerHTML = engsProj.map(e=>`
