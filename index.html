@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>T.A INVEST HOLDING — BP Groupe 2026–2030</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 :root {
   --navy:  #1B2A4A;
@@ -107,31 +106,6 @@ body {
   .card, .kpi-card { box-shadow: none !important; border: 1px solid #ddd !important; }
 }
 
-/* ── MODAL ──────────────────────────────────────── */
-.modal-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(27,42,74,.4); z-index: 1000;
-  align-items: center; justify-content: center;
-}
-.modal-overlay.open { display: flex; }
-.modal {
-  background: var(--white); border-radius: 8px;
-  padding: 28px; width: 460px; max-width: 95vw;
-  box-shadow: 0 8px 40px rgba(27,42,74,.18);
-  border-top: 3px solid var(--navy);
-}
-.modal h3 { font-size: 14px; margin-bottom: 6px; color: var(--navy); }
-.modal .hint { font-size: 11px; color: var(--txt2); margin-bottom: 16px; line-height: 1.6; }
-.modal label { display: block; font-size: 11px; color: var(--txt2); margin-bottom: 4px; font-weight: 600; }
-.modal input[type=text], .modal input[type=file] {
-  width: 100%; padding: 9px 12px; border-radius: 4px;
-  border: 1px solid var(--border); background: var(--bg);
-  color: var(--txt); font-size: 12px; margin-bottom: 14px;
-}
-.modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
-.modal-btns button { padding: 8px 20px; border-radius: 4px; border: none; cursor: pointer; font-weight: 600; font-size: 12px; }
-.btn-cancel { background: var(--bg); color: var(--txt2); }
-.btn-load   { background: var(--navy); color: #fff; }
 
 /* ── MAIN ───────────────────────────────────────── */
 .main { padding: 20px 28px; display: flex; flex-direction: column; gap: 16px; }
@@ -508,8 +482,6 @@ body {
     </div>
   </div>
   <div class="header-right">
-    <button class="btn btn-gs" onclick="openModal('gs')">&#9698; Google Sheets</button>
-    <button class="btn btn-xl" onclick="openModal('xl')">&#9698; Excel Local</button>
     <div class="date-badge" id="dateLabel">— </div>
     <div class="refresh-badge" id="refreshBadge" style="display:none">
       <span class="refresh-dot" id="refreshDot"></span>
@@ -520,35 +492,6 @@ body {
   </div>
 </header>
 
-<!-- ═══ MODAL GOOGLE SHEETS ═════════════════════════ -->
-<div class="modal-overlay" id="modal-gs">
-  <div class="modal">
-    <h3>Connexion Google Sheets</h3>
-    <p class="hint">Dans Google Sheets : <b>Fichier → Partager → Publier sur le web</b><br>
-    Choisir l'onglet <b>PORTEFEUILLE</b>, format <b>CSV</b>, copier l'URL générée.</p>
-    <label>URL CSV publique :</label>
-    <input type="text" id="gs-url" placeholder="https://docs.google.com/spreadsheets/d/.../pub?output=csv">
-    <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal('gs')">Annuler</button>
-      <button class="btn-load" onclick="loadGoogleSheets()">Charger</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ MODAL EXCEL ══════════════════════════════════ -->
-<div class="modal-overlay" id="modal-xl">
-  <div class="modal">
-    <h3>Charger Excel Local</h3>
-    <p class="hint">Sélectionne ton fichier <b>TA_INVEST_BP_GROUPE.xlsx</b>.<br>
-    L'onglet <b>PORTEFEUILLE</b> sera lu automatiquement.</p>
-    <label>Fichier Excel (.xlsx) :</label>
-    <input type="file" id="xl-file" accept=".xlsx,.xls">
-    <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal('xl')">Annuler</button>
-      <button class="btn-load" onclick="loadExcel()">Charger</button>
-    </div>
-  </div>
-</div>
 
 <!-- ═══ MAIN ═════════════════════════════════════════ -->
 <main class="main">
@@ -885,64 +828,6 @@ function renderAll(projects, flux, engs) {
 }
 
 // ── DATA LOADERS ──────────────────────────────────
-async function loadGoogleSheets() {
-  const url=document.getElementById('gs-url').value.trim();
-  if(!url) return alert('Colle l\'URL CSV de ton Google Sheet.');
-  closeModal('gs');
-  document.getElementById('loaderMsg').style.display='block';
-
-  // Proxy CORS pour contourner les restrictions file://
-  const proxies = [
-    u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
-    u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
-    u => u  // tentative directe en dernier recours
-  ];
-
-  let csv = null;
-  for (const proxy of proxies) {
-    try {
-      const resp = await fetch(proxy(url), {cache:'no-store'});
-      if (resp.ok) { csv = await resp.text(); break; }
-    } catch(e) { continue; }
-  }
-
-  if (!csv) {
-    alert('Impossible de charger le sheet.\nVérifie que l\'URL est bien publiée en CSV (Fichier → Partager → Publier sur le web).');
-    document.getElementById('loaderMsg').style.display='none';
-    return;
-  }
-
-  const rows = csv.split('\n').map(r=>r.split(',').map(c=>c.replace(/^"|"$/g,'').trim()));
-  const p = parseRows(rows);
-  if (p.length === 0) {
-    alert('Aucune donnée trouvée. Vérifie que l\'onglet s\'appelle PORTEFEUILLE et contient des lignes.');
-    document.getElementById('loaderMsg').style.display='none';
-    return;
-  }
-  renderAll(p, computeFlux(p), DEFAULT_ENG);
-  document.getElementById('loaderMsg').style.display='none';
-  startAutoRefresh(url);
-}
-
-function loadExcel() {
-  const file=document.getElementById('xl-file').files[0];
-  if(!file) return alert('Sélectionne un fichier Excel.');
-  closeModal('xl');
-  document.getElementById('loaderMsg').style.display='block';
-  const r=new FileReader();
-  r.onload=e=>{
-    try {
-      const wb=XLSX.read(e.target.result,{type:'binary'});
-      const ws=wb.Sheets['PORTEFEUILLE'];
-      if(!ws){alert('Onglet PORTEFEUILLE introuvable.');return;}
-      const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
-      const p=parseRows(rows);
-      renderAll(p,computeFlux(p),DEFAULT_ENG);
-    } catch(err){alert('Erreur: '+err.message);}
-    document.getElementById('loaderMsg').style.display='none';
-  };
-  r.readAsBinaryString(file);
-}
 
 function parseRows(rows){
   const out=[];
@@ -1051,15 +936,6 @@ async function refreshNow() {
 }
 
 // ── MODALS ────────────────────────────────────────
-function openModal(id) {
-  // Pré-remplir l'URL si déjà en mémoire
-  if (id === 'gs' && gsUrl) document.getElementById('gs-url').value = gsUrl;
-  document.getElementById('modal-'+id).classList.add('open');
-}
-function closeModal(id){document.getElementById('modal-'+id).classList.remove('open');}
-document.querySelectorAll('.modal-overlay').forEach(m=>{
-  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
-});
 
 // Démarrage automatique immédiat
 fetchSheet(gsUrl).then(() => startAutoRefresh(gsUrl));
