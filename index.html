@@ -378,11 +378,23 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
   // Logger la connexion
   async function logVisit() {
     try {
-      // Récupérer IP + géolocalisation
-      const geoRes = await fetch('https://ipapi.co/json/', {cache:'no-store'});
-      const geo    = await geoRes.json();
-      const ip     = geo.ip     || '—';
-      const ville  = (geo.city && geo.country_name) ? `${geo.city}, ${geo.country_name}` : '—';
+      // Récupérer IP + géolocalisation (3 services en fallback)
+      let ip = '—', ville = '—';
+      const apis = [
+        'https://ipwho.is/',
+        'https://ipapi.co/json/',
+        'https://ipinfo.io/json'
+      ];
+      for (const api of apis) {
+        try {
+          const r = await fetch(api, {cache:'no-store'});
+          const d = await r.json();
+          ip    = d.ip || '—';
+          ville = (d.city && (d.country_name||d.country))
+                  ? `${d.city}, ${d.country_name||d.country}` : '—';
+          if (ip !== '—') break;
+        } catch(e) { continue; }
+      }
 
       const params = new URLSearchParams({
         ip:  ip,
