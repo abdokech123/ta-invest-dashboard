@@ -213,6 +213,34 @@ body {
 .stat-surv { background: rgba(196,160,32,.18); color: var(--gold2); }
 .stat-risk { background: rgba(224,80,80,.18);  color: #f07070; }
 
+/* ── KPI STRATÉGIQUES ───────────────────────────── */
+.extra-kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.ekpi {
+  background:var(--card2); border:1px solid var(--border); border-radius:6px;
+  padding:14px 12px; display:flex; flex-direction:column; gap:5px;
+  border-left:3px solid var(--border); transition:border-color .2s, box-shadow .2s;
+}
+.ekpi:hover { box-shadow:0 4px 16px rgba(0,0,0,.4); }
+.ekpi.good { border-left-color:var(--grn); }
+.ekpi.warn { border-left-color:var(--gold); }
+.ekpi.risk { border-left-color:var(--red); }
+.ekpi.info { border-left-color:#4A8C84; }
+.ekpi-icon { font-size:15px; }
+.ekpi-lbl  { font-size:9px; color:var(--txt2); text-transform:uppercase; letter-spacing:.8px; }
+.ekpi-val  { font-size:20px; font-weight:800; color:var(--gold2); line-height:1; }
+.ekpi.good .ekpi-val { color:var(--grn); }
+.ekpi.risk .ekpi-val { color:var(--red); }
+.ekpi.warn .ekpi-val { color:var(--oran); }
+.ekpi.info .ekpi-val { color:#4A8C84; }
+.ekpi-desc { font-size:9px; color:var(--txt2); }
+
+/* ── PROGRESS BAR PILOTAGE ──────────────────────── */
+.pil-bar-wrap { width:70px; height:4px; background:rgba(255,255,255,.08); border-radius:2px; overflow:hidden; flex-shrink:0; }
+.pil-bar      { height:100%; border-radius:2px; }
+
+/* ── 3-COL INDICATORS ───────────────────────────── */
+.indic-row { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+
 /* ── FOOTER ─────────────────────────────────────── */
 .footer {
   background: #05090F; border-top: 1px solid var(--border);
@@ -226,7 +254,7 @@ body {
 /* ── ROADMAP ROW ────────────────────────────────── */
 .roadmap-row {
   display: grid;
-  grid-template-columns: 3fr 1.4fr;
+  grid-template-columns: 1fr;
   gap: 14px;
 }
 .roadmap-wrap { font-size: 11px; }
@@ -625,6 +653,69 @@ body {
     </div>
   </div>
 
+  <!-- KPI STRATÉGIQUES -->
+  <div class="card" style="padding:16px 18px">
+    <div class="card-title"><div class="card-title-dot"></div>KPI Stratégiques Recommandés</div>
+    <div class="extra-kpi-grid">
+      <div class="ekpi good">
+        <span class="ekpi-icon">📈</span>
+        <div class="ekpi-lbl">ROIC Portefeuille</div>
+        <div class="ekpi-val">14.0%</div>
+        <div class="ekpi-desc">Retour sur capital investi</div>
+        <span class="fin-kpi-stat stat-bon" style="align-self:flex-start;margin-top:2px">BON</span>
+      </div>
+      <div class="ekpi good">
+        <span class="ekpi-icon">✖️</span>
+        <div class="ekpi-lbl">Multiplicateur FP (MOIC)</div>
+        <div class="ekpi-val">1.8×</div>
+        <div class="ekpi-desc">Objectif ≥ 1.5× à 2030</div>
+        <span class="fin-kpi-stat stat-bon" style="align-self:flex-start;margin-top:2px">BON</span>
+      </div>
+      <div class="ekpi warn">
+        <span class="ekpi-icon">🏦</span>
+        <div class="ekpi-lbl">Ratio Levier Financier</div>
+        <div class="ekpi-val">2.1×</div>
+        <div class="ekpi-desc">Dette / Fonds propres</div>
+        <span class="fin-kpi-stat stat-surv" style="align-self:flex-start;margin-top:2px">SURVEILLER</span>
+      </div>
+      <div class="ekpi warn">
+        <span class="ekpi-icon">📊</span>
+        <div class="ekpi-lbl">Taux d'Engagement</div>
+        <div class="ekpi-val" id="ekpi-txeng">12%</div>
+        <div class="ekpi-desc">Objectif ≥ 20% mi-2026</div>
+        <span class="fin-kpi-stat stat-surv" style="align-self:flex-start;margin-top:2px">SURVEILLER</span>
+      </div>
+      <div class="ekpi risk">
+        <span class="ekpi-icon">💧</span>
+        <div class="ekpi-lbl">Pic Trésorerie Négatif</div>
+        <div class="ekpi-val">−95 M</div>
+        <div class="ekpi-desc">MAD — T3 2027</div>
+        <span class="fin-kpi-stat stat-risk" style="align-self:flex-start;margin-top:2px">ANTICIPER</span>
+      </div>
+      <div class="ekpi warn">
+        <span class="ekpi-icon">🏗️</span>
+        <div class="ekpi-lbl">Avancement Projets</div>
+        <div class="ekpi-val">48%</div>
+        <div class="ekpi-desc">Moyenne portefeuille</div>
+        <span class="fin-kpi-stat stat-surv" style="align-self:flex-start;margin-top:2px">SURVEILLER</span>
+      </div>
+      <div class="ekpi good">
+        <span class="ekpi-icon">📋</span>
+        <div class="ekpi-lbl">Respect Budget</div>
+        <div class="ekpi-val">92%</div>
+        <div class="ekpi-desc">Projets dans enveloppe</div>
+        <span class="fin-kpi-stat stat-bon" style="align-self:flex-start;margin-top:2px">BON</span>
+      </div>
+      <div class="ekpi info">
+        <span class="ekpi-icon">🎯</span>
+        <div class="ekpi-lbl">Concentration Immobilier</div>
+        <div class="ekpi-val">67%</div>
+        <div class="ekpi-desc">Du portefeuille — à diversifier</div>
+        <span class="fin-kpi-stat stat-surv" style="align-self:flex-start;margin-top:2px">DIVERSIFIER</span>
+      </div>
+    </div>
+  </div>
+
   <!-- CHARTS ROW -->
   <div class="charts-row">
     <div class="card">
@@ -670,42 +761,50 @@ body {
       <div class="fin-kpis">
         <div class="fin-kpi-row">
           <span class="fin-kpi-label">TRI moyen pondéré</span>
+          <div class="pil-bar-wrap"><div class="pil-bar" style="width:80%;background:var(--grn)"></div></div>
           <span class="fin-kpi-val" id="p-tri">16.0%</span>
           <span class="fin-kpi-stat stat-bon">BON</span>
         </div>
         <div class="fin-kpi-row">
           <span class="fin-kpi-label">Marge opér. moyenne</span>
+          <div class="pil-bar-wrap"><div class="pil-bar" style="width:75%;background:var(--grn)"></div></div>
           <span class="fin-kpi-val" id="p-marge">20.7%</span>
           <span class="fin-kpi-stat stat-bon">BON</span>
         </div>
         <div class="fin-kpi-row">
           <span class="fin-kpi-label">ROIC portefeuille</span>
+          <div class="pil-bar-wrap"><div class="pil-bar" style="width:70%;background:var(--grn)"></div></div>
           <span class="fin-kpi-val">14.0%</span>
           <span class="fin-kpi-stat stat-bon">BON</span>
         </div>
         <div class="fin-kpi-row">
-          <span class="fin-kpi-label">Multiplicateur fonds propres</span>
-          <span class="fin-kpi-val">1.8x</span>
+          <span class="fin-kpi-label">Multiplicateur FP</span>
+          <div class="pil-bar-wrap"><div class="pil-bar" style="width:65%;background:#4A8C84"></div></div>
+          <span class="fin-kpi-val">1.8×</span>
           <span class="fin-kpi-stat stat-bon">BON</span>
         </div>
         <div class="fin-kpi-row">
           <span class="fin-kpi-label">Taux d'engagement</span>
+          <div class="pil-bar-wrap"><div class="pil-bar" style="width:30%;background:var(--gold)"></div></div>
           <span class="fin-kpi-val" id="p-txeng">12%</span>
           <span class="fin-kpi-stat stat-surv">SURVEILLER</span>
         </div>
         <div class="fin-kpi-row">
           <span class="fin-kpi-label">Respect du budget</span>
+          <div class="pil-bar-wrap"><div class="pil-bar" style="width:92%;background:var(--grn)"></div></div>
           <span class="fin-kpi-val">92%</span>
           <span class="fin-kpi-stat stat-bon">BON</span>
         </div>
         <div class="fin-kpi-row">
           <span class="fin-kpi-label">Couverture financement</span>
+          <div class="pil-bar-wrap"><div class="pil-bar" style="width:100%;background:var(--grn)"></div></div>
           <span class="fin-kpi-val">100%</span>
           <span class="fin-kpi-stat stat-bon">BON</span>
         </div>
         <div class="fin-kpi-row">
           <span class="fin-kpi-label">Pic trésorerie</span>
-          <span class="fin-kpi-val" style="color:var(--red)">-95 M MAD</span>
+          <div class="pil-bar-wrap"><div class="pil-bar" style="width:60%;background:var(--red)"></div></div>
+          <span class="fin-kpi-val" style="color:var(--red)">−95 M</span>
           <span class="fin-kpi-stat stat-risk">T3 2027</span>
         </div>
       </div>
@@ -722,40 +821,63 @@ body {
       <div id="roadmapContent"><div style="color:var(--txt2);font-size:11px;padding:20px">Chargement Road Map...</div></div>
     </div>
 
-    <!-- TABLEAU DE BORD INDICATEURS -->
-    <div class="card">
-      <div class="card-title"><div class="card-title-dot"></div>Tableau de Bord – Indicateurs Clés</div>
+  </div><!-- /roadmap-row -->
 
-      <div class="kpi-section-title">FINANCIERS</div>
+  <!-- TABLEAU DE BORD 3 COLONNES -->
+  <div class="indic-row">
+
+    <!-- Financiers -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot"></div>Indicateurs Financiers</div>
       <table class="kpi-table">
         <thead><tr><th>Indicateur</th><th>Valeur</th><th>Objectif</th><th>Statut</th></tr></thead>
         <tbody>
-          <tr><td>TRI moyen pondéré</td><td id="tb-tri">16%</td><td>≥ 15%</td><td><span class="dot-ind dot-grn"></span></td></tr>
-          <tr><td>Marge opérationnelle moyenne</td><td id="tb-marge">24%</td><td>≥ 20%</td><td><span class="dot-ind dot-grn"></span></td></tr>
+          <tr><td>TRI moyen pondéré</td><td id="tb-tri2">16%</td><td>≥ 15%</td><td><span class="dot-ind dot-grn"></span></td></tr>
+          <tr><td>Marge opérationnelle</td><td id="tb-marge2">20.7%</td><td>≥ 20%</td><td><span class="dot-ind dot-grn"></span></td></tr>
           <tr><td>ROIC portefeuille</td><td>14%</td><td>≥ 12%</td><td><span class="dot-ind dot-grn"></span></td></tr>
-          <tr><td>Multiplicateur de fonds propres</td><td>1,8x</td><td>≥ 1,5x</td><td><span class="dot-ind dot-grn"></span></td></tr>
-          <tr><td>Payback moyen pondéré</td><td>Fin 2028</td><td>≤ Fin 2028</td><td><span class="dot-ind dot-grn"></span></td></tr>
+          <tr><td>Multiplicateur FP</td><td>1.8×</td><td>≥ 1.5×</td><td><span class="dot-ind dot-grn"></span></td></tr>
+          <tr><td>Ratio levier financier</td><td>2.1×</td><td>≤ 2.5×</td><td><span class="dot-ind dot-gold"></span></td></tr>
+          <tr><td>Payback moyen</td><td>Fin 2028</td><td>≤ Fin 2028</td><td><span class="dot-ind dot-grn"></span></td></tr>
         </tbody>
       </table>
+    </div>
 
-      <div class="kpi-section-title" style="margin-top:14px">PILOTAGE</div>
+    <!-- Opérationnels -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot"></div>Indicateurs Opérationnels</div>
       <table class="kpi-table">
         <thead><tr><th>Indicateur</th><th>Valeur</th><th>Objectif</th><th>Statut</th></tr></thead>
         <tbody>
           <tr><td>Taux d'engagement</td><td id="tb-txeng">12%</td><td>≥ 20%</td><td><span class="dot-ind dot-gold"></span></td></tr>
           <tr><td>Respect du budget</td><td>92%</td><td>≥ 90%</td><td><span class="dot-ind dot-grn"></span></td></tr>
           <tr><td>Respect des délais</td><td>85%</td><td>≥ 85%</td><td><span class="dot-ind dot-grn"></span></td></tr>
-          <tr><td>Avancement projets (moyenne)</td><td>48%</td><td>≥ 50%</td><td><span class="dot-ind dot-gold"></span></td></tr>
+          <tr><td>Avancement projets</td><td>48%</td><td>≥ 50%</td><td><span class="dot-ind dot-gold"></span></td></tr>
           <tr><td>Couverture financement</td><td>100%</td><td>≥ 100%</td><td><span class="dot-ind dot-grn"></span></td></tr>
+          <tr><td>Projets actifs</td><td>3 / 10</td><td>≥ 3</td><td><span class="dot-ind dot-grn"></span></td></tr>
         </tbody>
       </table>
+    </div>
 
-      <div class="statut-global">
-        STATUT GLOBAL &nbsp;<span style="color:var(--grn);font-weight:900">●</span>&nbsp; BON
+    <!-- Risques & Alertes -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot" style="background:var(--red)"></div>Risques & Alertes</div>
+      <table class="kpi-table">
+        <thead><tr><th>Risque</th><th>Valeur</th><th>Seuil</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td>Pic trésorerie négative</td><td style="color:var(--red);font-weight:700">−95 M</td><td>T3 2027</td><td><span class="dot-ind" style="background:var(--red)"></span></td></tr>
+          <tr><td>Concentration immobilier</td><td>67%</td><td>≤ 60%</td><td><span class="dot-ind" style="background:var(--red)"></span></td></tr>
+          <tr><td>Risque taux bancaire</td><td>Modéré</td><td>Faible</td><td><span class="dot-ind dot-gold"></span></td></tr>
+          <tr><td>Dépendance 1 projet</td><td>32%</td><td>≤ 35%</td><td><span class="dot-ind dot-gold"></span></td></tr>
+          <tr><td>Autorisations en attente</td><td>2</td><td>0</td><td><span class="dot-ind dot-gold"></span></td></tr>
+          <tr><td>Projets en retard</td><td style="color:var(--grn)">0</td><td>0</td><td><span class="dot-ind dot-grn"></span></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:12px;padding:8px 10px;background:rgba(224,80,80,.08);border:1px solid rgba(224,80,80,.2);border-radius:4px;font-size:10px;color:#f07070">
+        ⚠️ Point de vigilance : Anticiper le pic de trésorerie T3 2027 (−95 M MAD) et réduire la concentration immobilier.
       </div>
     </div>
 
-  </div><!-- /roadmap-row -->
+  </div><!-- /indic-row -->
 
 <footer class="footer">
   <span class="footer-left">T.A INVEST HOLDING &nbsp;·&nbsp; BP Groupe 2026–2030 &nbsp;·&nbsp; Confidentiel</span>
