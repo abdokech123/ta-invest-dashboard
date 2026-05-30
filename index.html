@@ -458,6 +458,94 @@ body {
 </head>
 <body>
 
+<!-- ═══ LOGIN OVERLAY ════════════════════════════════ -->
+<div id="loginOverlay" style="
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(135deg,#05090F 0%,#0E1520 60%,#0A1428 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;
+">
+  <!-- Logo -->
+  <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
+    <svg viewBox="0 0 240 50" xmlns="http://www.w3.org/2000/svg" style="height:56px;width:auto">
+      <text x="0" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="38" font-weight="700" fill="#E2B840" letter-spacing="-1">T.</text>
+      <text x="46" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="38" font-weight="700" fill="#E2B840">A</text>
+      <line x1="44" y1="46" x2="44" y2="10" stroke="#C4A020" stroke-width="1.5"/>
+      <line x1="44" y1="10" x2="240" y2="10" stroke="#C4A020" stroke-width="1.5"/>
+      <text x="78" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="26" font-weight="300" fill="#D8E0EE" letter-spacing="5">INVEST</text>
+    </svg>
+    <div style="font-size:11px;color:#6B7A99;letter-spacing:3px;text-transform:uppercase">Business Plan Groupe · 2026–2030</div>
+  </div>
+
+  <!-- Carte login -->
+  <div style="
+    background:#0E1520;border:1px solid #1C2D44;border-radius:12px;
+    padding:36px 40px;width:340px;display:flex;flex-direction:column;gap:20px;
+    box-shadow:0 8px 40px rgba(0,0,0,.6);
+  ">
+    <div style="text-align:center">
+      <div style="font-size:13px;font-weight:700;color:#D8E0EE;letter-spacing:1px">ACCÈS SÉCURISÉ</div>
+      <div style="font-size:11px;color:#6B7A99;margin-top:4px">Espace réservé — Perenity Capital</div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <label style="font-size:11px;color:#6B7A99;letter-spacing:.5px">MOT DE PASSE</label>
+      <input id="loginPwd" type="password" placeholder="••••••••••"
+        onkeydown="if(event.key==='Enter')doLogin()"
+        style="
+          background:#080C14;border:1px solid #1C2D44;border-radius:6px;
+          padding:10px 14px;color:#D8E0EE;font-size:13px;font-family:inherit;
+          outline:none;width:100%;transition:border .2s;
+        "
+        onfocus="this.style.borderColor='#C4A020'"
+        onblur="this.style.borderColor='#1C2D44'"
+      >
+    </div>
+
+    <div id="loginErr" style="font-size:11px;color:#E05050;text-align:center;display:none">
+      ⚠️ Mot de passe incorrect
+    </div>
+
+    <button onclick="doLogin()" style="
+      background:linear-gradient(135deg,#C4A020,#E2B840);color:#080C14;
+      border:none;border-radius:6px;padding:12px;font-size:13px;font-weight:700;
+      cursor:pointer;letter-spacing:1px;font-family:inherit;transition:opacity .2s;
+    " onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+      CONNEXION
+    </button>
+  </div>
+
+  <div style="font-size:10px;color:#2a3a55">© T.A Invest Holding · Perenity Capital</div>
+</div>
+
+<script>
+// ── LOGIN ─────────────────────────────────────────
+(function(){
+  const PWD = 'TAInvest2026';  // ← modifie ici le mot de passe
+  const SESSION_KEY = 'ta_auth';
+  // Déjà authentifié cette session ?
+  if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    document.getElementById('loginOverlay').style.display = 'none';
+  }
+  window.doLogin = function() {
+    const val = document.getElementById('loginPwd').value;
+    const err = document.getElementById('loginErr');
+    if (val === PWD) {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      const overlay = document.getElementById('loginOverlay');
+      overlay.style.transition = 'opacity .4s';
+      overlay.style.opacity = '0';
+      setTimeout(()=> overlay.style.display='none', 420);
+    } else {
+      err.style.display = 'block';
+      const input = document.getElementById('loginPwd');
+      input.style.borderColor = '#E05050';
+      input.value = '';
+      setTimeout(()=>{ err.style.display='none'; input.style.borderColor='#1C2D44'; }, 2500);
+    }
+  };
+})();
+</script>
+
 <!-- ═══ HEADER ══════════════════════════════════════ -->
 <header class="header">
   <div class="header-left">
@@ -699,6 +787,8 @@ const DEFAULT_ENG = [
   {projet:"Projet B",nature:"Achat foncier",montant:20,date:"Août 2026",statut:"Non engagé"},
   {projet:"Projet C",nature:"Travaux phase 1",montant:25,date:"Oct. 2026",statut:"À définir"},
 ];
+// Variable globale engagements — mise à jour par GS ou Excel, préservée lors des refreshs projets
+let currentEngs = DEFAULT_ENG;
 
 // ── CHARTS ────────────────────────────────────────
 Chart.defaults.color = '#6B7A99';
@@ -925,7 +1015,7 @@ async function fetchSheet(url) {
   const rows = csv.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g,'').trim()));
   const p = parseRows(rows);
   if (p.length > 0) {
-    renderAll(p, computeFlux(p), DEFAULT_ENG);
+    renderAll(p, computeFlux(p), currentEngs);
     lastUpdated = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
   }
 }
@@ -966,9 +1056,9 @@ async function fetchEngagements() {
   for (let i = 1; i < rows.length; i++) {
     const [projet, nature, montant, date, statut, decision] = rows[i];
     if (!projet) continue;
-    engs.push({ projet, nature, montant: parseFloat(montant)/1_000_000 || 0, date, statut, decision });
+    engs.push({ projet, nature, montant: parseFloat(String(montant).replace(/[\s,]/g,'')) || 0, date, statut, decision });
   }
-  if (engs.length > 0) renderEngagements(engs);
+  if (engs.length > 0) { currentEngs = engs; renderEngagements(engs); }
 }
 
 function renderEngagements(engs) {
@@ -1140,7 +1230,7 @@ function loadExcel(input) {
         const wsEng = wb.Sheets[engSheetName];
         const rawEng = XLSX.utils.sheet_to_json(wsEng, {header:1, defval:''});
         const parsedEngs = parseEngXL(rawEng);
-        if (parsedEngs.length > 0) engs = parsedEngs;
+        if (parsedEngs.length > 0) { engs = parsedEngs; currentEngs = engs; }
       }
 
       if (projects.length > 0) {
