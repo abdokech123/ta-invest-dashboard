@@ -979,7 +979,8 @@ function computeFlux(p){
 
 // ── AUTO-REFRESH GOOGLE SHEETS ────────────────────
 const GS_DEFAULT  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?output=csv';
-const GS_ROADMAP  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?gid=1401549304&single=true&output=csv';
+const GS_ROADMAP      = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?gid=1401549304&single=true&output=csv';
+const GS_ENGAGEMENTS  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?gid=623335287&single=true&output=csv';
 let gsUrl        = localStorage.getItem('gsUrl') || GS_DEFAULT;
 let refreshTimer = null;
 const REFRESH_MS = 15000; // 15 secondes
@@ -1063,8 +1064,47 @@ document.querySelectorAll('.modal-overlay').forEach(m=>{
 // Démarrage automatique immédiat
 fetchSheet(gsUrl).then(() => startAutoRefresh(gsUrl));
 fetchRoadmap();
-// Refresh roadmap toutes les 30s (moins fréquent car données plus stables)
+fetchEngagements();
+// Refresh roadmap + engagements toutes les 30s
 setInterval(fetchRoadmap, 30000);
+setInterval(fetchEngagements, 30000);
+
+// ── ENGAGEMENTS DYNAMIQUES ────────────────────────
+async function fetchEngagements() {
+  const enc = encodeURIComponent(GS_ENGAGEMENTS);
+  const proxies = [
+    `https://corsproxy.io/?${enc}`,
+    `https://api.allorigins.win/raw?url=${enc}`,
+    GS_ENGAGEMENTS
+  ];
+  let csv = null;
+  for (const p of proxies) {
+    try {
+      const r = await fetch(p, {cache:'no-store'});
+      if (r.ok) { const t = await r.text(); if (t.length > 10) { csv = t; break; } }
+    } catch(e) { continue; }
+  }
+  if (!csv) return;
+  const rows = csv.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g,'').trim()));
+  const engs = [];
+  for (let i = 1; i < rows.length; i++) {
+    const [projet, nature, montant, date, statut, decision] = rows[i];
+    if (!projet) continue;
+    engs.push({ projet, nature, montant: parseFloat(montant)/1_000_000 || 0, date, statut, decision });
+  }
+  if (engs.length > 0) renderEngagements(engs);
+}
+
+function renderEngagements(engs) {
+  document.getElementById('engList').innerHTML = engs.map(e => `
+    <div class="eng-item">
+      <span style="font-weight:600;color:var(--navy)">${e.projet}</span>
+      <span style="color:var(--txt2)">${e.nature}</span>
+      <span style="text-align:right;font-weight:600">${e.montant.toFixed(0)} M</span>
+      <span style="color:var(--txt2);font-size:10px">${e.date}</span>
+      <span><span class="dot ${dotCls(e.statut)}"></span>${badge(e.statut)}</span>
+    </div>`).join('');
+}
 
 // ── ROADMAP DYNAMIQUE ─────────────────────────────
 const AXE_ICONS = {
