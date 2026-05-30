@@ -779,8 +779,8 @@ function renderAll(projects, flux, engs) {
   const tb = document.getElementById('tbodyPortefeuille');
   tb.innerHTML = projects.map(p=>`
     <tr>
-      <td style="font-weight:600">${p.name}</td>
-      <td>${p.sector}</td>
+      <td style="font-weight:700;color:var(--gold2)">${p.name}</td>
+      <td style="color:var(--txt2)">${p.sector}</td>
       <td class="num">${fmtM(p.budget)}</td>
       <td class="num">${fmtM(p.engage)}</td>
       <td class="num">${fmtM(p.reste)}</td>
@@ -958,9 +958,9 @@ async function fetchEngagements() {
 function renderEngagements(engs) {
   document.getElementById('engList').innerHTML = engs.map(e => `
     <div class="eng-item">
-      <span style="font-weight:600;color:var(--navy)">${e.projet}</span>
-      <span style="color:var(--txt2)">${e.nature}</span>
-      <span style="text-align:right;font-weight:600">${e.montant.toFixed(0)} M</span>
+      <span style="font-weight:700;color:var(--gold2)">${e.projet}</span>
+      <span style="color:var(--txt)">${e.nature}</span>
+      <span style="text-align:right;font-weight:600;color:var(--txt)">${e.montant.toFixed(0)} M</span>
       <span style="color:var(--txt2);font-size:10px">${e.date}</span>
       <span><span class="dot ${dotCls(e.statut)}"></span>${badge(e.statut)}</span>
     </div>`).join('');
