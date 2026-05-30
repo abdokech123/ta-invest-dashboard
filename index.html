@@ -7,17 +7,20 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root {
-  --navy:  #1B2A4A;
-  --gold:  #C4A020;
-  --grn:   #2D7A2D;
-  --red:   #B03030;
-  --oran:  #C86020;
-  --bg:    #F4F6FA;
-  --white: #FFFFFF;
-  --border:#E2E6EF;
-  --txt:   #1B2A4A;
-  --txt2:  #6B7A99;
-  --shadow: 0 2px 12px rgba(27,42,74,.08);
+  --bg:     #080C14;
+  --card:   #0E1520;
+  --card2:  #121B2A;
+  --border: #1C2D44;
+  --navy:   #1B2A4A;
+  --gold:   #C4A020;
+  --gold2:  #E2B840;
+  --grn:    #27A84A;
+  --red:    #E05050;
+  --oran:   #D07030;
+  --txt:    #D8E0EE;
+  --txt2:   #6B7A99;
+  --white:  #FFFFFF;
+  --shadow: 0 4px 20px rgba(0,0,0,.5);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -30,51 +33,31 @@ body {
 
 /* ── HEADER ─────────────────────────────────────── */
 .header {
-  background: var(--white);
-  border-bottom: 2px solid var(--navy);
+  background: linear-gradient(135deg, #05090F 0%, #0E1520 100%);
+  border-bottom: 1px solid var(--gold);
   padding: 0 32px;
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 2px 30px rgba(0,0,0,.6);
 }
 .header-left { display: flex; align-items: center; gap: 24px; }
-
-/* Logo SVG inline — reproduit le style T.A INVEST */
-.logo-svg { height: 36px; width: auto; }
-
-.header-sep {
-  width: 1px; height: 32px;
-  background: var(--border);
-}
+.logo-svg { height: 38px; width: auto; }
+.header-sep { width: 1px; height: 32px; background: var(--border); }
 .header-title h1 {
   font-size: 13px; font-weight: 700;
-  letter-spacing: 2px; text-transform: uppercase; color: var(--navy);
+  letter-spacing: 2px; text-transform: uppercase; color: var(--txt);
 }
-.header-title p {
-  font-size: 10px; color: var(--txt2); margin-top: 2px; letter-spacing: .3px;
-}
-.header-right { display: flex; align-items: center; gap: 8px; }
-.btn {
-  padding: 7px 14px; border-radius: 4px; font-size: 11px;
-  font-weight: 600; cursor: pointer; border: 1px solid transparent;
-  transition: .15s; letter-spacing: .3px;
-}
-.btn-gs  { background: #fff; border-color: #34a853; color: #34a853; }
-.btn-xl  { background: #fff; border-color: #1d6f42; color: #1d6f42; }
-.btn-gs:hover { background: #34a853; color: #fff; }
-.btn-xl:hover { background: #1d6f42; color: #fff; }
-.date-badge {
-  font-size: 10px; color: var(--txt2); letter-spacing: .3px;
-  padding-left: 12px; border-left: 1px solid var(--border);
-}
+.header-title p { font-size: 10px; color: var(--txt2); margin-top: 2px; letter-spacing: .3px; }
+.header-right { display: flex; align-items: center; gap: 10px; }
+.date-badge { font-size: 10px; color: var(--txt2); letter-spacing: .3px; padding-left: 12px; border-left: 1px solid var(--border); }
 .refresh-badge {
   display: flex; align-items: center; gap: 6px;
-  background: #f0faf2; border: 1px solid #b8e6c0;
+  background: rgba(39,168,74,.12); border: 1px solid rgba(39,168,74,.3);
   border-radius: 20px; padding: 4px 10px;
-  font-size: 10px; color: #2D7A2D; font-weight: 600;
+  font-size: 10px; color: var(--grn); font-weight: 600;
 }
 .refresh-dot {
   width: 7px; height: 7px; border-radius: 50%;
@@ -118,17 +101,19 @@ body {
   gap: 10px;
 }
 .kpi-card {
-  background: var(--white);
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 16px 14px;
   position: relative;
   box-shadow: var(--shadow);
+  transition: border-color .2s;
 }
+.kpi-card:hover { border-color: var(--gold); }
 .kpi-card::after {
   content: ''; position: absolute;
   bottom: 0; left: 0; right: 0; height: 3px;
-  background: var(--navy); border-radius: 0 0 6px 6px;
+  background: var(--gold); border-radius: 0 0 6px 6px;
 }
 .kpi-card.green::after  { background: var(--grn); }
 .kpi-card.orange::after { background: var(--oran); }
@@ -137,7 +122,7 @@ body {
   font-size: 9px; color: var(--txt2); text-transform: uppercase;
   letter-spacing: .8px; margin-bottom: 10px; font-weight: 600;
 }
-.kpi-value { font-size: 22px; font-weight: 800; color: var(--navy); }
+.kpi-value { font-size: 22px; font-weight: 800; color: var(--gold2); }
 .kpi-card.green  .kpi-value { color: var(--grn); }
 .kpi-card.orange .kpi-value { color: var(--oran); }
 .kpi-card.red    .kpi-value { color: var(--red); }
@@ -148,14 +133,14 @@ body {
 .tables-row  { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
 .bottom-row  { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; }
 .card {
-  background: var(--white);
+  background: var(--card);
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 18px;
   box-shadow: var(--shadow);
 }
 .card-title {
-  font-size: 10px; font-weight: 700; color: var(--navy);
+  font-size: 10px; font-weight: 700; color: var(--gold2);
   text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
   padding-bottom: 10px; border-bottom: 1px solid var(--border);
   display: flex; align-items: center; gap: 8px;
@@ -168,7 +153,7 @@ body {
 
 /* ── TABLE ──────────────────────────────────────── */
 .data-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-.data-table thead tr { background: var(--bg); }
+.data-table thead tr { background: var(--card2); }
 .data-table th {
   padding: 8px 10px; text-align: left; color: var(--txt2);
   font-weight: 700; font-size: 9px; text-transform: uppercase;
@@ -179,18 +164,18 @@ body {
   vertical-align: middle; color: var(--txt);
 }
 .data-table tr:last-child td { border-bottom: none; }
-.data-table tr:hover td { background: #f8f9fc; }
+.data-table tr:hover td { background: rgba(255,255,255,.03); }
 .data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
-.total-row td { font-weight: 700; color: var(--navy); background: var(--bg) !important; }
+.total-row td { font-weight: 700; color: var(--gold2); background: rgba(196,160,32,.08) !important; }
 
 .badge {
   display: inline-block; padding: 2px 8px; border-radius: 3px;
   font-size: 9px; font-weight: 700; letter-spacing: .4px;
 }
-.badge-grn  { background: #e8f5e9; color: #2D7A2D; }
-.badge-gold { background: #fff8e1; color: #9a7a00; }
-.badge-red  { background: #fdecea; color: #B03030; }
-.badge-gry  { background: #f0f0f0; color: #888; }
+.badge-grn  { background: rgba(39,168,74,.2);  color: #5de07a; }
+.badge-gold { background: rgba(196,160,32,.2); color: var(--gold2); }
+.badge-red  { background: rgba(224,80,80,.2);  color: #f07070; }
+.badge-gry  { background: rgba(255,255,255,.08); color: var(--txt2); }
 
 /* ── ENGAGEMENTS ────────────────────────────────── */
 .eng-list { display: flex; flex-direction: column; gap: 4px; }
@@ -200,9 +185,9 @@ body {
   gap: 8px; align-items: center;
   padding: 7px 10px; border-radius: 4px;
   border: 1px solid var(--border); font-size: 11px;
-  background: var(--bg);
+  background: var(--card2);
 }
-.eng-item:hover { background: #edf0f7; }
+.eng-item:hover { background: rgba(255,255,255,.04); }
 .dot { width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;flex-shrink:0; }
 .dot-grn  { background: var(--grn); }
 .dot-gold { background: var(--gold); }
@@ -217,20 +202,21 @@ body {
 }
 .fin-kpi-row:last-child { border-bottom: none; }
 .fin-kpi-label { font-size: 11px; color: var(--txt2); flex: 1; }
-.fin-kpi-val   { font-size: 12px; font-weight: 700; color: var(--navy); }
+.fin-kpi-val   { font-size: 12px; font-weight: 700; color: var(--txt); }
 .fin-kpi-stat  { font-size: 9px; padding: 2px 8px; border-radius: 3px; font-weight: 700; letter-spacing: .4px; }
-.stat-bon  { background: #e8f5e9; color: #2D7A2D; }
-.stat-surv { background: #fff8e1; color: #9a7a00; }
-.stat-risk { background: #fdecea; color: #B03030; }
+.stat-bon  { background: rgba(39,168,74,.18);  color: #5de07a; }
+.stat-surv { background: rgba(196,160,32,.18); color: var(--gold2); }
+.stat-risk { background: rgba(224,80,80,.18);  color: #f07070; }
 
 /* ── FOOTER ─────────────────────────────────────── */
 .footer {
-  background: var(--navy); padding: 12px 32px;
+  background: #05090F; border-top: 1px solid var(--border);
+  padding: 12px 32px;
   display: flex; align-items: center; justify-content: space-between;
   margin-top: 4px;
 }
-.footer-left  { font-size: 11px; color: rgba(255,255,255,.6); letter-spacing: .3px; }
-.footer-right { font-size: 11px; color: var(--gold); font-weight: 600; letter-spacing: .5px; }
+.footer-left  { font-size: 11px; color: var(--txt2); letter-spacing: .3px; }
+.footer-right { font-size: 11px; color: var(--gold2); font-weight: 600; letter-spacing: .5px; }
 
 /* ── ROADMAP ROW ────────────────────────────────── */
 .roadmap-row {
@@ -247,7 +233,7 @@ body {
 }
 .rm-year {
   text-align: center; font-size: 11px; font-weight: 700;
-  color: var(--navy); padding: 4px 0;
+  color: var(--gold2); padding: 4px 0;
   border-left: 1px solid var(--border);
 }
 .rm-sems {
@@ -256,7 +242,7 @@ body {
 }
 .rm-sem {
   text-align: center; font-size: 9px; color: var(--txt2);
-  padding: 2px 0; background: var(--bg);
+  padding: 2px 0; background: var(--card2);
   border-left: 1px solid var(--border); border-bottom: 1px solid var(--border);
 }
 
@@ -267,7 +253,7 @@ body {
 }
 .rm-axe-label {
   width: 180px; min-width: 180px;
-  font-size: 10px; font-weight: 600; color: var(--navy);
+  font-size: 10px; font-weight: 600; color: var(--txt);
   padding: 4px 8px 4px 0;
   display: flex; align-items: center; gap: 6px;
 }
@@ -298,20 +284,20 @@ body {
 }
 .rm-etape {
   flex: 1; padding: 6px 8px;
-  border-left: 2px solid var(--navy);
-  background: var(--bg); border-radius: 0 4px 4px 0;
+  border-left: 2px solid var(--gold);
+  background: var(--card2); border-radius: 0 4px 4px 0;
   margin-right: 6px;
 }
 .rm-etape-date {
-  font-size: 10px; font-weight: 800; color: var(--navy); margin-bottom: 2px;
+  font-size: 10px; font-weight: 800; color: var(--gold2); margin-bottom: 2px;
 }
 .rm-etape-desc { font-size: 9px; color: var(--txt2); line-height: 1.4; }
 
 /* ── KPI TABLE (pastilles) ──────────────────────── */
 .kpi-section-title {
-  font-size: 9px; font-weight: 800; color: var(--navy);
+  font-size: 9px; font-weight: 800; color: var(--gold2);
   text-transform: uppercase; letter-spacing: 1px;
-  background: var(--bg); padding: 5px 8px;
+  background: var(--card2); padding: 5px 8px;
   border-radius: 3px; margin-bottom: 4px;
 }
 .kpi-table { width: 100%; border-collapse: collapse; font-size: 11px; }
@@ -327,21 +313,21 @@ body {
 .kpi-table td:nth-child(2),.kpi-table td:nth-child(3) { text-align: right; font-weight: 600; }
 .kpi-table td:nth-child(4) { text-align: center; }
 .kpi-table tr:last-child td { border-bottom: none; }
-.kpi-table tr:hover td { background: #f8f9fc; }
+.kpi-table tr:hover td { background: rgba(255,255,255,.03); }
 
 .dot-ind {
   display: inline-block; width: 14px; height: 14px;
-  border-radius: 50%; box-shadow: 0 0 4px rgba(0,0,0,.15);
+  border-radius: 50%; box-shadow: 0 0 6px rgba(0,0,0,.4);
 }
-.dot-ind.dot-grn  { background: #34c759; }
-.dot-ind.dot-gold { background: #ffcc00; }
-.dot-ind.dot-red  { background: #ff3b30; }
+.dot-ind.dot-grn  { background: #34c759; box-shadow: 0 0 6px rgba(52,199,89,.4); }
+.dot-ind.dot-gold { background: #ffcc00; box-shadow: 0 0 6px rgba(255,204,0,.4); }
+.dot-ind.dot-red  { background: #ff3b30; box-shadow: 0 0 6px rgba(255,59,48,.4); }
 
 .statut-global {
   margin-top: 14px; padding: 10px 14px;
-  background: var(--bg); border-radius: 4px;
+  background: rgba(39,168,74,.1); border-radius: 4px;
   border-left: 3px solid var(--grn);
-  font-size: 11px; font-weight: 700; color: var(--navy);
+  font-size: 11px; font-weight: 700; color: var(--grn);
   letter-spacing: .5px;
 }
 
@@ -462,17 +448,13 @@ body {
 <header class="header">
   <div class="header-left">
 
-    <!-- Logo T.A INVEST reconstruit en SVG inline -->
-    <svg class="logo-svg" viewBox="0 0 220 50" xmlns="http://www.w3.org/2000/svg">
-      <!-- T. -->
-      <text x="0" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="38" font-weight="700" fill="#1B2A4A" letter-spacing="-1">T.</text>
-      <!-- A -->
-      <text x="46" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="38" font-weight="700" fill="#1B2A4A">A</text>
-      <!-- Ligne graphique style logo -->
-      <line x1="44" y1="46" x2="44" y2="10" stroke="#1B2A4A" stroke-width="1.5"/>
-      <line x1="44" y1="10" x2="220" y2="10" stroke="#1B2A4A" stroke-width="1.5"/>
-      <!-- INVEST -->
-      <text x="76" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="28" font-weight="300" fill="#1B2A4A" letter-spacing="4">INVEST</text>
+    <!-- Logo T.A INVEST — thème sombre -->
+    <svg class="logo-svg" viewBox="0 0 240 50" xmlns="http://www.w3.org/2000/svg">
+      <text x="0" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="38" font-weight="700" fill="#E2B840" letter-spacing="-1">T.</text>
+      <text x="46" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="38" font-weight="700" fill="#E2B840">A</text>
+      <line x1="44" y1="46" x2="44" y2="10" stroke="#C4A020" stroke-width="1.5"/>
+      <line x1="44" y1="10" x2="240" y2="10" stroke="#C4A020" stroke-width="1.5"/>
+      <text x="78" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="26" font-weight="300" fill="#D8E0EE" letter-spacing="5">INVEST</text>
     </svg>
 
     <div class="header-sep"></div>
@@ -705,6 +687,8 @@ const DEFAULT_ENG = [
 // ── CHARTS ────────────────────────────────────────
 Chart.defaults.color = '#6B7A99';
 Chart.defaults.font.family = "'Segoe UI',system-ui,sans-serif";
+Chart.defaults.borderColor = '#1C2D44';
+Chart.defaults.backgroundColor = 'transparent';
 let cFlux, cSect, cTri;
 
 function initCharts(projects, flux) {
@@ -725,8 +709,8 @@ function initCharts(projects, flux) {
       plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}},
         tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y>0?'+':''}${c.parsed.y} M`}}},
       scales:{
-        x:{grid:{color:'rgba(0,0,0,.05)'}},
-        y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>v+'M'}}
+        x:{grid:{color:'rgba(255,255,255,.06)'}},
+        y:{grid:{color:'rgba(255,255,255,.06)'},ticks:{callback:v=>v+'M'}}
       }
     }
   });
@@ -758,7 +742,7 @@ function initCharts(projects, flux) {
     },
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`TRI: ${c.parsed.x}%`}}},
-      scales:{x:{grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>v+'%'},min:0,max:25},
+      scales:{x:{grid:{color:'rgba(255,255,255,.06)'},ticks:{callback:v=>v+'%'},min:0,max:25},
               y:{grid:{display:false},ticks:{font:{size:10}}}}}
   });
 }
