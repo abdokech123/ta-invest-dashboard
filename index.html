@@ -351,12 +351,58 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 (function(){
   const PWD = 'TAINVEST20262030';
   const KEY = 'ta_auth';
+  const LOG_URL = 'https://script.google.com/macros/s/AKfycbzzParC67ByoOt1Pq9TeV-E_GQYW7Shz70zmsxNh72lbmZsVPtsFxKzhG2q9GLf292ZCQ/exec';
+
   if(sessionStorage.getItem(KEY)==='1') document.getElementById('loginOverlay').style.display='none';
+
+  // Détecter type appareil
+  function getDevice() {
+    const ua = navigator.userAgent;
+    if (/iPhone|iPad|iPod/i.test(ua)) return 'iPhone / iPad';
+    if (/Android/i.test(ua)) return 'Android';
+    if (/Windows/i.test(ua)) return 'Windows';
+    if (/Mac/i.test(ua)) return 'Mac';
+    return 'Autre';
+  }
+
+  // Détecter navigateur
+  function getBrowser() {
+    const ua = navigator.userAgent;
+    if (ua.includes('Edg')) return 'Edge';
+    if (ua.includes('Chrome')) return 'Chrome';
+    if (ua.includes('Firefox')) return 'Firefox';
+    if (ua.includes('Safari')) return 'Safari';
+    return 'Autre';
+  }
+
+  // Logger la connexion
+  async function logVisit() {
+    try {
+      // Récupérer IP + géolocalisation
+      const geoRes = await fetch('https://ipapi.co/json/', {cache:'no-store'});
+      const geo    = await geoRes.json();
+      const ip     = geo.ip     || '—';
+      const ville  = (geo.city && geo.country_name) ? `${geo.city}, ${geo.country_name}` : '—';
+
+      const params = new URLSearchParams({
+        ip:  ip,
+        geo: ville,
+        ua:  getBrowser(),
+        dev: getDevice()
+      });
+      // Appel silencieux au Web App (no-cors pour éviter erreur CORS)
+      fetch(LOG_URL + '?' + params.toString(), {mode:'no-cors', cache:'no-store'});
+    } catch(e) {
+      // Silencieux — ne pas bloquer la connexion si tracking échoue
+    }
+  }
+
   window.doLogin = function(){
     const val = document.getElementById('loginPwd').value;
     const err = document.getElementById('loginErr');
     if(val===PWD){
       sessionStorage.setItem(KEY,'1');
+      logVisit(); // ← Enregistrement silencieux
       const o = document.getElementById('loginOverlay');
       o.style.transition='opacity .4s'; o.style.opacity='0';
       setTimeout(()=>o.style.display='none',420);
