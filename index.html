@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>T.A INVEST HOLDING — BP Groupe 2026–2030</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 :root {
   --bg:     #080C14;
@@ -82,6 +83,14 @@ body {
 }
 .btn-pdf:hover { background: #0d1a30; border-color: #0d1a30; }
 .btn-pdf.loading { opacity: .6; cursor: wait; }
+.btn-xl {
+  background: rgba(39,168,74,.15); color: #5de086; border: 1px solid rgba(39,168,74,.35);
+  display: flex; align-items: center; gap: 6px; font-size: 11px;
+  letter-spacing: .4px; border-radius: 4px; padding: 6px 12px; cursor: pointer;
+  font-family: inherit; transition: background .2s;
+}
+.btn-xl:hover { background: rgba(39,168,74,.28); }
+.btn-xl.loaded { background: rgba(39,168,74,.3); color: #fff; border-color: rgba(39,168,74,.6); }
 
 @media print {
   .header-right, .modal-overlay { display: none !important; }
@@ -475,6 +484,8 @@ body {
       <span id="refreshLabel">Live</span>
       <button class="refresh-now" onclick="refreshNow()" title="Forcer la mise à jour">↺</button>
     </div>
+    <button class="btn btn-xl" onclick="document.getElementById('xlInput').click()" title="Importer votre fichier Excel .xlsx">&#128196; Import Excel</button>
+    <input type="file" id="xlInput" accept=".xlsx,.xls" style="display:none" onchange="loadExcel(this)">
     <button class="btn btn-pdf" onclick="exportPDF()" id="btnPDF">&#8595; Export PDF</button>
   </div>
 </header>
@@ -1093,6 +1104,128 @@ function exportPDF() {
 
 // Init
 renderAll(DEFAULT_PROJECTS, DEFAULT_FLUX, DEFAULT_ENG);
+
+// ── IMPORT EXCEL ──────────────────────────────────
+function loadExcel(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const btn = document.querySelector('.btn-xl');
+  btn.textContent = '⏳ Lecture...';
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const wb   = XLSX.read(data, {type:'array'});
+
+      // ── 1. Onglet Projets (1er onglet ou nommé Projets/BP/Portfolio) ──
+      const sheetNames = wb.SheetNames;
+      const projSheetName = sheetNames.find(n =>
+        /projet|bp|portfolio|données|data|principal|main/i.test(n)
+      ) || sheetNames[0];
+
+      const wsProj = wb.Sheets[projSheetName];
+      const rawProj = XLSX.utils.sheet_to_json(wsProj, {header:1, defval:''});
+      // Convertir en format attendu par parseRows (colonnes CSV)
+      // parseRows attend: [nom, secteur, budget, engagé, reste, besoin, tri, payback, marge, statut]
+      const projects = parseRowsXL(rawProj);
+
+      // ── 2. Onglet Engagements ──
+      const engSheetName = sheetNames.find(n =>
+        /engag/i.test(n)
+      ) || (sheetNames.length > 1 ? sheetNames[1] : null);
+
+      let engs = DEFAULT_ENG;
+      if (engSheetName) {
+        const wsEng = wb.Sheets[engSheetName];
+        const rawEng = XLSX.utils.sheet_to_json(wsEng, {header:1, defval:''});
+        const parsedEngs = parseEngXL(rawEng);
+        if (parsedEngs.length > 0) engs = parsedEngs;
+      }
+
+      if (projects.length > 0) {
+        renderAll(projects, computeFlux(projects), engs);
+        btn.textContent = '✅ ' + file.name.replace('.xlsx','').replace('.xls','').substring(0,18);
+        btn.classList.add('loaded');
+        // Stopper l'auto-refresh Google Sheets pour ne pas écraser les données Excel
+        clearInterval(refreshTimer);
+        document.getElementById('refreshBadge').style.display = 'none';
+      } else {
+        btn.textContent = '⚠️ Aucune donnée trouvée';
+        setTimeout(()=>{ btn.textContent='📄 Import Excel'; btn.classList.remove('loaded'); }, 3000);
+      }
+    } catch(err) {
+      console.error('Erreur Excel:', err);
+      btn.textContent = '❌ Erreur lecture';
+      setTimeout(()=>{ btn.textContent='📄 Import Excel'; btn.classList.remove('loaded'); }, 3000);
+    }
+    input.value = ''; // reset pour permettre re-import du même fichier
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function parseRowsXL(rows) {
+  // Trouver la ligne d'en-tête (contient "budget" ou similaire)
+  let headerIdx = 0;
+  for (let i = 0; i < Math.min(rows.length, 10); i++) {
+    const r = rows[i].map(c => String(c).toLowerCase());
+    if (r.some(c => c.includes('budget') || c.includes('projet') || c.includes('nom'))) {
+      headerIdx = i; break;
+    }
+  }
+  const out = [];
+  for (let i = headerIdx + 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r[0] || String(r[0]).trim() === '') continue;
+    const name = String(r[0]).trim();
+    if (name.toUpperCase() === 'TOTAL' || name.toUpperCase().includes('TOTAL')) continue;
+    const budget = parseFloat(String(r[2]).replace(/[\s,]/g,'')) || 0;
+    if (budget === 0) continue;
+    // Détecter si valeurs en MAD ou millions
+    const scale = budget > 1000000 ? 1e6 : (budget > 1000 ? 1e3 : 1);
+    const tri   = parseFloat(String(r[6]).replace(/[%\s,]/g,'')) || 0;
+    const marge = parseFloat(String(r[8]).replace(/[%\s,]/g,'')) || 0;
+    out.push({
+      name,
+      sector:  String(r[1] || '—').trim(),
+      budget:  budget / scale,
+      engage:  parseFloat(String(r[3]).replace(/[\s,]/g,'')) / scale || 0,
+      reste:   parseFloat(String(r[4]).replace(/[\s,]/g,'')) / scale || 0,
+      besoin:  parseFloat(String(r[5]).replace(/[\s,]/g,'')) / scale || 0,
+      tri:     tri > 1 ? tri / 100 : tri,
+      payback: String(r[7] || '—').trim(),
+      marge:   marge > 1 ? marge / 100 : marge,
+      statut:  String(r[9] || 'À définir').trim()
+    });
+  }
+  return out;
+}
+
+function parseEngXL(rows) {
+  // En-têtes attendus: Projet | Nature | Montant | Date | Statut
+  let headerIdx = 0;
+  for (let i = 0; i < Math.min(rows.length, 5); i++) {
+    const r = rows[i].map(c => String(c).toLowerCase());
+    if (r.some(c => c.includes('projet') || c.includes('nature') || c.includes('montant'))) {
+      headerIdx = i; break;
+    }
+  }
+  const out = [];
+  for (let i = headerIdx + 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r[0] || String(r[0]).trim() === '') continue;
+    const montantRaw = parseFloat(String(r[2]).replace(/[\s,]/g,'')) || 0;
+    const scale = montantRaw > 1000000 ? 1e6 : (montantRaw > 1000 ? 1e3 : 1);
+    out.push({
+      projet:  String(r[0]).trim(),
+      nature:  String(r[1] || '—').trim(),
+      montant: montantRaw / scale,
+      date:    String(r[3] || '—').trim(),
+      statut:  String(r[4] || 'À définir').trim()
+    });
+  }
+  return out;
+}
 </script>
 </body>
 </html>
