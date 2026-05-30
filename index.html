@@ -311,7 +311,13 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 <!-- ═══ LOGIN ════════════════════════════════════════ -->
 <div id="loginOverlay">
   <div class="login-brand">
-    <div class="login-ta">T.<span>A</span> INVEST</div>
+    <svg viewBox="0 0 240 50" xmlns="http://www.w3.org/2000/svg" style="height:48px;width:auto">
+      <text x="0" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="38" font-weight="700" fill="#1E4A44" letter-spacing="-1">T.</text>
+      <text x="46" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="38" font-weight="700" fill="#1E4A44">A</text>
+      <line x1="44" y1="46" x2="44" y2="10" stroke="#C49878" stroke-width="1.5"/>
+      <line x1="44" y1="10" x2="240" y2="10" stroke="#C49878" stroke-width="1.5"/>
+      <text x="78" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="26" font-weight="300" fill="#4A8C84" letter-spacing="5">INVEST</text>
+    </svg>
     <div class="login-sub">Business Plan Groupe · 2026–2030</div>
   </div>
 
@@ -368,7 +374,13 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 <!-- ═══ HEADER ═══════════════════════════════════════ -->
 <header class="header">
   <div class="h-brand">
-    <div class="h-logo">T.<span>A</span> INVEST</div>
+    <svg viewBox="0 0 240 50" xmlns="http://www.w3.org/2000/svg" style="height:36px;width:auto;flex-shrink:0">
+      <text x="0" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="38" font-weight="700" fill="#D4AA8A" letter-spacing="-1">T.</text>
+      <text x="46" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="38" font-weight="700" fill="#D4AA8A">A</text>
+      <line x1="44" y1="46" x2="44" y2="10" stroke="#C49878" stroke-width="1.5"/>
+      <line x1="44" y1="10" x2="240" y2="10" stroke="#C49878" stroke-width="1.5"/>
+      <text x="78" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="26" font-weight="300" fill="rgba(255,255,255,0.85)" letter-spacing="5">INVEST</text>
+    </svg>
     <div class="h-sep"></div>
     <div class="h-sub">Business Plan Groupe · Horizon 2026–2030</div>
   </div>
@@ -839,7 +851,8 @@ async function fetchEngagements() {
   for(let i=1;i<rows.length;i++){
     const [projet,nature,montant,date,statut] = rows[i];
     if(!projet) continue;
-    engs.push({projet,nature,montant:parseFloat(String(montant).replace(/[\s,]/g,''))||0,date,statut});
+    const rawM = parseFloat(String(montant).replace(/[\s,]/g,''))||0;
+    engs.push({projet,nature,montant: rawM > 1000 ? rawM/1e6 : rawM, date,statut});
   }
   if(engs.length>0){ currentEngs=engs; renderEngagements(engs); }
 }
