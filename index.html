@@ -180,14 +180,19 @@ body {
 /* ── ENGAGEMENTS ────────────────────────────────── */
 .eng-list { display: flex; flex-direction: column; gap: 4px; }
 .eng-item {
-  display: grid;
-  grid-template-columns: 120px 1fr 80px 70px 90px;
-  gap: 8px; align-items: center;
-  padding: 7px 10px; border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px; border-radius: 4px;
   border: 1px solid var(--border); font-size: 11px;
   background: var(--card2);
 }
 .eng-item:hover { background: rgba(255,255,255,.04); }
+.eng-projet  { min-width: 110px; font-weight:700; color:var(--gold2); }
+.eng-nature  { flex:1; color:var(--txt); }
+.eng-montant { min-width: 55px; text-align:right; font-weight:600; color:var(--txt); }
+.eng-date    { min-width: 70px; text-align:right; font-size:10px; color:var(--txt2); }
+.eng-statut  { min-width: 90px; text-align:right; }
 .dot { width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;flex-shrink:0; }
 .dot-grn  { background: var(--grn); }
 .dot-gold { background: var(--gold); }
@@ -958,11 +963,11 @@ async function fetchEngagements() {
 function renderEngagements(engs) {
   document.getElementById('engList').innerHTML = engs.map(e => `
     <div class="eng-item">
-      <span style="font-weight:700;color:var(--gold2)">${e.projet}</span>
-      <span style="color:var(--txt)">${e.nature}</span>
-      <span style="text-align:right;font-weight:600;color:var(--txt)">${e.montant.toFixed(0)} M</span>
-      <span style="color:var(--txt2);font-size:10px">${e.date}</span>
-      <span><span class="dot ${dotCls(e.statut)}"></span>${badge(e.statut)}</span>
+      <span class="eng-projet">${e.projet}</span>
+      <span class="eng-nature">${e.nature}</span>
+      <span class="eng-montant">${e.montant.toFixed(0)} M</span>
+      <span class="eng-date">${e.date}</span>
+      <span class="eng-statut"><span class="dot ${dotCls(e.statut)}"></span>${badge(e.statut)}</span>
     </div>`).join('');
 }
 
