@@ -287,6 +287,52 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
   border-radius:4px; font-size:10px; color:var(--red); line-height:1.5;
 }
 
+/* ══ TAB NAVIGATION ══════════════════════════════════ */
+.tab-nav{
+  background:var(--white); border-bottom:2px solid var(--g2);
+  padding:0 40px; display:flex; align-items:center; gap:4px;
+  overflow-x:auto; scrollbar-width:none;
+}
+.tab-nav::-webkit-scrollbar{ display:none; }
+.tab-btn{
+  padding:12px 18px; font-size:11px; font-weight:600; font-family:'Inter',sans-serif;
+  color:var(--g4); background:none; border:none; border-bottom:2px solid transparent;
+  cursor:pointer; white-space:nowrap; letter-spacing:.4px; text-transform:uppercase;
+  margin-bottom:-2px; transition:color .2s,border-color .2s;
+}
+.tab-btn:hover{ color:var(--teal); }
+.tab-btn.active{ color:var(--teal); border-bottom-color:var(--teal); font-weight:700; }
+.tab-btn .tab-dot{ display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:6px; background:var(--g3); }
+.tab-btn.active .tab-dot{ background:var(--rose); }
+
+/* ══ FICHE PROJET ════════════════════════════════════ */
+#projectView{ display:none; }
+.proj-header{
+  background:linear-gradient(135deg,var(--teal) 0%,var(--teal2) 100%);
+  border-radius:10px; padding:28px 32px; color:#fff;
+  display:flex; justify-content:space-between; align-items:center;
+  box-shadow:var(--sh2);
+}
+.proj-header-left h2{ font-family:'Playfair Display',serif; font-size:22px; font-weight:700; }
+.proj-header-left p { font-size:11px; opacity:.7; margin-top:4px; letter-spacing:.5px; }
+.proj-header-right{ display:flex; gap:32px; }
+.proj-stat{ text-align:center; }
+.proj-stat-val{ font-family:'Playfair Display',serif; font-size:26px; font-weight:700; color:var(--rose2); }
+.proj-stat-lbl{ font-size:9px; opacity:.6; text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+.proj-badge{
+  display:inline-block; padding:5px 14px; border-radius:20px;
+  font-size:10px; font-weight:700; letter-spacing:.5px;
+  background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.3); color:#fff;
+}
+.proj-kpi-strip{ display:grid; grid-template-columns:repeat(6,1fr); gap:12px; }
+.proj-charts-row{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.proj-inv-row{ display:flex; flex-direction:column; gap:8px; }
+.inv-bar-item{ display:flex; align-items:center; gap:10px; font-size:11px; }
+.inv-bar-label{ min-width:180px; color:var(--g5); }
+.inv-bar-track{ flex:1; height:8px; background:var(--g2); border-radius:4px; overflow:hidden; }
+.inv-bar-fill{ height:100%; border-radius:4px; }
+.inv-bar-pct{ min-width:38px; text-align:right; font-weight:600; color:var(--teal); font-size:11px; }
+
 /* ══ FOOTER ══════════════════════════════════════════ */
 .footer{
   background:var(--teal); border-top:none;
@@ -455,9 +501,19 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 
 <!-- ═══ BREADCRUMB ═══════════════════════════════════ -->
 <div class="breadcrumb">
-  T.A Invest Holding &nbsp;›&nbsp; <strong>Tableau de Bord Groupe</strong> &nbsp;›&nbsp; Vision 2026–2030
+  T.A Invest Holding &nbsp;›&nbsp; <strong id="bcLabel">Tableau de Bord Groupe</strong> &nbsp;›&nbsp; Vision 2026–2030
   &nbsp;&nbsp;|&nbsp;&nbsp; Conseil exclusif : Perenity Capital Advisory Firm
 </div>
+
+<!-- ═══ TAB NAVIGATION ════════════════════════════════ -->
+<nav class="tab-nav" id="tabNav">
+  <button class="tab-btn active" onclick="switchTab('groupe',this)">
+    <span class="tab-dot"></span>Vue Groupe
+  </button>
+</nav>
+
+<!-- ═══ FICHE PROJET ══════════════════════════════════ -->
+<div id="projectView" style="padding:24px 40px 40px;display:flex;flex-direction:column;gap:24px"></div>
 
 <!-- ═══ MAIN ══════════════════════════════════════════ -->
 <main class="main">
@@ -792,6 +848,7 @@ function renderAll(projects, flux, engs) {
     </tr>`;
 
   renderEngagements(engs);
+  buildTabs(projects);
   initCharts(projects, flux);
 }
 
@@ -987,8 +1044,251 @@ function exportPDF() {
   setTimeout(()=>{ window.print(); setTimeout(()=>{btn.textContent='↓ Export PDF';},1500); },400);
 }
 
+// ── TABS ─────────────────────────────────────────────
+let allProjects = DEFAULT_PROJECTS;
+let projChartCF = null, projChartInv = null;
+
+function buildTabs(projects) {
+  allProjects = projects;
+  const nav = document.getElementById('tabNav');
+  // Supprimer anciens onglets projets (garder Vue Groupe)
+  [...nav.querySelectorAll('.tab-btn[data-proj]')].forEach(b => b.remove());
+  projects.forEach((p, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn';
+    btn.setAttribute('data-proj', i);
+    const sectorIcon = {
+      'Immobilier':'🏠','Energie':'⚡','Énergie':'⚡',
+      'Industrie':'🏭','Services':'💼'
+    }[p.sector] || '📁';
+    btn.innerHTML = `<span class="tab-dot"></span>${sectorIcon} ${p.name.split('–')[0].trim().split(' ').slice(0,3).join(' ')}`;
+    btn.onclick = function(){ switchTab('projet', this, i); };
+    nav.appendChild(btn);
+  });
+}
+
+function switchTab(type, btn, projIdx) {
+  // Mettre à jour boutons actifs
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const main = document.querySelector('.main');
+  const footer = document.querySelector('.footer');
+  const projView = document.getElementById('projectView');
+  const bc = document.getElementById('bcLabel');
+
+  if (type === 'groupe') {
+    main.style.display = 'flex';
+    projView.style.display = 'none';
+    bc.textContent = 'Tableau de Bord Groupe';
+  } else {
+    main.style.display = 'none';
+    projView.style.display = 'flex';
+    const p = allProjects[projIdx];
+    bc.textContent = p.name;
+    renderProjectFiche(p, projIdx);
+  }
+}
+
+function renderProjectFiche(p, idx) {
+  const pv = document.getElementById('projectView');
+  const sectorColor = {
+    'Immobilier':['#1E4A44','#E8F2F1'],
+    'Energie':['#7B4A00','#FFF3E0'],
+    'Énergie':['#7B4A00','#FFF3E0'],
+    'Industrie':['#1A237E','#E8EAF6'],
+    'Services':['#4A148C','#F3E5F5']
+  }[p.sector] || ['#1E4A44','#E8F2F1'];
+
+  const statutColor = {
+    'En cours':'rgba(196,146,10,.2)',
+    'À définir':'rgba(154,148,144,.15)',
+    'Terminé':'rgba(46,125,85,.2)'
+  }[p.statut] || 'rgba(196,146,10,.2)';
+
+  // Cash flow du projet seul
+  const cf = computeFluxSingle(p);
+  // Postes investissement estimés
+  const inv = [
+    {lbl:'Acquisition foncière', pct:.30, color:'#1E4A44'},
+    {lbl:'Études & conception',   pct:.05, color:'#2B5F58'},
+    {lbl:'Travaux construction',  pct:.45, color:'#C49878'},
+    {lbl:'Commercialisation',     pct:.08, color:'#C4920A'},
+    {lbl:'Frais financiers',      pct:.07, color:'#4A8C84'},
+    {lbl:'Imprévus',              pct:.05, color:'#9A9490'},
+  ];
+
+  pv.innerHTML = `
+  <!-- HEADER PROJET -->
+  <div class="proj-header">
+    <div class="proj-header-left">
+      <h2>${p.name}</h2>
+      <p>${p.sector} &nbsp;·&nbsp; ${p.payback} &nbsp;·&nbsp; <span style="background:${statutColor};padding:2px 10px;border-radius:10px">${p.statut}</span></p>
+    </div>
+    <div class="proj-header-right">
+      <div class="proj-stat">
+        <div class="proj-stat-val">${fmtM(p.budget)}</div>
+        <div class="proj-stat-lbl">Budget Total</div>
+      </div>
+      <div class="proj-stat">
+        <div class="proj-stat-val">${fmtP(p.tri)}</div>
+        <div class="proj-stat-lbl">TRI</div>
+      </div>
+      <div class="proj-stat">
+        <div class="proj-stat-val">${fmtP(p.marge)}</div>
+        <div class="proj-stat-lbl">Marge</div>
+      </div>
+      <div class="proj-stat">
+        <div class="proj-stat-val">${fmtM(p.budget*(1+p.marge))}</div>
+        <div class="proj-stat-lbl">CA Prévisionnel</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI STRIP PROJET -->
+  <div class="proj-kpi-strip">
+    <div class="kpi-card accent">
+      <div class="kpi-label">Budget Total</div>
+      <div class="kpi-value">${fmtM(p.budget)}</div>
+      <div class="kpi-sub">MAD</div>
+    </div>
+    <div class="kpi-card rose">
+      <div class="kpi-label">Déjà Engagé</div>
+      <div class="kpi-value">${fmtM(p.engage)}</div>
+      <div class="kpi-sub">MAD</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Reste à Engager</div>
+      <div class="kpi-value">${fmtM(p.reste)}</div>
+      <div class="kpi-sub">MAD</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Besoin Net FP</div>
+      <div class="kpi-value">${fmtM(p.besoin)}</div>
+      <div class="kpi-sub">MAD</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">TRI</div>
+      <div class="kpi-value">${fmtP(p.tri)}</div>
+      <div class="kpi-sub">Objectif ≥ 15%</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Marge Opér.</div>
+      <div class="kpi-value">${fmtP(p.marge)}</div>
+      <div class="kpi-sub">Objectif ≥ 20%</div>
+    </div>
+  </div>
+
+  <!-- CHARTS PROJET -->
+  <div class="proj-charts-row">
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot"></div>Cash Flow Prévisionnel (M MAD)</div>
+      <div style="height:220px;position:relative"><canvas id="projChartCF"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot"></div>Plan d'Investissement</div>
+      <div style="height:160px;position:relative"><canvas id="projChartInv"></canvas></div>
+      <div class="proj-inv-row" style="margin-top:12px">
+        ${inv.map(it=>`
+        <div class="inv-bar-item">
+          <span class="inv-bar-label">${it.lbl}</span>
+          <div class="inv-bar-track">
+            <div class="inv-bar-fill" style="width:${it.pct*100}%;background:${it.color}"></div>
+          </div>
+          <span class="inv-bar-pct">${(it.pct*100).toFixed(0)}%</span>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <!-- ENGAGEMENTS PROJET -->
+  <div class="card">
+    <div class="card-title"><div class="card-title-dot"></div>Engagements — ${p.name.split('–')[0].trim()}</div>
+    <div class="eng-list" id="projEngList"></div>
+  </div>
+  `;
+
+  // Chart Cash Flow
+  if(projChartCF) projChartCF.destroy();
+  projChartCF = new Chart(document.getElementById('projChartCF'), {
+    data:{
+      labels: cf.labels,
+      datasets:[
+        {type:'bar',label:'Cash-out',data:cf.cashOut,backgroundColor:'rgba(176,64,64,.12)',borderColor:'#B04040',borderWidth:1.5,borderRadius:3},
+        {type:'bar',label:'Cash-in', data:cf.cashIn, backgroundColor:'rgba(46,125,85,.12)',borderColor:'#2E7D55',borderWidth:1.5,borderRadius:3},
+        {type:'line',label:'Flux net',data:cf.fluxNet,borderColor:'#1E4A44',backgroundColor:'rgba(30,74,68,.06)',fill:true,tension:.4,pointBackgroundColor:'#C49878',pointRadius:4,borderWidth:2}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10},color:'#5A5550'}},
+        tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y>0?'+':''}${c.parsed.y} M`}}},
+      scales:{
+        x:{grid:{color:'rgba(0,0,0,.05)'},ticks:{color:'#9A9490'}},
+        y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>v+'M',color:'#9A9490'}}
+      }
+    }
+  });
+
+  // Chart Investissement Donut
+  if(projChartInv) projChartInv.destroy();
+  projChartInv = new Chart(document.getElementById('projChartInv'), {
+    type:'doughnut',
+    data:{
+      labels: inv.map(it=>it.lbl),
+      datasets:[{
+        data: inv.map(it=>Math.round(p.budget*it.pct)),
+        backgroundColor: inv.map(it=>it.color),
+        borderColor:'#fff', borderWidth:2
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'60%',
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:c=>`${c.label}: ${fmtM(c.parsed)}`}}
+      }
+    }
+  });
+
+  // Engagements filtrés pour ce projet
+  const projNom = p.name.split('–')[0].trim().split(' ').slice(0,2).join(' ');
+  const engsProj = currentEngs.filter(e =>
+    e.projet.toLowerCase().includes(projNom.toLowerCase().split(' ')[0]) ||
+    projNom.toLowerCase().includes(e.projet.toLowerCase().split(' ')[0])
+  );
+  const el = document.getElementById('projEngList');
+  if(engsProj.length > 0){
+    el.innerHTML = engsProj.map(e=>`
+      <div class="eng-item">
+        <div class="eng-bar" style="background:${engBarCls(e.statut)}"></div>
+        <span class="eng-projet">${e.projet}</span>
+        <span class="eng-nature">${e.nature}</span>
+        <span class="eng-montant">${typeof e.montant==='number'?e.montant.toFixed(0):e.montant} M</span>
+        <span class="eng-date">${e.date}</span>
+        <span class="eng-statut">${badge(e.statut)}</span>
+      </div>`).join('');
+  } else {
+    el.innerHTML = '<div style="color:var(--g4);font-size:11px;font-style:italic;padding:12px 0">Aucun engagement enregistré pour ce projet</div>';
+  }
+}
+
+function computeFluxSingle(p) {
+  const o=[0,0,0,0,0], n=[0,0,0,0,0];
+  o[0]+=p.budget*.35; o[1]+=p.budget*.40; o[2]+=p.budget*.20; o[3]+=p.budget*.04; o[4]+=p.budget*.01;
+  const ci=p.budget*(1+p.marge);
+  n[2]+=ci*.30; n[3]+=ci*.40; n[4]+=ci*.30;
+  return{
+    labels:['2026','2027','2028','2029','2030'],
+    cashOut:o.map(v=>-Math.round(v)),
+    cashIn:n.map(v=>Math.round(v)),
+    fluxNet:[0,1,2,3,4].map(i=>Math.round(n[i]-o[i]))
+  };
+}
+
 // ── INIT ────────────────────────────────────────────
 renderAll(DEFAULT_PROJECTS, DEFAULT_FLUX, DEFAULT_ENG);
+buildTabs(DEFAULT_PROJECTS);
 fetchSheet(gsUrl).then(()=>startAutoRefresh(gsUrl));
 fetchRoadmap();
 fetchEngagements();
