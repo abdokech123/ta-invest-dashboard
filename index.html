@@ -269,7 +269,7 @@ body {
 .rm-grid { display: flex; flex-direction: column; margin-bottom: 4px; }
 .rm-years {
   display: grid; grid-template-columns: repeat(10,1fr);
-  margin-left: 180px;
+  margin-left: 170px;
 }
 .rm-year {
   text-align: center; font-size: 11px; font-weight: 700;
@@ -278,7 +278,7 @@ body {
 }
 .rm-sems {
   display: grid; grid-template-columns: repeat(10,1fr);
-  margin-left: 180px;
+  margin-left: 170px;
 }
 .rm-sem {
   text-align: center; font-size: 9px; color: var(--txt2);
@@ -684,92 +684,10 @@ body {
   <!-- ROADMAP + KPI TABLEAU -->
   <div class="roadmap-row">
 
-    <!-- ROAD MAP -->
+    <!-- ROAD MAP dynamique -->
     <div class="card">
       <div class="card-title"><div class="card-title-dot"></div>Road Map Groupe – 2026 / 2030</div>
-      <div class="roadmap-wrap">
-        <!-- Headers années/semestres -->
-        <div class="rm-grid">
-          <div class="rm-label-col"></div>
-          <div class="rm-years">
-            <div class="rm-year" style="grid-column:span 2">2026</div>
-            <div class="rm-year" style="grid-column:span 2">2027</div>
-            <div class="rm-year" style="grid-column:span 2">2028</div>
-            <div class="rm-year" style="grid-column:span 2">2029</div>
-            <div class="rm-year" style="grid-column:span 2">2030</div>
-          </div>
-          <div class="rm-label-col"></div>
-          <div class="rm-sems">
-            <div class="rm-sem">S1</div><div class="rm-sem">S2</div>
-            <div class="rm-sem">S1</div><div class="rm-sem">S2</div>
-            <div class="rm-sem">S1</div><div class="rm-sem">S2</div>
-            <div class="rm-sem">S1</div><div class="rm-sem">S2</div>
-            <div class="rm-sem">S1</div><div class="rm-sem">S2</div>
-          </div>
-        </div>
-
-        <!-- Lignes axes -->
-        <div class="rm-row">
-          <div class="rm-axe-label"><span class="rm-icon">&#127968;</span>Acquisitions Foncières</div>
-          <div class="rm-bars">
-            <div class="rm-bar" style="grid-column:1/3;background:#1B2A4A">Opportunités identifiées</div>
-            <div class="rm-bar" style="grid-column:3/10;background:#2d4070;border-left:2px solid #C4A020">Négociations &amp; acquisitions</div>
-            <div class="rm-bar-empty" style="grid-column:10/11"></div>
-          </div>
-        </div>
-        <div class="rm-row">
-          <div class="rm-axe-label"><span class="rm-icon">&#128196;</span>Études &amp; Autorisations</div>
-          <div class="rm-bars">
-            <div class="rm-bar" style="grid-column:1/3;background:#1B2A4A">Études préliminaires</div>
-            <div class="rm-bar" style="grid-column:3/9;background:#2d4070;border-left:2px solid #C4A020">Autorisations &amp; permis</div>
-            <div class="rm-bar-empty" style="grid-column:9/11"></div>
-          </div>
-        </div>
-        <div class="rm-row">
-          <div class="rm-axe-label"><span class="rm-icon">&#127959;</span>Développement / Construction</div>
-          <div class="rm-bars">
-            <div class="rm-bar-empty" style="grid-column:1/3"></div>
-            <div class="rm-bar" style="grid-column:3/5;background:#C86020">Lancement chantiers</div>
-            <div class="rm-bar" style="grid-column:5/10;background:#E8902A;color:#fff">Construction phases</div>
-            <div class="rm-bar" style="grid-column:10/11;background:#C86020;font-size:9px">Finalisation</div>
-          </div>
-        </div>
-        <div class="rm-row">
-          <div class="rm-axe-label"><span class="rm-icon">&#11088;</span>Commercialisation / Exploitation</div>
-          <div class="rm-bars">
-            <div class="rm-bar-empty" style="grid-column:1/5"></div>
-            <div class="rm-bar" style="grid-column:5/7;background:#2D7A2D;font-size:9px">Pré-commercialisation</div>
-            <div class="rm-bar" style="grid-column:7/10;background:#3a9a3a">Montée en charge</div>
-            <div class="rm-bar" style="grid-column:10/11;background:#2D7A2D;font-size:9px">Exploitation</div>
-          </div>
-        </div>
-        <div class="rm-row">
-          <div class="rm-axe-label"><span class="rm-icon">&#127981;</span>Financements</div>
-          <div class="rm-bars">
-            <div class="rm-bar-empty" style="grid-column:1/2"></div>
-            <div class="rm-bar" style="grid-column:2/4;background:#4a6090;font-size:9px">Montage financier</div>
-            <div class="rm-bar" style="grid-column:4/7;background:#3a5080">Mobilisation financements</div>
-            <div class="rm-bar" style="grid-column:7/10;background:#2d3f6a">Suivi &amp; refinancement</div>
-            <div class="rm-bar-empty" style="grid-column:10/11"></div>
-          </div>
-        </div>
-        <div class="rm-row">
-          <div class="rm-axe-label"><span class="rm-icon">&#128200;</span>Optimisation &amp; Valeur</div>
-          <div class="rm-bars">
-            <div class="rm-bar" style="grid-column:1/11;background:#1B2A4A">Pilotage, reporting, création de valeur</div>
-          </div>
-        </div>
-
-        <!-- Étapes clés -->
-        <div class="rm-etapes-title">ÉTAPES CLÉS GROUPE</div>
-        <div class="rm-etapes">
-          <div class="rm-etape"><div class="rm-etape-date">T2 2026</div><div class="rm-etape-desc">Validations investissements phases 1</div></div>
-          <div class="rm-etape"><div class="rm-etape-date">T4 2026</div><div class="rm-etape-desc">Clôture financements principaux</div></div>
-          <div class="rm-etape"><div class="rm-etape-date">T3 2027</div><div class="rm-etape-desc">Pic d'investissement atteint</div></div>
-          <div class="rm-etape"><div class="rm-etape-date">T4 2028</div><div class="rm-etape-desc">Début des retours opérationnels majeurs</div></div>
-          <div class="rm-etape"><div class="rm-etape-date">T2 2030</div><div class="rm-etape-desc">Montée en régime portefeuille</div></div>
-        </div>
-      </div>
+      <div id="roadmapContent"><div style="color:var(--txt2);font-size:11px;padding:20px">Chargement Road Map...</div></div>
     </div>
 
     <!-- TABLEAU DE BORD INDICATEURS -->
@@ -1060,7 +978,8 @@ function computeFlux(p){
 }
 
 // ── AUTO-REFRESH GOOGLE SHEETS ────────────────────
-const GS_DEFAULT = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?output=csv';
+const GS_DEFAULT  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?output=csv';
+const GS_ROADMAP  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?gid=1401549304&single=true&output=csv';
 let gsUrl        = localStorage.getItem('gsUrl') || GS_DEFAULT;
 let refreshTimer = null;
 const REFRESH_MS = 15000; // 15 secondes
@@ -1141,8 +1060,115 @@ document.querySelectorAll('.modal-overlay').forEach(m=>{
   m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
 });
 
-// Démarrage automatique immédiat — charge le sheet dès l'ouverture
+// Démarrage automatique immédiat
 fetchSheet(gsUrl).then(() => startAutoRefresh(gsUrl));
+fetchRoadmap();
+// Refresh roadmap toutes les 30s (moins fréquent car données plus stables)
+setInterval(fetchRoadmap, 30000);
+
+// ── ROADMAP DYNAMIQUE ─────────────────────────────
+const AXE_ICONS = {
+  'Acquisitions Foncieres':'🏠',
+  'Etudes et Autorisations':'📄',
+  'Developpement Construction':'🏗️',
+  'Commercialisation':'⭐',
+  'Financements':'🏦',
+  'Optimisation Valeur':'📈'
+};
+
+async function fetchRoadmap() {
+  const enc = encodeURIComponent(GS_ROADMAP);
+  const proxies = [
+    `https://corsproxy.io/?${enc}`,
+    `https://api.allorigins.win/raw?url=${enc}`,
+    GS_ROADMAP
+  ];
+  let csv = null;
+  for (const p of proxies) {
+    try {
+      const r = await fetch(p, {cache:'no-store'});
+      if (r.ok) { const t = await r.text(); if (t.length > 10) { csv = t; break; } }
+    } catch(e) { continue; }
+  }
+  if (!csv) return;
+  const rows = csv.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g,'').trim()));
+  const bars = [], etapes = [];
+  for (let i = 1; i < rows.length; i++) {
+    const [type, col1, col2, col3, col4, col5] = rows[i];
+    if (!type) continue;
+    if (type === 'BAR')   bars.push({axe:col1, label:col2, start:+col3, end:+col4, color:'#'+col5});
+    if (type === 'ETAPE') etapes.push({date:col1, desc:col2});
+  }
+  if (bars.length > 0) renderRoadmap(bars, etapes);
+}
+
+function renderRoadmap(bars, etapes) {
+  // Grouper les barres par axe (ordre d'apparition)
+  const axes = [];
+  const axeMap = {};
+  bars.forEach(b => {
+    if (!axeMap[b.axe]) { axeMap[b.axe] = []; axes.push(b.axe); }
+    axeMap[b.axe].push(b);
+  });
+
+  // Headers
+  let html = `
+  <div class="roadmap-wrap">
+    <div class="rm-grid">
+      <div class="rm-years">
+        <div class="rm-year" style="grid-column:span 2">2026</div>
+        <div class="rm-year" style="grid-column:span 2">2027</div>
+        <div class="rm-year" style="grid-column:span 2">2028</div>
+        <div class="rm-year" style="grid-column:span 2">2029</div>
+        <div class="rm-year" style="grid-column:span 2">2030</div>
+      </div>
+      <div class="rm-sems">
+        ${'<div class="rm-sem">S1</div><div class="rm-sem">S2</div>'.repeat(5)}
+      </div>
+    </div>`;
+
+  // Lignes axes
+  axes.forEach(axe => {
+    const icon = AXE_ICONS[axe] || '▸';
+    const axeBars = axeMap[axe];
+
+    // Calculer les cases vides
+    const occupied = new Set();
+    axeBars.forEach(b => { for(let c=b.start; c<=b.end; c++) occupied.add(c); });
+
+    let barsHtml = '';
+    let col = 1;
+    while (col <= 10) {
+      const bar = axeBars.find(b => b.start === col);
+      if (bar) {
+        const span = bar.end - bar.start + 1;
+        barsHtml += `<div class="rm-bar" style="grid-column:${bar.start}/${bar.end+1};background:${bar.color}">${bar.label}</div>`;
+        col = bar.end + 1;
+      } else {
+        barsHtml += `<div class="rm-bar-empty" style="grid-column:${col}/${col+1}"></div>`;
+        col++;
+      }
+    }
+
+    html += `
+    <div class="rm-row">
+      <div class="rm-axe-label"><span class="rm-icon">${icon}</span>${axe}</div>
+      <div class="rm-bars">${barsHtml}</div>
+    </div>`;
+  });
+
+  // Étapes clés
+  if (etapes.length > 0) {
+    html += `<div class="rm-etapes-title">ÉTAPES CLÉS GROUPE</div><div class="rm-etapes">`;
+    etapes.forEach(e => {
+      html += `<div class="rm-etape"><div class="rm-etape-date">${e.date}</div><div class="rm-etape-desc">${e.desc}</div></div>`;
+    });
+    html += `</div>`;
+  }
+
+  html += `</div>`;
+  document.getElementById('roadmapContent').innerHTML = html;
+}
 
 // ── EXPORT PDF ────────────────────────────────────
 function exportPDF() {
