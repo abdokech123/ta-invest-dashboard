@@ -5,883 +5,578 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>T.A INVEST HOLDING — BP Groupe 2026–2030</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:     #080C14;
-  --card:   #0E1520;
-  --card2:  #121B2A;
-  --border: #1C2D44;
-  --navy:   #1B2A4A;
-  --gold:   #C4A020;
-  --gold2:  #E2B840;
-  --grn:    #27A84A;
-  --red:    #E05050;
-  --oran:   #D07030;
-  --txt:    #D8E0EE;
-  --txt2:   #6B7A99;
-  --white:  #FFFFFF;
-  --shadow: 0 4px 20px rgba(0,0,0,.5);
+  --teal:  #1E4A44; --teal2: #2B5F58; --teal3: #4A8C84; --teal4: #E8F2F1;
+  --rose:  #C49878; --rose2: #D4AA8A; --rose3: #F5EDE5;
+  --cream: #F7F4F0; --white: #FFFFFF;
+  --g1:#F0EDE8; --g2:#E0DDD8; --g3:#C8C4BE; --g4:#9A9490; --g5:#5A5550;
+  --grn:#2E7D55; --grn2:#E8F5EE;
+  --amb:#C4920A; --amb2:#FDF3DC;
+  --red:#B04040; --red2:#FCEAEA;
+  --sh: 0 2px 14px rgba(30,74,68,.07);
+  --sh2: 0 6px 28px rgba(30,74,68,.14);
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--txt);
-  min-height: 100vh;
-  font-size: 13px;
-}
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#1A1A1A; font-size:13px; min-height:100vh; }
 
-/* ── HEADER ─────────────────────────────────────── */
-.header {
-  background: linear-gradient(135deg, #05090F 0%, #0E1520 100%);
-  border-bottom: 1px solid var(--gold);
-  padding: 0 32px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  box-shadow: 0 2px 30px rgba(0,0,0,.6);
+/* ══ LOGIN ══════════════════════════════════════════ */
+#loginOverlay{
+  position:fixed; inset:0; z-index:9999;
+  background:linear-gradient(135deg,#F7F4F0 0%,#EEE8E0 60%,#E8F2F1 100%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:28px;
 }
-.header-left { display: flex; align-items: center; gap: 24px; }
-.logo-svg { height: 38px; width: auto; }
-.header-sep { width: 1px; height: 32px; background: var(--border); }
-.header-title h1 {
-  font-size: 13px; font-weight: 700;
-  letter-spacing: 2px; text-transform: uppercase; color: var(--txt);
+.login-brand{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+.login-ta{
+  font-family:'Playfair Display',serif; font-size:32px; font-weight:700;
+  color:var(--teal); letter-spacing:2px;
 }
-.header-title p { font-size: 10px; color: var(--txt2); margin-top: 2px; letter-spacing: .3px; }
-.header-right { display: flex; align-items: center; gap: 10px; }
-.date-badge { font-size: 10px; color: var(--txt2); letter-spacing: .3px; padding-left: 12px; border-left: 1px solid var(--border); }
-.refresh-badge {
-  display: flex; align-items: center; gap: 6px;
-  background: rgba(39,168,74,.12); border: 1px solid rgba(39,168,74,.3);
-  border-radius: 20px; padding: 4px 10px;
-  font-size: 10px; color: var(--grn); font-weight: 600;
+.login-ta span{ color:var(--rose); }
+.login-sub{ font-size:10px; color:var(--g4); letter-spacing:3px; text-transform:uppercase; }
+.login-card{
+  background:var(--white); border:1px solid var(--g2); border-radius:12px;
+  padding:36px 40px; width:340px; display:flex; flex-direction:column; gap:20px;
+  box-shadow:var(--sh2);
 }
-.refresh-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: #34c759; animation: pulse 2s infinite;
+.login-title{ text-align:center; }
+.login-title h2{ font-family:'Playfair Display',serif; font-size:15px; color:var(--teal); font-weight:600; letter-spacing:.5px; }
+.login-title p { font-size:10px; color:var(--g4); margin-top:4px; }
+.login-label{ font-size:10px; color:var(--g4); letter-spacing:.8px; text-transform:uppercase; margin-bottom:6px; display:block; }
+.login-input{
+  width:100%; background:var(--g1); border:1px solid var(--g2); border-radius:6px;
+  padding:11px 14px; color:var(--teal); font-size:13px; font-family:inherit; outline:none;
+  transition:border .2s;
 }
-@keyframes pulse {
-  0%,100% { opacity:1; transform:scale(1); }
-  50%      { opacity:.5; transform:scale(.8); }
+.login-input:focus{ border-color:var(--teal); background:var(--white); }
+#loginErr{ font-size:11px; color:var(--red); text-align:center; display:none; }
+.login-btn{
+  background:var(--teal); color:#fff; border:none; border-radius:6px;
+  padding:12px; font-size:13px; font-weight:600; cursor:pointer;
+  font-family:'Playfair Display',serif; letter-spacing:1px; transition:background .2s;
 }
-.refresh-now {
-  background: none; border: none; cursor: pointer;
-  font-size: 14px; color: #2D7A2D; padding: 0 2px;
-  line-height: 1; font-weight: 700;
-}
-.refresh-now:hover { color: #1a5a1a; }
-.refresh-now.spin { animation: spin .6s linear; }
-@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-.btn-pdf {
-  background: var(--navy); color: #fff; border-color: var(--navy);
-  display: flex; align-items: center; gap: 6px; font-size: 11px;
-  letter-spacing: .4px;
-}
-.btn-pdf:hover { background: #0d1a30; border-color: #0d1a30; }
-.btn-pdf.loading { opacity: .6; cursor: wait; }
+.login-btn:hover{ background:var(--teal2); }
+.login-footer{ display:flex; flex-direction:column; align-items:center; gap:8px; opacity:.5; }
+.login-pc{ font-family:'Playfair Display',serif; font-size:13px; color:var(--teal); font-weight:700; }
+.login-pc em{ color:var(--rose); font-style:italic; font-size:11px; font-weight:400; }
+.login-copy{ font-size:9px; color:var(--g4); letter-spacing:.3px; }
 
-@media print {
-  .header-right, .modal-overlay { display: none !important; }
-  body { background: #fff !important; }
-  .card, .kpi-card { box-shadow: none !important; border: 1px solid #ddd !important; }
+/* ══ HEADER ══════════════════════════════════════════ */
+.header{
+  background:var(--teal); padding:0 40px; height:66px;
+  display:flex; align-items:center; justify-content:space-between;
+  box-shadow:0 2px 20px rgba(0,0,0,.18); position:sticky; top:0; z-index:100;
 }
+.h-brand{ display:flex; align-items:center; gap:18px; }
+.h-logo{ font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:#fff; letter-spacing:.5px; }
+.h-logo span{ color:var(--rose2); }
+.h-sep{ width:1px; height:24px; background:rgba(255,255,255,.2); }
+.h-sub{ font-size:10px; color:rgba(255,255,255,.5); letter-spacing:2px; text-transform:uppercase; }
+.h-right{ display:flex; align-items:center; gap:12px; }
+.h-date{ font-size:10px; color:rgba(255,255,255,.45); }
+.refresh-badge{
+  display:none; align-items:center; gap:6px;
+  background:rgba(196,152,120,.18); border:1px solid rgba(196,152,120,.35);
+  color:var(--rose2); font-size:9.5px; font-weight:600;
+  padding:4px 11px; border-radius:20px;
+}
+.refresh-dot{ width:6px; height:6px; border-radius:50%; background:#7ED8A0; animation:pulse 2s infinite; }
+@keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.4} }
+.refresh-now{ background:none; border:none; cursor:pointer; font-size:13px; color:rgba(255,255,255,.6); padding:0 2px; }
+.refresh-now:hover{ color:#fff; }
+.refresh-now.spin{ animation:spin .6s linear; }
+@keyframes spin{ from{transform:rotate(0)} to{transform:rotate(360deg)} }
+.btn-pdf{
+  background:var(--rose); color:#fff; border:none; padding:7px 16px;
+  border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;
+  letter-spacing:.5px; font-family:inherit; transition:background .2s;
+}
+.btn-pdf:hover{ background:var(--rose2); }
 
+/* ══ BREADCRUMB ═══════════════════════════════════════ */
+.breadcrumb{
+  background:var(--white); border-bottom:1px solid var(--g2);
+  padding:9px 40px; display:flex; align-items:center; gap:8px;
+  font-size:10px; color:var(--g4); letter-spacing:.4px;
+}
+.breadcrumb strong{ color:var(--teal); font-weight:600; }
 
-/* ── MAIN ───────────────────────────────────────── */
-.main { padding: 20px 28px; display: flex; flex-direction: column; gap: 16px; }
-.loader-msg { display:none; text-align:center; padding:10px; color:var(--navy); font-size:12px; font-weight:600; }
+/* ══ MAIN ════════════════════════════════════════════ */
+.main{ padding:24px 40px 40px; display:flex; flex-direction:column; gap:24px; }
 
-/* ── KPI STRIP ──────────────────────────────────── */
-.kpi-strip {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
+/* ══ SECTION TITLES ══════════════════════════════════ */
+.s-title{
+  display:flex; align-items:center; gap:10px; margin-bottom:14px;
+  font-family:'Playfair Display',serif; font-size:11.5px; font-weight:600;
+  color:var(--teal); letter-spacing:.8px; text-transform:uppercase;
 }
-.kpi-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 16px 14px;
-  position: relative;
-  box-shadow: var(--shadow);
-  transition: border-color .2s;
-}
-.kpi-card:hover { border-color: var(--gold); }
-.kpi-card::after {
-  content: ''; position: absolute;
-  bottom: 0; left: 0; right: 0; height: 3px;
-  background: var(--gold); border-radius: 0 0 6px 6px;
-}
-.kpi-card.green::after  { background: var(--grn); }
-.kpi-card.orange::after { background: var(--oran); }
-.kpi-card.red::after    { background: var(--red); }
-.kpi-label {
-  font-size: 9px; color: var(--txt2); text-transform: uppercase;
-  letter-spacing: .8px; margin-bottom: 10px; font-weight: 600;
-}
-.kpi-value { font-size: 22px; font-weight: 800; color: var(--gold2); }
-.kpi-card.green  .kpi-value { color: var(--grn); }
-.kpi-card.orange .kpi-value { color: var(--oran); }
-.kpi-card.red    .kpi-value { color: var(--red); }
-.kpi-sub { font-size: 10px; color: var(--txt2); margin-top: 4px; }
+.s-title::after{ content:''; flex:1; height:1px; background:var(--g2); }
+.s-dot{ width:5px; height:5px; border-radius:50%; background:var(--rose); flex-shrink:0; }
 
-/* ── CARDS ──────────────────────────────────────── */
-.charts-row  { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; }
-.tables-row  { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
-.bottom-row  { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; }
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 18px;
-  box-shadow: var(--shadow);
+/* ══ KPI STRIP ═══════════════════════════════════════ */
+.kpi-strip{ display:grid; grid-template-columns:repeat(7,1fr); gap:12px; }
+.kpi-card{
+  background:var(--white); border:1px solid var(--g2); border-radius:8px;
+  padding:16px 14px; box-shadow:var(--sh); position:relative; overflow:hidden;
+  transition:box-shadow .2s,transform .2s;
 }
-.card-title {
-  font-size: 10px; font-weight: 700; color: var(--gold2);
-  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;
-  padding-bottom: 10px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 8px;
-}
-.card-title-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--gold); flex-shrink: 0;
-}
-.chart-wrap { position: relative; }
+.kpi-card:hover{ box-shadow:var(--sh2); transform:translateY(-2px); }
+.kpi-card::before{ content:''; position:absolute; top:0;left:0;right:0; height:3px; background:var(--g2); }
+.kpi-card.accent::before{ background:var(--teal); }
+.kpi-card.rose::before  { background:var(--rose); }
+.kpi-card.green::before { background:var(--grn); }
+.kpi-card.amber::before { background:var(--amb); }
+.kpi-label{ font-size:9px; color:var(--g4); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; font-weight:500; }
+.kpi-value{ font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--teal); line-height:1; }
+.kpi-card.rose  .kpi-value{ color:var(--rose); }
+.kpi-card.green .kpi-value{ color:var(--grn); }
+.kpi-card.amber .kpi-value{ color:var(--amb); }
+.kpi-sub{ font-size:9px; color:var(--g4); margin-top:4px; }
 
-/* ── TABLE ──────────────────────────────────────── */
-.data-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-.data-table thead tr { background: var(--card2); }
-.data-table th {
-  padding: 8px 10px; text-align: left; color: var(--txt2);
-  font-weight: 700; font-size: 9px; text-transform: uppercase;
-  letter-spacing: .6px; border-bottom: 1px solid var(--border);
-}
-.data-table td {
-  padding: 8px 10px; border-bottom: 1px solid var(--border);
-  vertical-align: middle; color: var(--txt);
-}
-.data-table tr:last-child td { border-bottom: none; }
-.data-table tr:hover td { background: rgba(255,255,255,.03); }
-.data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
-.total-row td { font-weight: 700; color: var(--gold2); background: rgba(196,160,32,.08) !important; }
-
-.badge {
-  display: inline-block; padding: 2px 8px; border-radius: 3px;
-  font-size: 9px; font-weight: 700; letter-spacing: .4px;
-}
-.badge-grn  { background: rgba(39,168,74,.2);  color: #5de07a; }
-.badge-gold { background: rgba(196,160,32,.2); color: var(--gold2); }
-.badge-red  { background: rgba(224,80,80,.2);  color: #f07070; }
-.badge-gry  { background: rgba(255,255,255,.08); color: var(--txt2); }
-
-/* ── ENGAGEMENTS ────────────────────────────────── */
-.eng-list { display: flex; flex-direction: column; gap: 4px; }
-.eng-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 12px; border-radius: 4px;
-  border: 1px solid var(--border); font-size: 11px;
-  background: var(--card2);
-}
-.eng-item:hover { background: rgba(255,255,255,.04); }
-.eng-projet  { min-width: 110px; font-weight:700; color:var(--gold2); }
-.eng-nature  { flex:1; color:var(--txt); }
-.eng-montant { min-width: 55px; text-align:right; font-weight:600; color:var(--txt); }
-.eng-date    { min-width: 70px; text-align:right; font-size:10px; color:var(--txt2); }
-.eng-statut  { min-width: 90px; text-align:right; }
-.dot { width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;flex-shrink:0; }
-.dot-grn  { background: var(--grn); }
-.dot-gold { background: var(--gold); }
-.dot-red  { background: var(--red); }
-.dot-gry  { background: #bbb; }
-
-/* ── KPI PILOTAGE ───────────────────────────────── */
-.fin-kpis { display: flex; flex-direction: column; }
-.fin-kpi-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 9px 0; border-bottom: 1px solid var(--border); gap: 8px;
-}
-.fin-kpi-row:last-child { border-bottom: none; }
-.fin-kpi-label { font-size: 11px; color: var(--txt2); flex: 1; }
-.fin-kpi-val   { font-size: 12px; font-weight: 700; color: var(--txt); }
-.fin-kpi-stat  { font-size: 9px; padding: 2px 8px; border-radius: 3px; font-weight: 700; letter-spacing: .4px; }
-.stat-bon  { background: rgba(39,168,74,.18);  color: #5de07a; }
-.stat-surv { background: rgba(196,160,32,.18); color: var(--gold2); }
-.stat-risk { background: rgba(224,80,80,.18);  color: #f07070; }
-
-/* ── KPI STRATÉGIQUES ───────────────────────────── */
-.extra-kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
-.ekpi {
-  background:var(--card2); border:1px solid var(--border); border-radius:6px;
+/* ══ KPI STRATÉGIQUES ════════════════════════════════ */
+.extra-kpi-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+.ekpi{
+  background:var(--white); border:1px solid var(--g2); border-radius:8px;
   padding:14px 12px; display:flex; flex-direction:column; gap:5px;
-  border-left:3px solid var(--border); transition:border-color .2s, box-shadow .2s;
+  border-left:3px solid var(--g2); box-shadow:var(--sh); transition:box-shadow .2s;
 }
-.ekpi:hover { box-shadow:0 4px 16px rgba(0,0,0,.4); }
-.ekpi.good { border-left-color:var(--grn); }
-.ekpi.warn { border-left-color:var(--gold); }
-.ekpi.risk { border-left-color:var(--red); }
-.ekpi.info { border-left-color:#4A8C84; }
-.ekpi-icon { font-size:15px; }
-.ekpi-lbl  { font-size:9px; color:var(--txt2); text-transform:uppercase; letter-spacing:.8px; }
-.ekpi-val  { font-size:20px; font-weight:800; color:var(--gold2); line-height:1; }
-.ekpi.good .ekpi-val { color:var(--grn); }
-.ekpi.risk .ekpi-val { color:var(--red); }
-.ekpi.warn .ekpi-val { color:var(--oran); }
-.ekpi.info .ekpi-val { color:#4A8C84; }
-.ekpi-desc { font-size:9px; color:var(--txt2); }
+.ekpi:hover{ box-shadow:var(--sh2); }
+.ekpi.good{ border-left-color:var(--grn); }
+.ekpi.warn{ border-left-color:var(--amb); }
+.ekpi.risk{ border-left-color:var(--red); }
+.ekpi.info{ border-left-color:var(--teal3); }
+.ekpi-icon{ font-size:15px; }
+.ekpi-lbl { font-size:9px; color:var(--g4); text-transform:uppercase; letter-spacing:.8px; }
+.ekpi-val { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--teal); line-height:1; }
+.ekpi.good .ekpi-val{ color:var(--grn); }
+.ekpi.risk .ekpi-val{ color:var(--red); }
+.ekpi.warn .ekpi-val{ color:var(--amb); }
+.ekpi.info .ekpi-val{ color:var(--teal3); }
+.ekpi-desc{ font-size:9px; color:var(--g4); }
 
-/* ── PROGRESS BAR PILOTAGE ──────────────────────── */
-.pil-bar-wrap { width:70px; height:4px; background:rgba(255,255,255,.08); border-radius:2px; overflow:hidden; flex-shrink:0; }
-.pil-bar      { height:100%; border-radius:2px; }
+/* ══ CARDS ═══════════════════════════════════════════ */
+.charts-row { display:grid; grid-template-columns:2fr 1fr; gap:16px; }
+.tables-row { display:grid; grid-template-columns:3fr 2fr; gap:16px; }
+.bottom-row { display:grid; grid-template-columns:2fr 1fr; gap:16px; }
+.roadmap-row{ display:grid; grid-template-columns:1fr; gap:16px; }
+.indic-row  { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.card{
+  background:var(--white); border:1px solid var(--g2);
+  border-radius:8px; padding:20px; box-shadow:var(--sh);
+}
+.card-title{
+  font-family:'Playfair Display',serif; font-size:11px; font-weight:600;
+  color:var(--teal); text-transform:uppercase; letter-spacing:.8px;
+  margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--g2);
+  display:flex; align-items:center; gap:8px;
+}
+.card-title-dot{ width:5px; height:5px; border-radius:50%; background:var(--rose); flex-shrink:0; }
+.chart-wrap{ position:relative; }
 
-/* ── 3-COL INDICATORS ───────────────────────────── */
-.indic-row { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+/* ══ TABLES ══════════════════════════════════════════ */
+.data-table{ width:100%; border-collapse:collapse; font-size:11.5px; }
+.data-table thead tr{ background:var(--g1); }
+.data-table th{
+  padding:9px 10px; text-align:left; color:var(--g4); font-weight:600;
+  font-size:9px; text-transform:uppercase; letter-spacing:1px;
+  border-bottom:2px solid var(--teal);
+}
+.data-table td{ padding:9px 10px; border-bottom:1px solid var(--g1); color:#1A1A1A; vertical-align:middle; }
+.data-table tr:last-child td{ border-bottom:none; }
+.data-table tr:hover td{ background:var(--g1); }
+.data-table .num{ text-align:right; font-variant-numeric:tabular-nums; font-weight:500; }
+.total-row td{ font-weight:700; color:var(--teal); background:rgba(30,74,68,.05)!important; border-top:1.5px solid var(--teal); }
 
-/* ── FOOTER ─────────────────────────────────────── */
-.footer {
-  background: #05090F; border-top: 1px solid var(--border);
-  padding: 12px 32px;
-  display: flex; align-items: center; justify-content: space-between;
-  margin-top: 4px;
-}
-.footer-left  { font-size: 11px; color: var(--txt2); letter-spacing: .3px; }
-.footer-right { font-size: 11px; color: var(--gold2); font-weight: 600; letter-spacing: .5px; }
+/* ══ BADGES ══════════════════════════════════════════ */
+.badge{ display:inline-block; padding:2px 8px; border-radius:3px; font-size:9px; font-weight:700; letter-spacing:.4px; }
+.badge-grn  { background:var(--grn2); color:var(--grn); }
+.badge-gold { background:var(--amb2); color:var(--amb); }
+.badge-red  { background:var(--red2); color:var(--red); }
+.badge-gry  { background:var(--g1);   color:var(--g4); }
 
-/* ── ROADMAP ROW ────────────────────────────────── */
-.roadmap-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
+/* ══ ENGAGEMENTS ═════════════════════════════════════ */
+.eng-list{ display:flex; flex-direction:column; gap:7px; }
+.eng-item{
+  background:var(--white); border:1px solid var(--g2); border-radius:6px;
+  padding:10px 14px; display:flex; align-items:center; gap:12px; box-shadow:var(--sh);
+  transition:box-shadow .15s;
 }
-.roadmap-wrap { font-size: 11px; }
+.eng-item:hover{ box-shadow:var(--sh2); }
+.eng-bar{ width:4px; height:32px; border-radius:2px; flex-shrink:0; }
+.eng-projet { min-width:120px; font-weight:600; color:var(--teal); font-size:12px; }
+.eng-nature { flex:1; color:var(--g5); }
+.eng-montant{ min-width:55px; text-align:right; font-weight:700; color:var(--teal); font-family:'Playfair Display',serif; font-size:14px; }
+.eng-date   { min-width:72px; text-align:right; font-size:10px; color:var(--g4); }
+.eng-statut { min-width:90px; text-align:right; }
+.dot{ width:7px; height:7px; border-radius:50%; display:inline-block; margin-right:4px; }
+.dot-grn { background:var(--grn); }
+.dot-gold{ background:var(--amb); }
+.dot-red { background:var(--red); }
+.dot-gry { background:var(--g3); }
 
-.rm-grid { display: flex; flex-direction: column; margin-bottom: 4px; }
-.rm-years {
-  display: grid; grid-template-columns: repeat(10,1fr);
-  margin-left: 170px;
+/* ══ PILOTAGE ════════════════════════════════════════ */
+.fin-kpis{ display:flex; flex-direction:column; }
+.fin-kpi-row{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:9px 0; border-bottom:1px solid var(--g1); gap:8px;
 }
-.rm-year {
-  text-align: center; font-size: 11px; font-weight: 700;
-  color: var(--gold2); padding: 4px 0;
-  border-left: 1px solid var(--border);
-}
-.rm-sems {
-  display: grid; grid-template-columns: repeat(10,1fr);
-  margin-left: 170px;
-}
-.rm-sem {
-  text-align: center; font-size: 9px; color: var(--txt2);
-  padding: 2px 0; background: var(--card2);
-  border-left: 1px solid var(--border); border-bottom: 1px solid var(--border);
-}
+.fin-kpi-row:last-child{ border-bottom:none; }
+.fin-kpi-label{ font-size:11px; color:var(--g5); flex:1; }
+.pil-bar-wrap{ width:70px; height:4px; background:var(--g2); border-radius:2px; overflow:hidden; flex-shrink:0; }
+.pil-bar{ height:100%; border-radius:2px; }
+.fin-kpi-val{ font-size:12px; font-weight:700; color:var(--teal); min-width:46px; text-align:right; }
+.fin-kpi-stat{ font-size:9px; padding:2px 7px; border-radius:3px; font-weight:700; letter-spacing:.4px; white-space:nowrap; }
+.stat-bon { background:var(--grn2); color:var(--grn); }
+.stat-surv{ background:var(--amb2); color:var(--amb); }
+.stat-risk{ background:var(--red2); color:var(--red); }
 
-.rm-row {
-  display: flex; align-items: center;
-  border-bottom: 1px solid var(--border);
-  min-height: 34px;
+/* ══ KPI TABLE ═══════════════════════════════════════ */
+.kpi-table{ width:100%; border-collapse:collapse; }
+.kpi-table th{
+  padding:8px 9px; font-size:9px; text-transform:uppercase; letter-spacing:1px;
+  color:var(--g4); font-weight:600; background:var(--g1);
+  border-bottom:1.5px solid var(--teal); text-align:left;
 }
-.rm-axe-label {
-  width: 180px; min-width: 180px;
-  font-size: 10px; font-weight: 600; color: var(--txt);
-  padding: 4px 8px 4px 0;
-  display: flex; align-items: center; gap: 6px;
-}
-.rm-icon { font-size: 13px; flex-shrink: 0; }
-.rm-bars {
-  display: grid;
-  grid-template-columns: repeat(10,1fr);
-  flex: 1; gap: 2px; align-items: center;
-  padding: 3px 0;
-}
-.rm-bar {
-  color: #fff; font-size: 9px; font-weight: 600;
-  padding: 4px 6px; border-radius: 3px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  letter-spacing: .2px;
-}
-.rm-bar-empty { background: transparent; }
+.kpi-table td{ padding:8px 9px; font-size:11.5px; border-bottom:1px solid var(--g1); color:#1A1A1A; }
+.kpi-table tr:hover td{ background:var(--g1); }
+.kpi-table td:nth-child(2){ font-weight:600; color:var(--teal); text-align:right; }
+.kpi-table td:nth-child(3){ font-size:10px; color:var(--g4); text-align:right; }
+.kpi-table td:nth-child(4){ text-align:center; }
+.dot-ind{ display:inline-block; width:8px; height:8px; border-radius:50%; }
+.dot-grn.dot-ind{ background:var(--grn); }
+.dot-gold.dot-ind,.dot-ind.dot-gold{ background:var(--amb); }
+.dot-grn{ background:var(--grn); }
+.dot-gold{ background:var(--amb); }
 
-/* Étapes clés */
-.rm-etapes-title {
-  font-size: 9px; font-weight: 700; color: var(--txt2);
-  text-transform: uppercase; letter-spacing: .8px;
-  margin: 12px 0 6px 180px;
-  border-top: 1px solid var(--border); padding-top: 10px;
-}
-.rm-etapes {
-  display: flex; gap: 0; margin-left: 180px;
-}
-.rm-etape {
-  flex: 1; padding: 6px 8px;
-  border-left: 2px solid var(--gold);
-  background: var(--card2); border-radius: 0 4px 4px 0;
-  margin-right: 6px;
-}
-.rm-etape-date {
-  font-size: 10px; font-weight: 800; color: var(--gold2); margin-bottom: 2px;
-}
-.rm-etape-desc { font-size: 9px; color: var(--txt2); line-height: 1.4; }
+/* ══ ROADMAP ═════════════════════════════════════════ */
+.roadmap-wrap{ font-size:11px; overflow-x:auto; }
+.rm-grid{ display:flex; flex-direction:column; margin-bottom:4px; }
+.rm-years{ display:grid; grid-template-columns:repeat(10,1fr); margin-left:175px; }
+.rm-year{ text-align:center; font-size:10px; font-weight:700; color:var(--white);
+          background:var(--teal); padding:5px 0; border-left:1px solid rgba(255,255,255,.2); }
+.rm-sems{ display:grid; grid-template-columns:repeat(10,1fr); margin-left:175px; }
+.rm-sem{ text-align:center; font-size:9px; color:var(--g4); padding:3px 0;
+         background:var(--g1); border-left:1px solid var(--g2); border-bottom:1px solid var(--g2); }
+.rm-row{ display:flex; align-items:center; border-bottom:1px solid var(--g1); min-height:34px; }
+.rm-axe-label{ width:185px; min-width:185px; font-size:10px; font-weight:600; color:var(--teal2);
+               padding:4px 8px 4px 0; display:flex; align-items:center; gap:6px; }
+.rm-icon{ font-size:13px; flex-shrink:0; }
+.rm-bars{ display:grid; grid-template-columns:repeat(10,1fr); flex:1; gap:2px; align-items:center; padding:3px 0; }
+.rm-bar{ color:#fff; font-size:9px; font-weight:600; padding:4px 6px; border-radius:3px;
+         white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:.2px;
+         box-shadow:0 1px 4px rgba(0,0,0,.15); }
+.rm-bar-empty{ background:transparent; }
+.rm-etapes-title{ font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;
+                  color:var(--rose); padding:12px 0 6px; margin-left:175px; }
+.rm-etapes{ display:flex; margin-left:175px; }
+.rm-etape{ flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; text-align:center;
+           padding:0 4px; position:relative; }
+.rm-etape::before{ content:''; position:absolute; top:8px; left:0; right:0; height:1px; background:var(--g2); z-index:0; }
+.rm-etape:first-child::before{ left:50%; }
+.rm-etape:last-child::before { right:50%; }
+.rm-etape-dot{ width:16px; height:16px; border-radius:50%; background:var(--teal); z-index:1;
+               border:2px solid var(--white); box-shadow:0 0 0 2px var(--teal); flex-shrink:0; }
+.rm-etape-date{ font-size:9px; font-weight:700; color:var(--teal); letter-spacing:.3px; }
+.rm-etape-desc{ font-size:9px; color:var(--g5); line-height:1.3; }
 
-/* ── KPI TABLE (pastilles) ──────────────────────── */
-.kpi-section-title {
-  font-size: 9px; font-weight: 800; color: var(--gold2);
-  text-transform: uppercase; letter-spacing: 1px;
-  background: var(--card2); padding: 5px 8px;
-  border-radius: 3px; margin-bottom: 4px;
-}
-.kpi-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-.kpi-table th {
-  font-size: 9px; font-weight: 700; color: var(--txt2);
-  text-transform: uppercase; letter-spacing: .5px;
-  padding: 5px 8px; border-bottom: 1px solid var(--border);
-  text-align: left;
-}
-.kpi-table th:nth-child(2),.kpi-table th:nth-child(3) { text-align: right; }
-.kpi-table th:nth-child(4) { text-align: center; }
-.kpi-table td { padding: 6px 8px; border-bottom: 1px solid var(--border); color: var(--txt); }
-.kpi-table td:nth-child(2),.kpi-table td:nth-child(3) { text-align: right; font-weight: 600; }
-.kpi-table td:nth-child(4) { text-align: center; }
-.kpi-table tr:last-child td { border-bottom: none; }
-.kpi-table tr:hover td { background: rgba(255,255,255,.03); }
-
-.dot-ind {
-  display: inline-block; width: 14px; height: 14px;
-  border-radius: 50%; box-shadow: 0 0 6px rgba(0,0,0,.4);
-}
-.dot-ind.dot-grn  { background: #34c759; box-shadow: 0 0 6px rgba(52,199,89,.4); }
-.dot-ind.dot-gold { background: #ffcc00; box-shadow: 0 0 6px rgba(255,204,0,.4); }
-.dot-ind.dot-red  { background: #ff3b30; box-shadow: 0 0 6px rgba(255,59,48,.4); }
-
-.statut-global {
-  margin-top: 14px; padding: 10px 14px;
-  background: rgba(39,168,74,.1); border-radius: 4px;
-  border-left: 3px solid var(--grn);
-  font-size: 11px; font-weight: 700; color: var(--grn);
-  letter-spacing: .5px;
-}
-
-@media (max-width: 1100px) {
-  .kpi-strip { grid-template-columns: repeat(4,1fr); }
-  .charts-row,.tables-row,.bottom-row,.roadmap-row { grid-template-columns: 1fr; }
-  .rm-axe-label { width: 130px; min-width: 130px; }
-  .rm-years,.rm-sems,.rm-etapes,.rm-etapes-title { margin-left: 130px; }
+/* ══ RISK ALERT BOX ══════════════════════════════════ */
+.alert-box{
+  margin-top:12px; padding:8px 10px;
+  background:rgba(176,64,64,.07); border:1px solid rgba(176,64,64,.2);
+  border-radius:4px; font-size:10px; color:var(--red); line-height:1.5;
 }
 
-/* ════════════════════════════════════════════════
-   IMPRESSION / EXPORT PDF
-   ════════════════════════════════════════════════ */
-@media print {
-  @page {
-    size: A3 landscape;
-    margin: 10mm 8mm;
-  }
-
-  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-
-  body { background: #fff !important; font-size: 10px; }
-
-  /* Cacher les éléments inutiles */
-  .btn-gs, .btn-xl, .btn-pdf, .modal-overlay { display: none !important; }
-
-  /* Header compact */
-  .header {
-    padding: 6px 16px !important;
-    height: auto !important;
-    border-bottom: 2px solid #1B2A4A !important;
-    box-shadow: none !important;
-    margin-bottom: 8px;
-  }
-  .header-title h1 { font-size: 11px !important; }
-  .header-title p  { font-size: 8px  !important; }
-  .logo-svg { height: 28px !important; }
-  .date-badge { display: block !important; }
-
-  /* Layout main */
-  .main { padding: 0 !important; gap: 8px !important; }
-
-  /* KPI strip — 7 sur une ligne */
-  .kpi-strip {
-    grid-template-columns: repeat(7,1fr) !important;
-    gap: 5px !important;
-    break-inside: avoid;
-  }
-  .kpi-card { padding: 8px 7px !important; border-radius: 4px !important; }
-  .kpi-label { font-size: 7px !important; margin-bottom: 4px !important; }
-  .kpi-value { font-size: 15px !important; }
-  .kpi-sub   { font-size: 7px  !important; }
-
-  /* Charts */
-  .charts-row {
-    grid-template-columns: 2fr 1fr !important;
-    gap: 6px !important;
-    break-inside: avoid;
-  }
-  .chart-wrap canvas { max-height: 160px !important; }
-
-  /* Tables */
-  .tables-row {
-    grid-template-columns: 3fr 2fr !important;
-    gap: 6px !important;
-    break-inside: avoid;
-  }
-  .data-table td, .data-table th { padding: 4px 6px !important; font-size: 9px !important; }
-
-  /* Bottom row */
-  .bottom-row {
-    grid-template-columns: 2fr 1fr !important;
-    gap: 6px !important;
-    break-inside: avoid;
-  }
-  .eng-item { padding: 4px 6px !important; font-size: 9px !important; }
-
-  /* Roadmap */
-  .roadmap-row {
-    grid-template-columns: 3fr 1.4fr !important;
-    gap: 6px !important;
-    break-before: page;
-  }
-  .rm-axe-label { font-size: 8px !important; width: 150px !important; min-width: 150px !important; }
-  .rm-years { margin-left: 150px !important; }
-  .rm-sems  { margin-left: 150px !important; }
-  .rm-etapes { margin-left: 150px !important; }
-  .rm-etapes-title { margin-left: 150px !important; font-size: 7px !important; }
-  .rm-bar { font-size: 7px !important; padding: 3px 4px !important; }
-  .rm-year { font-size: 9px !important; }
-  .rm-sem  { font-size: 7px !important; }
-  .rm-etape-date { font-size: 8px !important; }
-  .rm-etape-desc { font-size: 7px !important; }
-
-  /* KPI table */
-  .kpi-table td, .kpi-table th { padding: 4px 6px !important; font-size: 9px !important; }
-  .kpi-section-title { font-size: 7px !important; padding: 3px 6px !important; }
-  .dot-ind { width: 10px !important; height: 10px !important; }
-  .statut-global { font-size: 9px !important; padding: 6px 10px !important; margin-top: 8px !important; }
-
-  /* Cards */
-  .card { padding: 10px !important; box-shadow: none !important; border: 1px solid #ddd !important; break-inside: avoid; }
-  .card-title { font-size: 8px !important; padding-bottom: 6px !important; margin-bottom: 8px !important; }
-
-  /* Footer */
-  .footer { padding: 6px 16px !important; font-size: 9px !important; }
+/* ══ FOOTER ══════════════════════════════════════════ */
+.footer{
+  background:var(--teal); border-top:none;
+  padding:14px 40px; display:flex; align-items:center; justify-content:space-between;
+  margin-top:8px;
 }
-@media (max-width: 600px) {
-  .kpi-strip { grid-template-columns: repeat(2,1fr); }
-  .header { padding: 0 16px; }
-  .main { padding: 14px; }
+.footer-left { font-size:11px; color:rgba(255,255,255,.5); letter-spacing:.3px; }
+.footer-right{ font-size:11px; color:var(--rose2); font-weight:600; font-family:'Playfair Display',serif; }
+
+/* ══ PRINT ═══════════════════════════════════════════ */
+@media print{
+  #loginOverlay,.header .h-right,.btn-pdf{ display:none!important; }
+  body{ background:#fff!important; font-size:10px; }
+  .card{ box-shadow:none!important; border:1px solid #ddd!important; }
+  .main{ padding:0!important; gap:8px!important; }
+  * { -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important; }
 }
 </style>
 </head>
 <body>
 
-<!-- ═══ LOGIN OVERLAY ════════════════════════════════ -->
-<div id="loginOverlay" style="
-  position:fixed;inset:0;z-index:9999;
-  background:linear-gradient(135deg,#05090F 0%,#0E1520 60%,#0A1428 100%);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;
-">
-  <!-- Logo -->
-  <div style="display:flex;flex-direction:column;align-items:center;gap:12px">
-    <svg viewBox="0 0 240 50" xmlns="http://www.w3.org/2000/svg" style="height:56px;width:auto">
-      <text x="0" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="38" font-weight="700" fill="#E2B840" letter-spacing="-1">T.</text>
-      <text x="46" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="38" font-weight="700" fill="#E2B840">A</text>
-      <line x1="44" y1="46" x2="44" y2="10" stroke="#C4A020" stroke-width="1.5"/>
-      <line x1="44" y1="10" x2="240" y2="10" stroke="#C4A020" stroke-width="1.5"/>
-      <text x="78" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="26" font-weight="300" fill="#D8E0EE" letter-spacing="5">INVEST</text>
-    </svg>
-    <div style="font-size:11px;color:#6B7A99;letter-spacing:3px;text-transform:uppercase">Business Plan Groupe · 2026–2030</div>
+<!-- ═══ LOGIN ════════════════════════════════════════ -->
+<div id="loginOverlay">
+  <div class="login-brand">
+    <div class="login-ta">T.<span>A</span> INVEST</div>
+    <div class="login-sub">Business Plan Groupe · 2026–2030</div>
   </div>
 
-  <!-- Carte login -->
-  <div style="
-    background:#0E1520;border:1px solid #1C2D44;border-radius:12px;
-    padding:36px 40px;width:340px;display:flex;flex-direction:column;gap:20px;
-    box-shadow:0 8px 40px rgba(0,0,0,.6);
-  ">
-    <div style="text-align:center">
-      <div style="font-size:13px;font-weight:700;color:#D8E0EE;letter-spacing:1px">ACCÈS SÉCURISÉ</div>
-      <div style="font-size:11px;color:#6B7A99;margin-top:4px">Espace réservé — Perenity Capital</div>
+  <div class="login-card">
+    <div class="login-title">
+      <h2>Accès Sécurisé</h2>
+      <p>Espace réservé — Perenity Capital Advisory Firm</p>
     </div>
-
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <label style="font-size:11px;color:#6B7A99;letter-spacing:.5px">MOT DE PASSE</label>
-      <input id="loginPwd" type="password" placeholder="••••••••••"
-        onkeydown="if(event.key==='Enter')doLogin()"
-        style="
-          background:#080C14;border:1px solid #1C2D44;border-radius:6px;
-          padding:10px 14px;color:#D8E0EE;font-size:13px;font-family:inherit;
-          outline:none;width:100%;transition:border .2s;
-        "
-        onfocus="this.style.borderColor='#C4A020'"
-        onblur="this.style.borderColor='#1C2D44'"
-      >
+    <div>
+      <label class="login-label">Mot de passe</label>
+      <input id="loginPwd" class="login-input" type="password" placeholder="••••••••••"
+        onkeydown="if(event.key==='Enter')doLogin()">
     </div>
-
-    <div id="loginErr" style="font-size:11px;color:#E05050;text-align:center;display:none">
-      ⚠️ Mot de passe incorrect
-    </div>
-
-    <button onclick="doLogin()" style="
-      background:linear-gradient(135deg,#C4A020,#E2B840);color:#080C14;
-      border:none;border-radius:6px;padding:12px;font-size:13px;font-weight:700;
-      cursor:pointer;letter-spacing:1px;font-family:inherit;transition:opacity .2s;
-    " onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-      CONNEXION
-    </button>
+    <div id="loginErr">⚠️ Mot de passe incorrect</div>
+    <button class="login-btn" onclick="doLogin()">CONNEXION</button>
   </div>
 
-  <!-- Logo Perenity Capital — bas de page login -->
-  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0.45;margin-top:8px">
-    <svg viewBox="0 0 260 150" xmlns="http://www.w3.org/2000/svg" style="height:72px;width:auto">
-      <!-- Monogramme PC -->
-      <text x="68" y="95" font-family="Georgia,'Times New Roman',serif" font-size="88" font-weight="400" fill="#D8E0EE" letter-spacing="-6">P</text>
-      <text x="118" y="95" font-family="Georgia,'Times New Roman',serif" font-size="88" font-weight="400" fill="#D8E0EE" letter-spacing="-6">C</text>
-      <!-- Slash diagonal rose/beige -->
+  <div class="login-footer">
+    <svg viewBox="0 0 260 150" xmlns="http://www.w3.org/2000/svg" style="height:64px;width:auto">
+      <text x="68" y="95" font-family="Georgia,'Times New Roman',serif" font-size="88" font-weight="400" fill="#1E4A44" letter-spacing="-6">P</text>
+      <text x="118" y="95" font-family="Georgia,'Times New Roman',serif" font-size="88" font-weight="400" fill="#1E4A44" letter-spacing="-6">C</text>
       <line x1="95" y1="100" x2="148" y2="8" stroke="#C49878" stroke-width="2.2" stroke-linecap="round"/>
-      <!-- PERENITY CAPITAL -->
-      <text x="130" y="128" font-family="'Segoe UI',Arial,sans-serif" font-size="11.5" fill="#D8E0EE" font-weight="300" letter-spacing="5.5" text-anchor="middle">PERENITY CAPITAL</text>
-      <!-- Advisory Firm italic -->
+      <text x="130" y="128" font-family="'Segoe UI',Arial,sans-serif" font-size="11.5" fill="#1E4A44" font-weight="300" letter-spacing="5.5" text-anchor="middle">PERENITY CAPITAL</text>
       <text x="130" y="146" font-family="Georgia,'Times New Roman',serif" font-size="10" fill="#C49878" font-style="italic" letter-spacing="2" text-anchor="middle">Advisory Firm</text>
     </svg>
-    <div style="font-size:9px;color:#2a3a55;letter-spacing:.5px">© 2025 Perenity Capital · Strictement Privé et Confidentiel</div>
+    <div class="login-copy">© 2025 Perenity Capital · Strictement Privé et Confidentiel</div>
   </div>
 </div>
 
 <script>
-// ── LOGIN ─────────────────────────────────────────
 (function(){
-  const PWD = 'TAInvest2026';  // ← modifie ici le mot de passe
-  const SESSION_KEY = 'ta_auth';
-  // Déjà authentifié cette session ?
-  if (sessionStorage.getItem(SESSION_KEY) === '1') {
-    document.getElementById('loginOverlay').style.display = 'none';
-  }
-  window.doLogin = function() {
+  const PWD = 'TAInvest2026';
+  const KEY = 'ta_auth';
+  if(sessionStorage.getItem(KEY)==='1') document.getElementById('loginOverlay').style.display='none';
+  window.doLogin = function(){
     const val = document.getElementById('loginPwd').value;
     const err = document.getElementById('loginErr');
-    if (val === PWD) {
-      sessionStorage.setItem(SESSION_KEY, '1');
-      const overlay = document.getElementById('loginOverlay');
-      overlay.style.transition = 'opacity .4s';
-      overlay.style.opacity = '0';
-      setTimeout(()=> overlay.style.display='none', 420);
+    if(val===PWD){
+      sessionStorage.setItem(KEY,'1');
+      const o = document.getElementById('loginOverlay');
+      o.style.transition='opacity .4s'; o.style.opacity='0';
+      setTimeout(()=>o.style.display='none',420);
     } else {
-      err.style.display = 'block';
-      const input = document.getElementById('loginPwd');
-      input.style.borderColor = '#E05050';
-      input.value = '';
-      setTimeout(()=>{ err.style.display='none'; input.style.borderColor='#1C2D44'; }, 2500);
+      err.style.display='block';
+      const i=document.getElementById('loginPwd');
+      i.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--red');
+      i.value='';
+      setTimeout(()=>{err.style.display='none';i.style.borderColor='';},2500);
     }
   };
 })();
 </script>
 
-<!-- ═══ HEADER ══════════════════════════════════════ -->
+<!-- ═══ HEADER ═══════════════════════════════════════ -->
 <header class="header">
-  <div class="header-left">
-
-    <!-- Logo T.A INVEST — thème sombre -->
-    <svg class="logo-svg" viewBox="0 0 240 50" xmlns="http://www.w3.org/2000/svg">
-      <text x="0" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="38" font-weight="700" fill="#E2B840" letter-spacing="-1">T.</text>
-      <text x="46" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="38" font-weight="700" fill="#E2B840">A</text>
-      <line x1="44" y1="46" x2="44" y2="10" stroke="#C4A020" stroke-width="1.5"/>
-      <line x1="44" y1="10" x2="240" y2="10" stroke="#C4A020" stroke-width="1.5"/>
-      <text x="78" y="40" font-family="'Segoe UI',Arial,sans-serif" font-size="26" font-weight="300" fill="#D8E0EE" letter-spacing="5">INVEST</text>
-    </svg>
-
-    <div class="header-sep"></div>
-    <div class="header-title">
-      <h1>Business Plan Groupe</h1>
-      <p>Horizon 2026 – 2030 &nbsp;·&nbsp; Devise : MAD &nbsp;·&nbsp; Perenity Capital</p>
-    </div>
+  <div class="h-brand">
+    <div class="h-logo">T.<span>A</span> INVEST</div>
+    <div class="h-sep"></div>
+    <div class="h-sub">Business Plan Groupe · Horizon 2026–2030</div>
   </div>
-  <div class="header-right">
-    <div class="date-badge" id="dateLabel">— </div>
-    <div class="refresh-badge" id="refreshBadge" style="display:none">
-      <span class="refresh-dot" id="refreshDot"></span>
+  <div class="h-right">
+    <div class="h-date" id="dateLabel">—</div>
+    <div class="refresh-badge" id="refreshBadge">
+      <span class="refresh-dot"></span>
       <span id="refreshLabel">Live</span>
       <button class="refresh-now" onclick="refreshNow()" title="Forcer la mise à jour">↺</button>
     </div>
-<button class="btn btn-pdf" onclick="exportPDF()" id="btnPDF">&#8595; Export PDF</button>
+    <button class="btn-pdf" onclick="exportPDF()">↓ Export PDF</button>
   </div>
 </header>
 
+<!-- ═══ BREADCRUMB ═══════════════════════════════════ -->
+<div class="breadcrumb">
+  T.A Invest Holding &nbsp;›&nbsp; <strong>Tableau de Bord Groupe</strong> &nbsp;›&nbsp; Vision 2026–2030
+  &nbsp;&nbsp;|&nbsp;&nbsp; Conseil exclusif : Perenity Capital Advisory Firm
+</div>
 
-<!-- ═══ MAIN ═════════════════════════════════════════ -->
+<!-- ═══ MAIN ══════════════════════════════════════════ -->
 <main class="main">
-  <div class="loader-msg" id="loaderMsg">Chargement des données...</div>
 
-  <!-- KPI STRIP -->
-  <div class="kpi-strip">
-    <div class="kpi-card">
-      <div class="kpi-label">Budget Total</div>
-      <div class="kpi-value" id="kpi-budget">310 M</div>
-      <div class="kpi-sub">MAD — Portefeuille</div>
-    </div>
-    <div class="kpi-card orange">
-      <div class="kpi-label">Déjà Engagé</div>
-      <div class="kpi-value" id="kpi-engage">38 M</div>
-      <div class="kpi-sub">MAD</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Reste à Engager</div>
-      <div class="kpi-value" id="kpi-reste">272 M</div>
-      <div class="kpi-sub">MAD</div>
-    </div>
-    <div class="kpi-card red">
-      <div class="kpi-label">Besoin Net Groupe</div>
-      <div class="kpi-value" id="kpi-besoin">83 M</div>
-      <div class="kpi-sub">MAD</div>
-    </div>
-    <div class="kpi-card green">
-      <div class="kpi-label">TRI Moyen Pondéré</div>
-      <div class="kpi-value" id="kpi-tri">16.0%</div>
-      <div class="kpi-sub">Objectif ≥ 15%</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Payback Moyen</div>
-      <div class="kpi-value" id="kpi-payback">2028</div>
-      <div class="kpi-sub">Fin 2028 prévu</div>
-    </div>
-    <div class="kpi-card green">
-      <div class="kpi-label">Marge Opér. Moy.</div>
-      <div class="kpi-value" id="kpi-marge">20.7%</div>
-      <div class="kpi-sub">Objectif ≥ 20%</div>
+  <!-- KPI PRINCIPAUX -->
+  <div>
+    <div class="s-title"><span class="s-dot"></span>Indicateurs Clés Groupe</div>
+    <div class="kpi-strip">
+      <div class="kpi-card accent">
+        <div class="kpi-label">Budget Total</div>
+        <div class="kpi-value" id="kpi-budget">310 M</div>
+        <div class="kpi-sub">MAD — Portefeuille</div>
+      </div>
+      <div class="kpi-card rose">
+        <div class="kpi-label">Déjà Engagé</div>
+        <div class="kpi-value" id="kpi-engage">38 M</div>
+        <div class="kpi-sub">MAD</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Reste à Engager</div>
+        <div class="kpi-value" id="kpi-reste">272 M</div>
+        <div class="kpi-sub">MAD</div>
+      </div>
+      <div class="kpi-card amber">
+        <div class="kpi-label">Besoin Net Groupe</div>
+        <div class="kpi-value" id="kpi-besoin">83 M</div>
+        <div class="kpi-sub">MAD Fonds Propres</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">TRI Moyen Pondéré</div>
+        <div class="kpi-value" id="kpi-tri">16.0%</div>
+        <div class="kpi-sub">Objectif ≥ 15%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Payback Moyen</div>
+        <div class="kpi-value" id="kpi-payback">2028</div>
+        <div class="kpi-sub">Fin 2028 prévu</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Marge Opér. Moy.</div>
+        <div class="kpi-value" id="kpi-marge">20.7%</div>
+        <div class="kpi-sub">Objectif ≥ 20%</div>
+      </div>
     </div>
   </div>
 
   <!-- KPI STRATÉGIQUES -->
-  <div class="card" style="padding:16px 18px">
-    <div class="card-title"><div class="card-title-dot"></div>KPI Stratégiques Recommandés</div>
+  <div>
+    <div class="s-title"><span class="s-dot"></span>KPI Stratégiques</div>
     <div class="extra-kpi-grid">
-      <div class="ekpi good">
-        <span class="ekpi-icon">📈</span>
-        <div class="ekpi-lbl">ROIC Portefeuille</div>
-        <div class="ekpi-val">14.0%</div>
-        <div class="ekpi-desc">Retour sur capital investi</div>
-        <span class="fin-kpi-stat stat-bon" style="align-self:flex-start;margin-top:2px">BON</span>
+      <div class="ekpi good"><span class="ekpi-icon">📈</span><div class="ekpi-lbl">ROIC Portefeuille</div><div class="ekpi-val">14.0%</div><div class="ekpi-desc">Retour sur capital investi</div><span class="fin-kpi-stat stat-bon" style="align-self:flex-start;margin-top:2px">BON</span></div>
+      <div class="ekpi good"><span class="ekpi-icon">✖️</span><div class="ekpi-lbl">Multiplicateur FP</div><div class="ekpi-val">1.8×</div><div class="ekpi-desc">MOIC groupe objectif ≥ 1.5×</div><span class="fin-kpi-stat stat-bon" style="align-self:flex-start;margin-top:2px">BON</span></div>
+      <div class="ekpi warn"><span class="ekpi-icon">🏦</span><div class="ekpi-lbl">Ratio Levier</div><div class="ekpi-val">2.1×</div><div class="ekpi-desc">Dette / Fonds propres ≤ 2.5×</div><span class="fin-kpi-stat stat-surv" style="align-self:flex-start;margin-top:2px">SURVEILLER</span></div>
+      <div class="ekpi warn"><span class="ekpi-icon">📊</span><div class="ekpi-lbl">Taux d'Engagement</div><div class="ekpi-val" id="ekpi-txeng">12%</div><div class="ekpi-desc">Objectif ≥ 20% mi-2026</div><span class="fin-kpi-stat stat-surv" style="align-self:flex-start;margin-top:2px">SURVEILLER</span></div>
+      <div class="ekpi risk"><span class="ekpi-icon">💧</span><div class="ekpi-lbl">Pic Trésorerie</div><div class="ekpi-val">−95 M</div><div class="ekpi-desc">MAD — T3 2027</div><span class="fin-kpi-stat stat-risk" style="align-self:flex-start;margin-top:2px">ANTICIPER</span></div>
+      <div class="ekpi warn"><span class="ekpi-icon">🏗️</span><div class="ekpi-lbl">Avancement Projets</div><div class="ekpi-val">48%</div><div class="ekpi-desc">Moyenne portefeuille</div><span class="fin-kpi-stat stat-surv" style="align-self:flex-start;margin-top:2px">SURVEILLER</span></div>
+      <div class="ekpi good"><span class="ekpi-icon">📋</span><div class="ekpi-lbl">Respect Budget</div><div class="ekpi-val">92%</div><div class="ekpi-desc">Projets dans enveloppe</div><span class="fin-kpi-stat stat-bon" style="align-self:flex-start;margin-top:2px">BON</span></div>
+      <div class="ekpi info"><span class="ekpi-icon">🎯</span><div class="ekpi-lbl">Concentration Immo</div><div class="ekpi-val">67%</div><div class="ekpi-desc">Du portefeuille — à diversifier</div><span class="fin-kpi-stat stat-surv" style="align-self:flex-start;margin-top:2px">DIVERSIFIER</span></div>
+    </div>
+  </div>
+
+  <!-- GRAPHIQUES -->
+  <div>
+    <div class="s-title"><span class="s-dot"></span>Analyse Financière</div>
+    <div class="charts-row">
+      <div class="card">
+        <div class="card-title"><div class="card-title-dot"></div>Évolution des Flux Nets Groupe (M MAD)</div>
+        <div class="chart-wrap" style="height:200px"><canvas id="chartFlux"></canvas></div>
       </div>
-      <div class="ekpi good">
-        <span class="ekpi-icon">✖️</span>
-        <div class="ekpi-lbl">Multiplicateur FP (MOIC)</div>
-        <div class="ekpi-val">1.8×</div>
-        <div class="ekpi-desc">Objectif ≥ 1.5× à 2030</div>
-        <span class="fin-kpi-stat stat-bon" style="align-self:flex-start;margin-top:2px">BON</span>
-      </div>
-      <div class="ekpi warn">
-        <span class="ekpi-icon">🏦</span>
-        <div class="ekpi-lbl">Ratio Levier Financier</div>
-        <div class="ekpi-val">2.1×</div>
-        <div class="ekpi-desc">Dette / Fonds propres</div>
-        <span class="fin-kpi-stat stat-surv" style="align-self:flex-start;margin-top:2px">SURVEILLER</span>
-      </div>
-      <div class="ekpi warn">
-        <span class="ekpi-icon">📊</span>
-        <div class="ekpi-lbl">Taux d'Engagement</div>
-        <div class="ekpi-val" id="ekpi-txeng">12%</div>
-        <div class="ekpi-desc">Objectif ≥ 20% mi-2026</div>
-        <span class="fin-kpi-stat stat-surv" style="align-self:flex-start;margin-top:2px">SURVEILLER</span>
-      </div>
-      <div class="ekpi risk">
-        <span class="ekpi-icon">💧</span>
-        <div class="ekpi-lbl">Pic Trésorerie Négatif</div>
-        <div class="ekpi-val">−95 M</div>
-        <div class="ekpi-desc">MAD — T3 2027</div>
-        <span class="fin-kpi-stat stat-risk" style="align-self:flex-start;margin-top:2px">ANTICIPER</span>
-      </div>
-      <div class="ekpi warn">
-        <span class="ekpi-icon">🏗️</span>
-        <div class="ekpi-lbl">Avancement Projets</div>
-        <div class="ekpi-val">48%</div>
-        <div class="ekpi-desc">Moyenne portefeuille</div>
-        <span class="fin-kpi-stat stat-surv" style="align-self:flex-start;margin-top:2px">SURVEILLER</span>
-      </div>
-      <div class="ekpi good">
-        <span class="ekpi-icon">📋</span>
-        <div class="ekpi-lbl">Respect Budget</div>
-        <div class="ekpi-val">92%</div>
-        <div class="ekpi-desc">Projets dans enveloppe</div>
-        <span class="fin-kpi-stat stat-bon" style="align-self:flex-start;margin-top:2px">BON</span>
-      </div>
-      <div class="ekpi info">
-        <span class="ekpi-icon">🎯</span>
-        <div class="ekpi-lbl">Concentration Immobilier</div>
-        <div class="ekpi-val">67%</div>
-        <div class="ekpi-desc">Du portefeuille — à diversifier</div>
-        <span class="fin-kpi-stat stat-surv" style="align-self:flex-start;margin-top:2px">DIVERSIFIER</span>
+      <div class="card">
+        <div class="card-title"><div class="card-title-dot"></div>Répartition Budget par Secteur</div>
+        <div class="chart-wrap" style="height:200px"><canvas id="chartSecteur"></canvas></div>
       </div>
     </div>
   </div>
 
-  <!-- CHARTS ROW -->
-  <div class="charts-row">
-    <div class="card">
-      <div class="card-title"><div class="card-title-dot"></div>Évolution des Flux Nets Groupe (M MAD)</div>
-      <div class="chart-wrap" style="height:200px"><canvas id="chartFlux"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="card-title"><div class="card-title-dot"></div>Répartition Budget par Secteur</div>
-      <div class="chart-wrap" style="height:200px"><canvas id="chartSecteur"></canvas></div>
-    </div>
-  </div>
-
-  <!-- TABLES ROW -->
-  <div class="tables-row">
-    <div class="card">
-      <div class="card-title"><div class="card-title-dot"></div>Synthèse Portefeuille Groupe</div>
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Projet</th><th>Secteur</th>
-            <th class="num">Budget M</th><th class="num">Engagé M</th>
-            <th class="num">Reste M</th><th class="num">TRI</th>
-            <th class="num">Marge</th><th>Statut</th>
-          </tr>
-        </thead>
-        <tbody id="tbodyPortefeuille"></tbody>
-      </table>
-    </div>
-    <div class="card">
-      <div class="card-title"><div class="card-title-dot"></div>TRI par Projet</div>
-      <div class="chart-wrap" style="height:260px"><canvas id="chartTri"></canvas></div>
+  <!-- PORTEFEUILLE + TRI -->
+  <div>
+    <div class="s-title"><span class="s-dot"></span>Synthèse Portefeuille Groupe</div>
+    <div class="tables-row">
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="padding:16px 20px 0"><div class="card-title"><div class="card-title-dot"></div>Portefeuille Projets</div></div>
+        <table class="data-table">
+          <thead><tr><th>Projet</th><th>Secteur</th><th class="num">Budget M</th><th class="num">Engagé M</th><th class="num">Reste M</th><th class="num">TRI</th><th class="num">Marge</th><th>Statut</th></tr></thead>
+          <tbody id="tbodyPortefeuille"></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-dot"></div>TRI par Projet</div>
+        <div class="chart-wrap" style="height:260px"><canvas id="chartTri"></canvas></div>
+      </div>
     </div>
   </div>
 
-  <!-- BOTTOM ROW -->
-  <div class="bottom-row">
-    <div class="card">
-      <div class="card-title"><div class="card-title-dot"></div>Suivi des Engagements Groupe</div>
-      <div class="eng-list" id="engList"></div>
-    </div>
-    <div class="card">
-      <div class="card-title"><div class="card-title-dot"></div>Indicateurs Clés de Pilotage</div>
-      <div class="fin-kpis">
-        <div class="fin-kpi-row">
-          <span class="fin-kpi-label">TRI moyen pondéré</span>
-          <div class="pil-bar-wrap"><div class="pil-bar" style="width:80%;background:var(--grn)"></div></div>
-          <span class="fin-kpi-val" id="p-tri">16.0%</span>
-          <span class="fin-kpi-stat stat-bon">BON</span>
-        </div>
-        <div class="fin-kpi-row">
-          <span class="fin-kpi-label">Marge opér. moyenne</span>
-          <div class="pil-bar-wrap"><div class="pil-bar" style="width:75%;background:var(--grn)"></div></div>
-          <span class="fin-kpi-val" id="p-marge">20.7%</span>
-          <span class="fin-kpi-stat stat-bon">BON</span>
-        </div>
-        <div class="fin-kpi-row">
-          <span class="fin-kpi-label">ROIC portefeuille</span>
-          <div class="pil-bar-wrap"><div class="pil-bar" style="width:70%;background:var(--grn)"></div></div>
-          <span class="fin-kpi-val">14.0%</span>
-          <span class="fin-kpi-stat stat-bon">BON</span>
-        </div>
-        <div class="fin-kpi-row">
-          <span class="fin-kpi-label">Multiplicateur FP</span>
-          <div class="pil-bar-wrap"><div class="pil-bar" style="width:65%;background:#4A8C84"></div></div>
-          <span class="fin-kpi-val">1.8×</span>
-          <span class="fin-kpi-stat stat-bon">BON</span>
-        </div>
-        <div class="fin-kpi-row">
-          <span class="fin-kpi-label">Taux d'engagement</span>
-          <div class="pil-bar-wrap"><div class="pil-bar" style="width:30%;background:var(--gold)"></div></div>
-          <span class="fin-kpi-val" id="p-txeng">12%</span>
-          <span class="fin-kpi-stat stat-surv">SURVEILLER</span>
-        </div>
-        <div class="fin-kpi-row">
-          <span class="fin-kpi-label">Respect du budget</span>
-          <div class="pil-bar-wrap"><div class="pil-bar" style="width:92%;background:var(--grn)"></div></div>
-          <span class="fin-kpi-val">92%</span>
-          <span class="fin-kpi-stat stat-bon">BON</span>
-        </div>
-        <div class="fin-kpi-row">
-          <span class="fin-kpi-label">Couverture financement</span>
-          <div class="pil-bar-wrap"><div class="pil-bar" style="width:100%;background:var(--grn)"></div></div>
-          <span class="fin-kpi-val">100%</span>
-          <span class="fin-kpi-stat stat-bon">BON</span>
-        </div>
-        <div class="fin-kpi-row">
-          <span class="fin-kpi-label">Pic trésorerie</span>
-          <div class="pil-bar-wrap"><div class="pil-bar" style="width:60%;background:var(--red)"></div></div>
-          <span class="fin-kpi-val" style="color:var(--red)">−95 M</span>
-          <span class="fin-kpi-stat stat-risk">T3 2027</span>
+  <!-- ENGAGEMENTS + PILOTAGE -->
+  <div>
+    <div class="s-title"><span class="s-dot"></span>Suivi Opérationnel</div>
+    <div class="bottom-row">
+      <div class="card">
+        <div class="card-title"><div class="card-title-dot"></div>Suivi des Engagements Groupe</div>
+        <div class="eng-list" id="engList"></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-dot"></div>Indicateurs Clés de Pilotage</div>
+        <div class="fin-kpis">
+          <div class="fin-kpi-row"><span class="fin-kpi-label">TRI moyen pondéré</span><div class="pil-bar-wrap"><div class="pil-bar" style="width:80%;background:var(--grn)"></div></div><span class="fin-kpi-val" id="p-tri">16.0%</span><span class="fin-kpi-stat stat-bon">BON</span></div>
+          <div class="fin-kpi-row"><span class="fin-kpi-label">Marge opér. moyenne</span><div class="pil-bar-wrap"><div class="pil-bar" style="width:75%;background:var(--grn)"></div></div><span class="fin-kpi-val" id="p-marge">20.7%</span><span class="fin-kpi-stat stat-bon">BON</span></div>
+          <div class="fin-kpi-row"><span class="fin-kpi-label">ROIC portefeuille</span><div class="pil-bar-wrap"><div class="pil-bar" style="width:70%;background:var(--grn)"></div></div><span class="fin-kpi-val">14.0%</span><span class="fin-kpi-stat stat-bon">BON</span></div>
+          <div class="fin-kpi-row"><span class="fin-kpi-label">Multiplicateur FP</span><div class="pil-bar-wrap"><div class="pil-bar" style="width:65%;background:var(--teal3)"></div></div><span class="fin-kpi-val">1.8×</span><span class="fin-kpi-stat stat-bon">BON</span></div>
+          <div class="fin-kpi-row"><span class="fin-kpi-label">Taux d'engagement</span><div class="pil-bar-wrap"><div class="pil-bar" style="width:30%;background:var(--amb)"></div></div><span class="fin-kpi-val" id="p-txeng">12%</span><span class="fin-kpi-stat stat-surv">SURVEILLER</span></div>
+          <div class="fin-kpi-row"><span class="fin-kpi-label">Respect du budget</span><div class="pil-bar-wrap"><div class="pil-bar" style="width:92%;background:var(--grn)"></div></div><span class="fin-kpi-val">92%</span><span class="fin-kpi-stat stat-bon">BON</span></div>
+          <div class="fin-kpi-row"><span class="fin-kpi-label">Couverture financement</span><div class="pil-bar-wrap"><div class="pil-bar" style="width:100%;background:var(--grn)"></div></div><span class="fin-kpi-val">100%</span><span class="fin-kpi-stat stat-bon">BON</span></div>
+          <div class="fin-kpi-row"><span class="fin-kpi-label">Pic trésorerie</span><div class="pil-bar-wrap"><div class="pil-bar" style="width:60%;background:var(--red)"></div></div><span class="fin-kpi-val" style="color:var(--red)">−95 M</span><span class="fin-kpi-stat stat-risk">T3 2027</span></div>
         </div>
       </div>
     </div>
   </div>
-</main>
 
-  <!-- ROADMAP + KPI TABLEAU -->
-  <div class="roadmap-row">
-
-    <!-- ROAD MAP dynamique -->
-    <div class="card">
-      <div class="card-title"><div class="card-title-dot"></div>Road Map Groupe – 2026 / 2030</div>
-      <div id="roadmapContent"><div style="color:var(--txt2);font-size:11px;padding:20px">Chargement Road Map...</div></div>
+  <!-- ROADMAP -->
+  <div>
+    <div class="s-title"><span class="s-dot"></span>Road Map Groupe — 2026 / 2030</div>
+    <div class="roadmap-row">
+      <div class="card">
+        <div class="card-title"><div class="card-title-dot"></div>Calendrier Stratégique par Axe</div>
+        <div id="roadmapContent"><div style="color:var(--g4);font-size:11px;padding:20px;font-style:italic">Chargement Road Map depuis Google Sheets...</div></div>
+      </div>
     </div>
-
-  </div><!-- /roadmap-row -->
+  </div>
 
   <!-- TABLEAU DE BORD 3 COLONNES -->
-  <div class="indic-row">
+  <div>
+    <div class="s-title"><span class="s-dot"></span>Tableau de Bord — Indicateurs de Contrôle</div>
+    <div class="indic-row">
 
-    <!-- Financiers -->
-    <div class="card">
-      <div class="card-title"><div class="card-title-dot"></div>Indicateurs Financiers</div>
-      <table class="kpi-table">
-        <thead><tr><th>Indicateur</th><th>Valeur</th><th>Objectif</th><th>Statut</th></tr></thead>
-        <tbody>
-          <tr><td>TRI moyen pondéré</td><td id="tb-tri2">16%</td><td>≥ 15%</td><td><span class="dot-ind dot-grn"></span></td></tr>
-          <tr><td>Marge opérationnelle</td><td id="tb-marge2">20.7%</td><td>≥ 20%</td><td><span class="dot-ind dot-grn"></span></td></tr>
-          <tr><td>ROIC portefeuille</td><td>14%</td><td>≥ 12%</td><td><span class="dot-ind dot-grn"></span></td></tr>
-          <tr><td>Multiplicateur FP</td><td>1.8×</td><td>≥ 1.5×</td><td><span class="dot-ind dot-grn"></span></td></tr>
-          <tr><td>Ratio levier financier</td><td>2.1×</td><td>≤ 2.5×</td><td><span class="dot-ind dot-gold"></span></td></tr>
-          <tr><td>Payback moyen</td><td>Fin 2028</td><td>≤ Fin 2028</td><td><span class="dot-ind dot-grn"></span></td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Opérationnels -->
-    <div class="card">
-      <div class="card-title"><div class="card-title-dot"></div>Indicateurs Opérationnels</div>
-      <table class="kpi-table">
-        <thead><tr><th>Indicateur</th><th>Valeur</th><th>Objectif</th><th>Statut</th></tr></thead>
-        <tbody>
-          <tr><td>Taux d'engagement</td><td id="tb-txeng">12%</td><td>≥ 20%</td><td><span class="dot-ind dot-gold"></span></td></tr>
-          <tr><td>Respect du budget</td><td>92%</td><td>≥ 90%</td><td><span class="dot-ind dot-grn"></span></td></tr>
-          <tr><td>Respect des délais</td><td>85%</td><td>≥ 85%</td><td><span class="dot-ind dot-grn"></span></td></tr>
-          <tr><td>Avancement projets</td><td>48%</td><td>≥ 50%</td><td><span class="dot-ind dot-gold"></span></td></tr>
-          <tr><td>Couverture financement</td><td>100%</td><td>≥ 100%</td><td><span class="dot-ind dot-grn"></span></td></tr>
-          <tr><td>Projets actifs</td><td>3 / 10</td><td>≥ 3</td><td><span class="dot-ind dot-grn"></span></td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Risques & Alertes -->
-    <div class="card">
-      <div class="card-title"><div class="card-title-dot" style="background:var(--red)"></div>Risques & Alertes</div>
-      <table class="kpi-table">
-        <thead><tr><th>Risque</th><th>Valeur</th><th>Seuil</th><th>Statut</th></tr></thead>
-        <tbody>
-          <tr><td>Pic trésorerie négative</td><td style="color:var(--red);font-weight:700">−95 M</td><td>T3 2027</td><td><span class="dot-ind" style="background:var(--red)"></span></td></tr>
-          <tr><td>Concentration immobilier</td><td>67%</td><td>≤ 60%</td><td><span class="dot-ind" style="background:var(--red)"></span></td></tr>
-          <tr><td>Risque taux bancaire</td><td>Modéré</td><td>Faible</td><td><span class="dot-ind dot-gold"></span></td></tr>
-          <tr><td>Dépendance 1 projet</td><td>32%</td><td>≤ 35%</td><td><span class="dot-ind dot-gold"></span></td></tr>
-          <tr><td>Autorisations en attente</td><td>2</td><td>0</td><td><span class="dot-ind dot-gold"></span></td></tr>
-          <tr><td>Projets en retard</td><td style="color:var(--grn)">0</td><td>0</td><td><span class="dot-ind dot-grn"></span></td></tr>
-        </tbody>
-      </table>
-      <div style="margin-top:12px;padding:8px 10px;background:rgba(224,80,80,.08);border:1px solid rgba(224,80,80,.2);border-radius:4px;font-size:10px;color:#f07070">
-        ⚠️ Point de vigilance : Anticiper le pic de trésorerie T3 2027 (−95 M MAD) et réduire la concentration immobilier.
+      <div class="card">
+        <div class="card-title"><div class="card-title-dot"></div>Indicateurs Financiers</div>
+        <table class="kpi-table">
+          <thead><tr><th>Indicateur</th><th>Valeur</th><th>Objectif</th><th>Statut</th></tr></thead>
+          <tbody>
+            <tr><td>TRI moyen pondéré</td><td id="tb-tri">16%</td><td>≥ 15%</td><td><span class="dot-ind dot-grn"></span></td></tr>
+            <tr><td>Marge opérationnelle</td><td id="tb-marge">20.7%</td><td>≥ 20%</td><td><span class="dot-ind dot-grn"></span></td></tr>
+            <tr><td>ROIC portefeuille</td><td>14%</td><td>≥ 12%</td><td><span class="dot-ind dot-grn"></span></td></tr>
+            <tr><td>Multiplicateur FP</td><td>1.8×</td><td>≥ 1.5×</td><td><span class="dot-ind dot-grn"></span></td></tr>
+            <tr><td>Ratio levier financier</td><td>2.1×</td><td>≤ 2.5×</td><td><span class="dot-ind dot-gold"></span></td></tr>
+            <tr><td>Payback moyen</td><td>Fin 2028</td><td>≤ Fin 2028</td><td><span class="dot-ind dot-grn"></span></td></tr>
+          </tbody>
+        </table>
       </div>
+
+      <div class="card">
+        <div class="card-title"><div class="card-title-dot"></div>Indicateurs Opérationnels</div>
+        <table class="kpi-table">
+          <thead><tr><th>Indicateur</th><th>Valeur</th><th>Objectif</th><th>Statut</th></tr></thead>
+          <tbody>
+            <tr><td>Taux d'engagement</td><td id="tb-txeng">12%</td><td>≥ 20%</td><td><span class="dot-ind dot-gold"></span></td></tr>
+            <tr><td>Respect du budget</td><td>92%</td><td>≥ 90%</td><td><span class="dot-ind dot-grn"></span></td></tr>
+            <tr><td>Respect des délais</td><td>85%</td><td>≥ 85%</td><td><span class="dot-ind dot-grn"></span></td></tr>
+            <tr><td>Avancement projets</td><td>48%</td><td>≥ 50%</td><td><span class="dot-ind dot-gold"></span></td></tr>
+            <tr><td>Couverture financement</td><td>100%</td><td>≥ 100%</td><td><span class="dot-ind dot-grn"></span></td></tr>
+            <tr><td>Projets actifs</td><td>3 / 10</td><td>≥ 3</td><td><span class="dot-ind dot-grn"></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><div class="card-title-dot" style="background:var(--red)"></div>Risques & Alertes</div>
+        <table class="kpi-table">
+          <thead><tr><th>Risque</th><th>Valeur</th><th>Seuil</th><th>Statut</th></tr></thead>
+          <tbody>
+            <tr><td>Pic trésorerie négative</td><td style="color:var(--red);font-weight:700">−95 M</td><td>T3 2027</td><td><span class="dot-ind" style="background:var(--red)"></span></td></tr>
+            <tr><td>Concentration immobilier</td><td>67%</td><td>≤ 60%</td><td><span class="dot-ind" style="background:var(--red)"></span></td></tr>
+            <tr><td>Risque taux bancaire</td><td>Modéré</td><td>Faible</td><td><span class="dot-ind dot-gold"></span></td></tr>
+            <tr><td>Dépendance 1 projet</td><td>32%</td><td>≤ 35%</td><td><span class="dot-ind dot-gold"></span></td></tr>
+            <tr><td>Autorisations en attente</td><td>2</td><td>0</td><td><span class="dot-ind dot-gold"></span></td></tr>
+            <tr><td>Projets en retard</td><td style="color:var(--grn)">0</td><td>0</td><td><span class="dot-ind dot-grn"></span></td></tr>
+          </tbody>
+        </table>
+        <div class="alert-box">⚠️ Anticiper le pic de trésorerie T3 2027 (−95 M MAD) et réduire la concentration immobilier (67% > seuil 60%).</div>
+      </div>
+
     </div>
+  </div>
 
-  </div><!-- /indic-row -->
+</main>
 
+<!-- ═══ FOOTER ════════════════════════════════════════ -->
 <footer class="footer">
-  <span class="footer-left">T.A INVEST HOLDING &nbsp;·&nbsp; BP Groupe 2026–2030 &nbsp;·&nbsp; Confidentiel</span>
-  <span class="footer-right">STATUT GLOBAL : BON ✓ &nbsp;·&nbsp; Perenity Capital — Abdessadek</span>
+  <span class="footer-left">T.A INVEST HOLDING &nbsp;·&nbsp; BP Groupe 2026–2030 &nbsp;·&nbsp; Strictement Confidentiel</span>
+  <span class="footer-right">Perenity Capital — Advisory Firm</span>
 </footer>
 
 <script>
@@ -912,44 +607,41 @@ const DEFAULT_ENG = [
   {projet:"Projet B",nature:"Achat foncier",montant:20,date:"Août 2026",statut:"Non engagé"},
   {projet:"Projet C",nature:"Travaux phase 1",montant:25,date:"Oct. 2026",statut:"À définir"},
 ];
-// Variable globale engagements — mise à jour par GS ou Excel, préservée lors des refreshs projets
 let currentEngs = DEFAULT_ENG;
 
 // ── CHARTS ────────────────────────────────────────
-Chart.defaults.color = '#6B7A99';
-Chart.defaults.font.family = "'Segoe UI',system-ui,sans-serif";
-Chart.defaults.borderColor = '#1C2D44';
+Chart.defaults.color = '#9A9490';
+Chart.defaults.font.family = "'Inter',system-ui,sans-serif";
+Chart.defaults.borderColor = '#E0DDD8';
 Chart.defaults.backgroundColor = 'transparent';
 let cFlux, cSect, cTri;
 
 function initCharts(projects, flux) {
-  // Flux nets
   if(cFlux) cFlux.destroy();
   cFlux = new Chart(document.getElementById('chartFlux'), {
     data:{
       labels: flux.labels,
       datasets:[
-        {type:'bar',label:'Cash-out',data:flux.cashOut,backgroundColor:'rgba(176,48,48,.15)',borderColor:'#B03030',borderWidth:1.5,borderRadius:3},
-        {type:'bar',label:'Cash-in', data:flux.cashIn, backgroundColor:'rgba(45,122,45,.15)', borderColor:'#2D7A2D', borderWidth:1.5,borderRadius:3},
-        {type:'line',label:'Flux net',data:flux.fluxNet,borderColor:'#1B2A4A',backgroundColor:'rgba(27,42,74,.06)',fill:true,tension:.4,pointBackgroundColor:'#C4A020',pointRadius:4,borderWidth:2}
+        {type:'bar',label:'Cash-out',data:flux.cashOut,backgroundColor:'rgba(176,64,64,.12)',borderColor:'#B04040',borderWidth:1.5,borderRadius:3},
+        {type:'bar',label:'Cash-in', data:flux.cashIn, backgroundColor:'rgba(46,125,85,.12)',borderColor:'#2E7D55',borderWidth:1.5,borderRadius:3},
+        {type:'line',label:'Flux net',data:flux.fluxNet,borderColor:'#1E4A44',backgroundColor:'rgba(30,74,68,.06)',fill:true,tension:.4,pointBackgroundColor:'#C49878',pointRadius:4,borderWidth:2}
       ]
     },
     options:{
       responsive:true,maintainAspectRatio:false,
       interaction:{mode:'index',intersect:false},
-      plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}},
+      plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10},color:'#5A5550'}},
         tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y>0?'+':''}${c.parsed.y} M`}}},
       scales:{
-        x:{grid:{color:'rgba(255,255,255,.06)'}},
-        y:{grid:{color:'rgba(255,255,255,.06)'},ticks:{callback:v=>v+'M'}}
+        x:{grid:{color:'rgba(0,0,0,.05)'},ticks:{color:'#9A9490'}},
+        y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>v+'M',color:'#9A9490'}}
       }
     }
   });
 
-  // Secteurs
   const sectors={};
   projects.forEach(p=>{sectors[p.sector]=(sectors[p.sector]||0)+p.budget;});
-  const SCOLS={'Immobilier':'#1B2A4A','Energie':'#C4A020','Industrie':'#2D7A2D','Services':'#C86020'};
+  const SCOLS={'Immobilier':'#1E4A44','Energie':'#C49878','Industrie':'#2E7D55','Services':'#C4920A'};
   const sL=Object.keys(sectors), sD=Object.values(sectors);
   if(cSect) cSect.destroy();
   cSect = new Chart(document.getElementById('chartSecteur'),{
@@ -957,12 +649,11 @@ function initCharts(projects, flux) {
     data:{labels:sL.map((l,i)=>`${l} ${Math.round(sD[i]/sD.reduce((a,b)=>a+b,0)*100)}%`),
           datasets:[{data:sD,backgroundColor:sL.map(l=>SCOLS[l]||'#aaa'),borderColor:'#fff',borderWidth:2}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:'65%',
-      plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10},padding:8}},
+      plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10},padding:8,color:'#5A5550'}},
         tooltip:{callbacks:{label:c=>`${c.label}: ${c.parsed} M MAD`}}}}
   });
 
-  // TRI
-  const triColors=projects.map(p=>p.tri>=0.17?'#2D7A2D':p.tri>=0.14?'#C4A020':'#B03030');
+  const triColors=projects.map(p=>p.tri>=0.17?'#2E7D55':p.tri>=0.14?'#C4920A':'#B04040');
   if(cTri) cTri.destroy();
   cTri = new Chart(document.getElementById('chartTri'),{
     type:'bar',
@@ -973,8 +664,8 @@ function initCharts(projects, flux) {
     },
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`TRI: ${c.parsed.x}%`}}},
-      scales:{x:{grid:{color:'rgba(255,255,255,.06)'},ticks:{callback:v=>v+'%'},min:0,max:25},
-              y:{grid:{display:false},ticks:{font:{size:10}}}}}
+      scales:{x:{grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>v+'%',color:'#9A9490'},min:0,max:25},
+              y:{grid:{display:false},ticks:{font:{size:10},color:'#5A5550'}}}}
   });
 }
 
@@ -987,10 +678,11 @@ function badge(s){
   const[c,l]=m[s]||['badge-gry',s];
   return `<span class="badge ${c}">${l}</span>`;
 }
+function engBarCls(s){return{'Engagé':'var(--grn)','En cours':'var(--amb)','Non engagé':'var(--red)','À définir':'var(--g2)'}[s]||'var(--g2)';}
 function dotCls(s){return{'Engagé':'dot-grn','En cours':'dot-gold','Non engagé':'dot-red','À définir':'dot-gry'}[s]||'dot-gry';}
 
 function renderAll(projects, flux, engs) {
-  const tot  = v=>projects.reduce((a,p)=>a+p[v],0);
+  const tot = v=>projects.reduce((a,p)=>a+p[v],0);
   const budg = tot('budget');
   const wtd  = k=>projects.reduce((a,p)=>a+p[k]*p.budget,0)/budg;
 
@@ -1003,15 +695,15 @@ function renderAll(projects, flux, engs) {
   document.getElementById('p-tri').textContent      = fmtP(wtd('tri'));
   document.getElementById('p-marge').textContent    = fmtP(wtd('marge'));
   document.getElementById('p-txeng').textContent    = fmtP(tot('engage')/budg);
+  if(document.getElementById('ekpi-txeng')) document.getElementById('ekpi-txeng').textContent = fmtP(tot('engage')/budg);
   document.getElementById('dateLabel').textContent  =
     new Date().toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
 
-  // Table
   const tb = document.getElementById('tbodyPortefeuille');
   tb.innerHTML = projects.map(p=>`
     <tr>
-      <td style="font-weight:700;color:var(--gold2)">${p.name}</td>
-      <td style="color:var(--txt2)">${p.sector}</td>
+      <td style="font-weight:600;color:var(--teal)">${p.name}</td>
+      <td style="color:var(--g4)">${p.sector}</td>
       <td class="num">${fmtM(p.budget)}</td>
       <td class="num">${fmtM(p.engage)}</td>
       <td class="num">${fmtM(p.reste)}</td>
@@ -1029,21 +721,23 @@ function renderAll(projects, flux, engs) {
       <td></td>
     </tr>`;
 
-  // Engagements
-  document.getElementById('engList').innerHTML = engs.map(e=>`
-    <div class="eng-item">
-      <span class="eng-projet">${e.projet}</span>
-      <span class="eng-nature">${e.nature}</span>
-      <span class="eng-montant">${e.montant} M</span>
-      <span class="eng-date">${e.date}</span>
-      <span class="eng-statut"><span class="dot ${dotCls(e.statut)}"></span>${badge(e.statut)}</span>
-    </div>`).join('');
-
+  renderEngagements(engs);
   initCharts(projects, flux);
 }
 
-// ── DATA LOADERS ──────────────────────────────────
+function renderEngagements(engs) {
+  document.getElementById('engList').innerHTML = engs.map(e=>`
+    <div class="eng-item">
+      <div class="eng-bar" style="background:${engBarCls(e.statut)}"></div>
+      <span class="eng-projet">${e.projet}</span>
+      <span class="eng-nature">${e.nature}</span>
+      <span class="eng-montant">${typeof e.montant==='number'?e.montant.toFixed(0):e.montant} M</span>
+      <span class="eng-date">${e.date}</span>
+      <span class="eng-statut">${badge(e.statut)}</span>
+    </div>`).join('');
+}
 
+// ── DATA LOADERS ──────────────────────────────────
 function parseRows(rows){
   const out=[];
   let start=1;
@@ -1077,13 +771,13 @@ function computeFlux(p){
     fluxNet:[0,1,2,3,4].map(i=>Math.round(n[i]-o[i]))};
 }
 
-// ── AUTO-REFRESH GOOGLE SHEETS ────────────────────
-const GS_DEFAULT  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?output=csv';
-const GS_ROADMAP      = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?gid=1401549304&single=true&output=csv';
-const GS_ENGAGEMENTS  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?gid=623335287&single=true&output=csv';
-let gsUrl        = localStorage.getItem('gsUrl') || GS_DEFAULT;
+// ── AUTO-REFRESH GOOGLE SHEETS ─────────────────────
+const GS_DEFAULT     = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?output=csv';
+const GS_ROADMAP     = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?gid=1401549304&single=true&output=csv';
+const GS_ENGAGEMENTS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?gid=623335287&single=true&output=csv';
+let gsUrl = localStorage.getItem('gsUrl') || GS_DEFAULT;
 let refreshTimer = null;
-const REFRESH_MS = 15000; // 15 secondes
+const REFRESH_MS = 15000;
 
 function startAutoRefresh(url) {
   gsUrl = url;
@@ -1101,225 +795,134 @@ let lastUpdated   = null;
 function updateRefreshLabel() {
   const secs = Math.max(0, Math.round((nextRefreshAt - Date.now()) / 1000));
   const lbl  = document.getElementById('refreshLabel');
-  if (secs <= 2) {
-    lbl.textContent = 'Mise à jour...';
-  } else if (lastUpdated) {
-    lbl.textContent = `Mis à jour à ${lastUpdated} · dans ${secs}s`;
-  } else {
-    lbl.textContent = `Dans ${secs}s`;
-  }
-  if (secs <= 0) nextRefreshAt = Date.now() + REFRESH_MS;
+  if(secs <= 2) { lbl.textContent = 'Mise à jour...'; }
+  else if(lastUpdated) { lbl.textContent = `Màj ${lastUpdated} · dans ${secs}s`; }
+  else { lbl.textContent = `Dans ${secs}s`; }
+  if(secs <= 0) nextRefreshAt = Date.now() + REFRESH_MS;
 }
 
 async function fetchSheet(url) {
   nextRefreshAt = Date.now() + REFRESH_MS;
   const btn = document.getElementById('refreshBadge').querySelector('.refresh-now');
   btn.classList.add('spin');
-
   const enc = encodeURIComponent(url);
-  const proxies = [
-    `https://corsproxy.io/?${enc}`,
-    `https://api.allorigins.win/raw?url=${enc}`,
-    `https://thingproxy.freeboard.io/fetch/${url}`,
-    url
-  ];
-
+  const proxies = [`https://corsproxy.io/?${enc}`,`https://api.allorigins.win/raw?url=${enc}`,`https://thingproxy.freeboard.io/fetch/${url}`,url];
   let csv = null;
-  for (const proxyUrl of proxies) {
-    try {
-      const resp = await fetch(proxyUrl, {cache:'no-store', headers:{'Cache-Control':'no-cache'}});
-      if (resp.ok) {
-        const text = await resp.text();
-        if (text.length > 10) { csv = text; break; }
-      }
-    } catch(e) { continue; }
+  for(const p of proxies){
+    try{ const r=await fetch(p,{cache:'no-store',headers:{'Cache-Control':'no-cache'}});
+      if(r.ok){const t=await r.text();if(t.length>10){csv=t;break;}} }catch(e){continue;}
   }
-
   btn.classList.remove('spin');
-  if (!csv) return;
-  const rows = csv.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g,'').trim()));
+  if(!csv) return;
+  const rows = csv.split('\n').map(r=>r.split(',').map(c=>c.replace(/^"|"$/g,'').trim()));
   const p = parseRows(rows);
-  if (p.length > 0) {
+  if(p.length>0){
     renderAll(p, computeFlux(p), currentEngs);
-    lastUpdated = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    lastUpdated = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   }
 }
 
-async function refreshNow() {
-  if (!gsUrl) return;
-  await fetchSheet(gsUrl);
-}
-
-// ── MODALS ────────────────────────────────────────
-
-// Démarrage automatique immédiat
-fetchSheet(gsUrl).then(() => startAutoRefresh(gsUrl));
-fetchRoadmap();
-fetchEngagements();
-// Refresh roadmap + engagements toutes les 30s
-setInterval(fetchRoadmap, 30000);
-setInterval(fetchEngagements, 30000);
+async function refreshNow() { if(gsUrl) await fetchSheet(gsUrl); }
 
 // ── ENGAGEMENTS DYNAMIQUES ────────────────────────
 async function fetchEngagements() {
   const enc = encodeURIComponent(GS_ENGAGEMENTS);
-  const proxies = [
-    `https://corsproxy.io/?${enc}`,
-    `https://api.allorigins.win/raw?url=${enc}`,
-    GS_ENGAGEMENTS
-  ];
+  const proxies = [`https://corsproxy.io/?${enc}`,`https://api.allorigins.win/raw?url=${enc}`,GS_ENGAGEMENTS];
   let csv = null;
-  for (const p of proxies) {
-    try {
-      const r = await fetch(p, {cache:'no-store'});
-      if (r.ok) { const t = await r.text(); if (t.length > 10) { csv = t; break; } }
-    } catch(e) { continue; }
+  for(const p of proxies){
+    try{ const r=await fetch(p,{cache:'no-store'});
+      if(r.ok){const t=await r.text();if(t.length>10){csv=t;break;}} }catch(e){continue;}
   }
-  if (!csv) return;
-  const rows = csv.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g,'').trim()));
+  if(!csv) return;
+  const rows = csv.split('\n').map(r=>r.split(',').map(c=>c.replace(/^"|"$/g,'').trim()));
   const engs = [];
-  for (let i = 1; i < rows.length; i++) {
-    const [projet, nature, montant, date, statut, decision] = rows[i];
-    if (!projet) continue;
-    engs.push({ projet, nature, montant: parseFloat(String(montant).replace(/[\s,]/g,'')) || 0, date, statut, decision });
+  for(let i=1;i<rows.length;i++){
+    const [projet,nature,montant,date,statut] = rows[i];
+    if(!projet) continue;
+    engs.push({projet,nature,montant:parseFloat(String(montant).replace(/[\s,]/g,''))||0,date,statut});
   }
-  if (engs.length > 0) { currentEngs = engs; renderEngagements(engs); }
+  if(engs.length>0){ currentEngs=engs; renderEngagements(engs); }
 }
 
-function renderEngagements(engs) {
-  document.getElementById('engList').innerHTML = engs.map(e => `
-    <div class="eng-item">
-      <span class="eng-projet" style="font-weight:700;color:#E2B840">${e.projet}</span>
-      <span class="eng-nature">${e.nature}</span>
-      <span class="eng-montant">${e.montant.toFixed(0)} M</span>
-      <span class="eng-date">${e.date}</span>
-      <span class="eng-statut"><span class="dot ${dotCls(e.statut)}"></span>${badge(e.statut)}</span>
-    </div>`).join('');
-}
-
-// ── ROADMAP DYNAMIQUE ─────────────────────────────
+// ── ROADMAP DYNAMIQUE ──────────────────────────────
 const AXE_ICONS = {
-  'Acquisitions Foncieres':'🏠',
-  'Etudes et Autorisations':'📄',
-  'Developpement Construction':'🏗️',
-  'Commercialisation':'⭐',
-  'Financements':'🏦',
-  'Optimisation Valeur':'📈'
+  'Acquisitions Foncieres':'🏠','Etudes et Autorisations':'📄',
+  'Developpement Construction':'🏗️','Commercialisation':'⭐',
+  'Financements':'🏦','Optimisation Valeur':'📈'
 };
 
 async function fetchRoadmap() {
   const enc = encodeURIComponent(GS_ROADMAP);
-  const proxies = [
-    `https://corsproxy.io/?${enc}`,
-    `https://api.allorigins.win/raw?url=${enc}`,
-    GS_ROADMAP
-  ];
+  const proxies = [`https://corsproxy.io/?${enc}`,`https://api.allorigins.win/raw?url=${enc}`,GS_ROADMAP];
   let csv = null;
-  for (const p of proxies) {
-    try {
-      const r = await fetch(p, {cache:'no-store'});
-      if (r.ok) { const t = await r.text(); if (t.length > 10) { csv = t; break; } }
-    } catch(e) { continue; }
+  for(const p of proxies){
+    try{ const r=await fetch(p,{cache:'no-store'});
+      if(r.ok){const t=await r.text();if(t.length>10){csv=t;break;}} }catch(e){continue;}
   }
-  if (!csv) return;
-  const rows = csv.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g,'').trim()));
-  const bars = [], etapes = [];
-  for (let i = 1; i < rows.length; i++) {
-    const [type, col1, col2, col3, col4, col5] = rows[i];
-    if (!type) continue;
-    if (type === 'BAR')   bars.push({axe:col1, label:col2, start:+col3, end:+col4, color:'#'+col5});
-    if (type === 'ETAPE') etapes.push({date:col1, desc:col2});
+  if(!csv) return;
+  const rows = csv.split('\n').map(r=>r.split(',').map(c=>c.replace(/^"|"$/g,'').trim()));
+  const bars=[], etapes=[];
+  for(let i=1;i<rows.length;i++){
+    const [type,col1,col2,col3,col4,col5]=rows[i];
+    if(!type) continue;
+    if(type==='BAR')   bars.push({axe:col1,label:col2,start:+col3,end:+col4,color:'#'+col5});
+    if(type==='ETAPE') etapes.push({date:col1,desc:col2});
   }
-  if (bars.length > 0) renderRoadmap(bars, etapes);
+  if(bars.length>0) renderRoadmap(bars, etapes);
 }
 
 function renderRoadmap(bars, etapes) {
-  // Grouper les barres par axe (ordre d'apparition)
-  const axes = [];
-  const axeMap = {};
-  bars.forEach(b => {
-    if (!axeMap[b.axe]) { axeMap[b.axe] = []; axes.push(b.axe); }
-    axeMap[b.axe].push(b);
-  });
+  const axes=[], axeMap={};
+  bars.forEach(b=>{ if(!axeMap[b.axe]){axeMap[b.axe]=[];axes.push(b.axe);} axeMap[b.axe].push(b); });
 
-  // Headers
-  let html = `
-  <div class="roadmap-wrap">
-    <div class="rm-grid">
-      <div class="rm-years">
-        <div class="rm-year" style="grid-column:span 2">2026</div>
-        <div class="rm-year" style="grid-column:span 2">2027</div>
-        <div class="rm-year" style="grid-column:span 2">2028</div>
-        <div class="rm-year" style="grid-column:span 2">2029</div>
-        <div class="rm-year" style="grid-column:span 2">2030</div>
-      </div>
-      <div class="rm-sems">
-        ${'<div class="rm-sem">S1</div><div class="rm-sem">S2</div>'.repeat(5)}
-      </div>
-    </div>`;
+  let html = `<div class="roadmap-wrap"><div class="rm-grid">
+    <div class="rm-years">
+      <div class="rm-year" style="grid-column:span 2">2026</div>
+      <div class="rm-year" style="grid-column:span 2">2027</div>
+      <div class="rm-year" style="grid-column:span 2">2028</div>
+      <div class="rm-year" style="grid-column:span 2">2029</div>
+      <div class="rm-year" style="grid-column:span 2">2030</div>
+    </div>
+    <div class="rm-sems">${'<div class="rm-sem">S1</div><div class="rm-sem">S2</div>'.repeat(5)}</div>
+  </div>`;
 
-  // Lignes axes
   axes.forEach(axe => {
-    const icon = AXE_ICONS[axe] || '▸';
+    const icon = AXE_ICONS[axe]||'▸';
     const axeBars = axeMap[axe];
-
-    // Calculer les cases vides
-    const occupied = new Set();
-    axeBars.forEach(b => { for(let c=b.start; c<=b.end; c++) occupied.add(c); });
-
-    let barsHtml = '';
-    let col = 1;
-    while (col <= 10) {
-      const bar = axeBars.find(b => b.start === col);
-      if (bar) {
-        const span = bar.end - bar.start + 1;
-        barsHtml += `<div class="rm-bar" style="grid-column:${bar.start}/${bar.end+1};background:${bar.color}">${bar.label}</div>`;
-        col = bar.end + 1;
-      } else {
-        barsHtml += `<div class="rm-bar-empty" style="grid-column:${col}/${col+1}"></div>`;
-        col++;
-      }
+    let barsHtml='', col=1;
+    while(col<=10){
+      const bar=axeBars.find(b=>b.start===col);
+      if(bar){ barsHtml+=`<div class="rm-bar" style="grid-column:${bar.start}/${bar.end+1};background:${bar.color}">${bar.label}</div>`; col=bar.end+1; }
+      else { barsHtml+=`<div class="rm-bar-empty"></div>`; col++; }
     }
-
-    html += `
-    <div class="rm-row">
-      <div class="rm-axe-label"><span class="rm-icon">${icon}</span>${axe}</div>
-      <div class="rm-bars">${barsHtml}</div>
-    </div>`;
+    html+=`<div class="rm-row"><div class="rm-axe-label"><span class="rm-icon">${icon}</span>${axe}</div><div class="rm-bars">${barsHtml}</div></div>`;
   });
 
-  // Étapes clés
-  if (etapes.length > 0) {
-    html += `<div class="rm-etapes-title">ÉTAPES CLÉS GROUPE</div><div class="rm-etapes">`;
-    etapes.forEach(e => {
-      html += `<div class="rm-etape"><div class="rm-etape-date">${e.date}</div><div class="rm-etape-desc">${e.desc}</div></div>`;
+  if(etapes.length>0){
+    html+=`<div class="rm-etapes-title">ÉTAPES CLÉS GROUPE</div><div class="rm-etapes" style="margin-left:175px">`;
+    etapes.forEach(e=>{
+      html+=`<div class="rm-etape"><div class="rm-etape-dot"></div><div class="rm-etape-date">${e.date}</div><div class="rm-etape-desc">${e.desc}</div></div>`;
     });
-    html += `</div>`;
+    html+=`</div>`;
   }
-
-  html += `</div>`;
+  html+=`</div>`;
   document.getElementById('roadmapContent').innerHTML = html;
 }
 
-// ── EXPORT PDF ────────────────────────────────────
+// ── EXPORT PDF ──────────────────────────────────────
 function exportPDF() {
-  const btn = document.getElementById('btnPDF');
-  btn.classList.add('loading');
-  btn.innerHTML = '⏳ Génération...';
-
-  // Laisser le navigateur rendre les charts avant d'imprimer
-  setTimeout(() => {
-    window.print();
-    setTimeout(() => {
-      btn.classList.remove('loading');
-      btn.innerHTML = '&#8595; Export PDF';
-    }, 1500);
-  }, 400);
+  const btn = document.querySelector('.btn-pdf');
+  btn.textContent='⏳ Génération...';
+  setTimeout(()=>{ window.print(); setTimeout(()=>{btn.textContent='↓ Export PDF';},1500); },400);
 }
 
-// Init
+// ── INIT ────────────────────────────────────────────
 renderAll(DEFAULT_PROJECTS, DEFAULT_FLUX, DEFAULT_ENG);
-
+fetchSheet(gsUrl).then(()=>startAutoRefresh(gsUrl));
+fetchRoadmap();
+fetchEngagements();
+setInterval(fetchRoadmap, 30000);
+setInterval(fetchEngagements, 30000);
 </script>
 </body>
 </html>
