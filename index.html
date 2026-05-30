@@ -1060,9 +1060,10 @@ function computeFlux(p){
 }
 
 // ── AUTO-REFRESH GOOGLE SHEETS ────────────────────
-let gsUrl        = localStorage.getItem('gsUrl') || '';
+const GS_DEFAULT = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?output=csv';
+let gsUrl        = localStorage.getItem('gsUrl') || GS_DEFAULT;
 let refreshTimer = null;
-const REFRESH_MS = 60000; // 60 secondes
+const REFRESH_MS = 15000; // 15 secondes
 
 function startAutoRefresh(url) {
   gsUrl = url;
@@ -1075,9 +1076,18 @@ function startAutoRefresh(url) {
 }
 
 let nextRefreshAt = Date.now() + REFRESH_MS;
+let lastUpdated   = null;
+
 function updateRefreshLabel() {
   const secs = Math.max(0, Math.round((nextRefreshAt - Date.now()) / 1000));
-  document.getElementById('refreshLabel').textContent = secs > 5 ? `Refresh dans ${secs}s` : 'Mise à jour...';
+  const lbl  = document.getElementById('refreshLabel');
+  if (secs <= 2) {
+    lbl.textContent = 'Mise à jour...';
+  } else if (lastUpdated) {
+    lbl.textContent = `Mis à jour à ${lastUpdated} · dans ${secs}s`;
+  } else {
+    lbl.textContent = `Dans ${secs}s`;
+  }
   if (secs <= 0) nextRefreshAt = Date.now() + REFRESH_MS;
 }
 
@@ -1109,7 +1119,10 @@ async function fetchSheet(url) {
   if (!csv) return;
   const rows = csv.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g,'').trim()));
   const p = parseRows(rows);
-  if (p.length > 0) renderAll(p, computeFlux(p), DEFAULT_ENG);
+  if (p.length > 0) {
+    renderAll(p, computeFlux(p), DEFAULT_ENG);
+    lastUpdated = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  }
 }
 
 async function refreshNow() {
@@ -1128,10 +1141,8 @@ document.querySelectorAll('.modal-overlay').forEach(m=>{
   m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
 });
 
-// Auto-reload au démarrage si URL mémorisée
-if (gsUrl) {
-  fetchSheet(gsUrl).then(() => startAutoRefresh(gsUrl));
-}
+// Démarrage automatique immédiat — charge le sheet dès l'ouverture
+fetchSheet(gsUrl).then(() => startAutoRefresh(gsUrl));
 
 // ── EXPORT PDF ────────────────────────────────────
 function exportPDF() {
