@@ -1014,6 +1014,21 @@ function renderEngagements(engs) {
 }
 
 // ── DATA LOADERS ──────────────────────────────────
+// Parser CSV robuste — respecte les champs entre guillemets (ex: "25,0%")
+function parseCSV(text){
+  return text.split('\n').map(line=>{
+    const fields=[]; let cur='', inQ=false;
+    for(let i=0;i<line.length;i++){
+      const ch=line[i];
+      if(ch==='"'){ inQ=!inQ; }
+      else if(ch===','&&!inQ){ fields.push(cur.trim()); cur=''; }
+      else { cur+=ch; }
+    }
+    fields.push(cur.trim());
+    return fields;
+  });
+}
+
 function parseRows(rows){
   const out=[];
   // Helpers robustes : gère espaces milliers, virgule décimale, format %
@@ -1104,7 +1119,7 @@ async function fetchSheet(url) {
   }
   btn.classList.remove('spin');
   if(!csv) return;
-  const rows = csv.split('\n').map(r=>r.split(',').map(c=>c.replace(/^"|"$/g,'').trim()));
+  const rows = parseCSV(csv);
   const p = parseRows(rows);
   if(p.length>0){
     renderAll(p, computeFlux(p), currentEngs);
@@ -1124,7 +1139,7 @@ async function fetchEngagements() {
       if(r.ok){const t=await r.text();if(t.length>10){csv=t;break;}} }catch(e){continue;}
   }
   if(!csv) return;
-  const rows = csv.split('\n').map(r=>r.split(',').map(c=>c.replace(/^"|"$/g,'').trim()));
+  const rows = parseCSV(csv);
   const engs = [];
   for(let i=1;i<rows.length;i++){
     const [projet,nature,montant,date,statut] = rows[i];
@@ -1151,7 +1166,7 @@ async function fetchRoadmap() {
       if(r.ok){const t=await r.text();if(t.length>10){csv=t;break;}} }catch(e){continue;}
   }
   if(!csv) return;
-  const rows = csv.split('\n').map(r=>r.split(',').map(c=>c.replace(/^"|"$/g,'').trim()));
+  const rows = parseCSV(csv);
   const bars=[], etapes=[];
   for(let i=1;i<rows.length;i++){
     const [type,col1,col2,col3,col4,col5]=rows[i];
@@ -1227,7 +1242,7 @@ async function fetchParticipations() {
     try{ const r=await fetch(p,{cache:'no-store'}); if(r.ok){const t=await r.text();if(t.length>10){csv=t;break;}} }catch(e){continue;}
   }
   if(!csv) return;
-  const rows = csv.split('\n').map(r=>r.split(',').map(c=>c.replace(/^"|"$/g,'').trim()));
+  const rows = parseCSV(csv);
   const parts = [];
   for(let i=2;i<rows.length;i++){
     const r=rows[i];
