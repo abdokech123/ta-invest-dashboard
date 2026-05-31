@@ -287,23 +287,38 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
   border-radius:4px; font-size:10px; color:var(--red); line-height:1.5;
 }
 
-/* ══ TAB NAVIGATION ══════════════════════════════════ */
-.tab-nav{
+/* ══ NAV PRINCIPALE (Vue Groupe / Participations) ═════ */
+.tab-nav-main{
   background:var(--white); border-bottom:2px solid var(--g2);
-  padding:0 40px; display:flex; align-items:center; gap:4px;
-  overflow-x:auto; scrollbar-width:none;
+  padding:0 32px; display:flex; align-items:center; gap:0;
 }
-.tab-nav::-webkit-scrollbar{ display:none; }
-.tab-btn{
-  padding:12px 18px; font-size:11px; font-weight:600; font-family:'Inter',sans-serif;
-  color:var(--g4); background:none; border:none; border-bottom:2px solid transparent;
-  cursor:pointer; white-space:nowrap; letter-spacing:.4px; text-transform:uppercase;
-  margin-bottom:-2px; transition:color .2s,border-color .2s;
-}
-.tab-btn:hover{ color:var(--teal); }
-.tab-btn.active{ color:var(--teal); border-bottom-color:var(--teal); font-weight:700; }
-.tab-btn .tab-dot{ display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:6px; background:var(--g3); }
+.tab-btn{ font-family:'Inter',sans-serif; cursor:pointer; border:none; background:none;
+           transition:color .2s,border-color .2s,background .2s; }
+.tab-btn .tab-dot{ display:inline-block; width:6px; height:6px; border-radius:50%;
+                   margin-right:6px; background:var(--g3); }
 .tab-btn.active .tab-dot{ background:var(--rose); }
+.tab-main{
+  padding:13px 22px; font-size:12px; font-weight:700; color:var(--g4);
+  border-bottom:3px solid transparent; white-space:nowrap;
+  letter-spacing:.5px; text-transform:uppercase; margin-bottom:-2px;
+}
+.tab-main:hover{ color:var(--teal); }
+.tab-main.active{ color:var(--teal); border-bottom-color:var(--teal); }
+/* ══ NAV PROJETS (barre secondaire) ══════════════════ */
+.tab-nav-proj{
+  background:var(--g1); border-bottom:1px solid var(--g2);
+  padding:7px 32px; display:flex; align-items:center; gap:6px;
+  overflow-x:auto; scrollbar-width:none; min-height:42px;
+}
+.tab-nav-proj::-webkit-scrollbar{ display:none; }
+.tab-proj{
+  padding:5px 14px; font-size:10px; font-weight:600; color:var(--g5);
+  background:var(--white); border:1px solid var(--g2); border-radius:20px;
+  white-space:nowrap; letter-spacing:.3px; flex-shrink:0;
+}
+.tab-proj:hover{ color:var(--teal); border-color:var(--teal3); }
+.tab-proj.active{ color:#fff; background:var(--teal); border-color:var(--teal); }
+.tab-proj .tab-dot{ display:none; }
 
 /* ══ FICHE PROJET ════════════════════════════════════ */
 #projectView{ display:none; }
@@ -346,7 +361,20 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 .part-tot td{ font-weight:700; color:var(--teal); background:rgba(30,74,68,.05)!important; border-top:1.5px solid var(--teal); }
 .type-badge{ display:inline-block; padding:2px 8px; border-radius:3px; font-size:9px; font-weight:700; letter-spacing:.3px;
              background:var(--teal4); color:var(--teal); }
-.tab-sep{ width:1px; height:28px; background:var(--g2); margin:0 4px; align-self:center; flex-shrink:0; }
+.tab-sep{ width:1px; height:20px; background:var(--g3); margin:0 6px; flex-shrink:0; align-self:center; }
+/* ══ RESPONSIVE ══════════════════════════════════════ */
+@media(max-width:900px){
+  .tab-nav-main,.tab-nav-proj{ padding-left:12px; padding-right:12px; }
+  .tab-main{ padding:10px 12px; font-size:10px; }
+  .main{ padding:12px 12px 24px!important; }
+  .kpi-strip,.proj-kpi-strip,.part-kpi-strip,.part-kpi-6{
+    grid-template-columns:repeat(3,1fr)!important; }
+  .proj-charts-row{ grid-template-columns:1fr!important; }
+  .proj-header{ flex-direction:column; align-items:flex-start; gap:14px; }
+  .part-fiche-hdr{ flex-direction:column; gap:16px; }
+  .part-tbl{ font-size:10px; }
+  .part-tbl th,.part-tbl td{ padding:6px 6px; }
+}
 /* Fiche participation */
 .part-fiche-hdr{ background:linear-gradient(135deg,var(--teal3) 0%,var(--teal) 100%);
                  border-radius:10px; padding:24px 28px; color:#fff;
@@ -532,17 +560,17 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
   &nbsp;&nbsp;|&nbsp;&nbsp; Conseil exclusif : Perenity Capital Advisory Firm
 </div>
 
-<!-- ═══ TAB NAVIGATION ════════════════════════════════ -->
-<nav class="tab-nav" id="tabNav">
-  <button class="tab-btn active" onclick="switchTab('groupe',this)">
+<!-- ═══ NAV PRINCIPALE ════════════════════════════════ -->
+<nav class="tab-nav-main">
+  <button class="tab-btn tab-main active" id="tabGroupe" onclick="switchTab('groupe',this)">
     <span class="tab-dot"></span>Vue Groupe
   </button>
-  <span class="tab-sep"></span>
-  <button class="tab-btn" id="tabPartList" onclick="switchTab('partlist',this)">
+  <button class="tab-btn tab-main" id="tabPartList" onclick="switchTab('partlist',this)">
     <span class="tab-dot" style="background:var(--teal3)"></span>📊 Participations
   </button>
-  <span class="tab-sep"></span>
 </nav>
+<!-- ═══ NAV PROJETS ═══════════════════════════════════ -->
+<nav class="tab-nav-proj" id="tabNav"></nav>
 
 <!-- ═══ FICHE PROJET ══════════════════════════════════ -->
 <div id="projectView" style="padding:24px 40px 40px;display:flex;flex-direction:column;gap:24px"></div>
@@ -732,58 +760,40 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
     </div>
   </div>
 
-
+  <!-- ══ SYNTHÈSE PARTICIPATIONS ════════════════════════ -->
+  <div>
+    <div class="s-title" style="display:flex;align-items:center;justify-content:space-between">
+      <span><span class="s-dot" style="background:var(--teal3)"></span>Participations — Synthèse Groupe</span>
+      <button onclick="switchTab('partlist',document.getElementById('tabPartList'))"
+        style="font-size:10px;font-weight:600;color:var(--teal);background:none;border:1px solid var(--teal3);
+               border-radius:4px;padding:4px 12px;cursor:pointer;letter-spacing:.3px">
+        Détail complet →
+      </button>
+    </div>
+    <div class="part-kpi-strip" style="margin-top:10px">
+      <div class="kpi-card accent"><div class="kpi-label">Total Investi</div><div class="kpi-value" id="pk-cout">— M</div><div class="kpi-sub">MAD</div></div>
+      <div class="kpi-card"><div class="kpi-label">Valeur Actuelle (NAV)</div><div class="kpi-value" id="pk-val">— M</div><div class="kpi-sub">Estimation</div></div>
+      <div class="kpi-card green"><div class="kpi-label">Plus-value Latente</div><div class="kpi-value" id="pk-pv">— M</div><div class="kpi-sub">Non réalisée</div></div>
+      <div class="kpi-card green"><div class="kpi-label">Dividendes Reçus</div><div class="kpi-value" id="pk-div">— M</div><div class="kpi-sub">MAD cumulés</div></div>
+      <div class="kpi-card green"><div class="kpi-label">MOIC Moyen</div><div class="kpi-value" id="pk-moic">—×</div><div class="kpi-sub">Multiplicateur</div></div>
+      <div class="kpi-card green"><div class="kpi-label">TRI Moyen</div><div class="kpi-value" id="pk-tri">—%</div><div class="kpi-sub">Pondéré coût</div></div>
+    </div>
+  </div>
 
 </main>
 
 <!-- ═══ VUE PARTICIPATIONS ════════════════════════════ -->
-<div id="participationsSection" style="display:none;padding:24px 40px 40px;flex-direction:column;gap:24px">
-  <div class="s-title"><span class="s-dot" style="background:var(--teal3)"></span>Portefeuille Participations Family Office</div>
-
-  <!-- KPI Participations -->
-  <div class="part-kpi-strip" id="partKpiStrip">
-    <div class="kpi-card accent">
-      <div class="kpi-label">Total Investi</div>
-      <div class="kpi-value" id="pk-cout">— M</div>
-      <div class="kpi-sub">MAD — Coût d'acquisition</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Valeur Actuelle</div>
-      <div class="kpi-value" id="pk-val">— M</div>
-      <div class="kpi-sub">NAV estimée</div>
-    </div>
-    <div class="kpi-card green">
-      <div class="kpi-label">Plus-value Latente</div>
-      <div class="kpi-value" id="pk-pv">— M</div>
-      <div class="kpi-sub">MAD non réalisée</div>
-    </div>
-    <div class="kpi-card green">
-      <div class="kpi-label">Dividendes Reçus</div>
-      <div class="kpi-value" id="pk-div">— M</div>
-      <div class="kpi-sub">MAD cumulés</div>
-    </div>
-    <div class="kpi-card green">
-      <div class="kpi-label">MOIC Moyen</div>
-      <div class="kpi-value" id="pk-moic">—×</div>
-      <div class="kpi-sub">Multiplicateur moyen</div>
-    </div>
-    <div class="kpi-card green">
-      <div class="kpi-label">TRI Moyen</div>
-      <div class="kpi-value" id="pk-tri">—%</div>
-      <div class="kpi-sub">Pondéré par coût</div>
-    </div>
-  </div>
-
-  <!-- Table participations -->
+<div id="participationsSection" style="display:none;padding:24px 40px 40px;flex-direction:column;gap:20px">
+  <div class="s-title"><span class="s-dot" style="background:var(--teal3)"></span>Portefeuille Participations — Détail Complet</div>
   <div class="card" style="padding:0;overflow:hidden">
-    <div style="padding:16px 20px 0"><div class="card-title"><div class="card-title-dot" style="background:var(--teal3)"></div>Détail des Participations</div></div>
+    <div style="padding:16px 20px 0"><div class="card-title"><div class="card-title-dot" style="background:var(--teal3)"></div>Toutes les Participations — cliquer une ligne pour la fiche détail</div></div>
     <table class="part-tbl">
       <thead>
         <tr>
           <th>Société / Fonds</th><th>Type</th><th>Secteur</th>
           <th class="n">% Déten.</th><th class="n">Coût (M MAD)</th>
-          <th class="n">Valeur Act. (M MAD)</th><th class="n">Plus-value (M MAD)</th>
-          <th class="n">Dividendes (M MAD)</th><th class="n">MOIC</th>
+          <th class="n">Valeur Act.</th><th class="n">Plus-value</th>
+          <th class="n">Dividendes</th><th class="n">MOIC</th>
           <th class="n">TRI</th><th>Horizon</th><th>Statut</th>
         </tr>
       </thead>
@@ -1295,26 +1305,27 @@ function buildTabs(projects, parts) {
   allProjects = projects;
   if(parts) currentParticipations = parts;
   const nav = document.getElementById('tabNav');
-  [...nav.querySelectorAll('.tab-btn[data-proj]')].forEach(b => b.remove());
-  // Insérer les onglets projets avant le séparateur #tabPartList
-  const tabPart = document.getElementById('tabPartList');
+  nav.innerHTML = '';
+  const sectorIcon = { 'Immobilier':'🏠','Energie':'⚡','Énergie':'⚡','Industrie':'🏭','Services':'💼' };
   projects.forEach((p, i) => {
     const btn = document.createElement('button');
-    btn.className = 'tab-btn';
+    btn.className = 'tab-btn tab-proj';
     btn.setAttribute('data-proj', i);
-    const sectorIcon = {
-      'Immobilier':'🏠','Energie':'⚡','Énergie':'⚡',
-      'Industrie':'🏭','Services':'💼'
-    }[p.sector] || '📁';
-    btn.innerHTML = `<span class="tab-dot"></span>${sectorIcon} ${p.name.split('–')[0].trim().split(' ').slice(0,3).join(' ')}`;
+    const icon = sectorIcon[p.sector] || '📁';
+    btn.innerHTML = `${icon} ${p.name.split('–')[0].trim().split(' ').slice(0,3).join(' ')}`;
     btn.onclick = function(){ switchTab('projet', this, i); };
-    nav.insertBefore(btn, tabPart.previousElementSibling);
+    nav.appendChild(btn);
   });
 }
 
 function switchTab(type, btn, idx) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
+  // Retirer actif sur les boutons du même groupe
+  if(btn){
+    const isMain = btn.classList.contains('tab-main');
+    if(isMain) document.querySelectorAll('.tab-main').forEach(b=>b.classList.remove('active'));
+    else        document.querySelectorAll('.tab-proj').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
   const main     = document.querySelector('.main');
   const projView = document.getElementById('projectView');
   const partView = document.getElementById('partView');
@@ -1329,11 +1340,14 @@ function switchTab(type, btn, idx) {
   if (type === 'groupe') {
     main.style.display = 'flex';
     bc.textContent = 'Tableau de Bord Groupe';
+    document.querySelectorAll('.tab-proj').forEach(b=>b.classList.remove('active'));
   } else if (type === 'partlist') {
     partList.style.display = 'flex';
     bc.textContent = 'Portefeuille Participations';
+    document.querySelectorAll('.tab-proj').forEach(b=>b.classList.remove('active'));
   } else if (type === 'projet') {
     projView.style.display = 'flex';
+    document.querySelectorAll('.tab-main').forEach(b=>b.classList.remove('active'));
     const p = allProjects[idx];
     bc.textContent = p.name;
     renderProjectFiche(p, idx);
