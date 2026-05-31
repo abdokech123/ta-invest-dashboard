@@ -333,6 +333,33 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 .inv-bar-fill{ height:100%; border-radius:4px; }
 .inv-bar-pct{ min-width:38px; text-align:right; font-weight:600; color:var(--teal); font-size:11px; }
 
+/* ══ PARTICIPATIONS ══════════════════════════════════ */
+.part-kpi-strip{ display:grid; grid-template-columns:repeat(6,1fr); gap:12px; }
+.part-tbl{ width:100%; border-collapse:collapse; font-size:11.5px; }
+.part-tbl thead tr{ background:var(--g1); }
+.part-tbl th{ padding:9px 10px; text-align:left; color:var(--g4); font-weight:600;
+              font-size:9px; text-transform:uppercase; letter-spacing:1px; border-bottom:2px solid var(--teal3); }
+.part-tbl td{ padding:9px 10px; border-bottom:1px solid var(--g1); vertical-align:middle; }
+.part-tbl tr:hover td{ background:var(--g1); }
+.part-tbl .n{ text-align:right; font-variant-numeric:tabular-nums; font-weight:500; }
+.part-tbl .nm{ font-weight:600; color:var(--teal); }
+.part-tot td{ font-weight:700; color:var(--teal); background:rgba(30,74,68,.05)!important; border-top:1.5px solid var(--teal); }
+.type-badge{ display:inline-block; padding:2px 8px; border-radius:3px; font-size:9px; font-weight:700; letter-spacing:.3px;
+             background:var(--teal4); color:var(--teal); }
+.tab-sep{ width:1px; height:28px; background:var(--g2); margin:0 4px; align-self:center; flex-shrink:0; }
+/* Fiche participation */
+.part-fiche-hdr{ background:linear-gradient(135deg,var(--teal3) 0%,var(--teal) 100%);
+                 border-radius:10px; padding:24px 28px; color:#fff;
+                 display:flex; justify-content:space-between; align-items:center; box-shadow:var(--sh2); }
+.part-fiche-hdr h2{ font-family:'Playfair Display',serif; font-size:20px; font-weight:700; }
+.part-fiche-hdr p{ font-size:11px; opacity:.7; margin-top:4px; }
+.part-fiche-stats{ display:flex; gap:28px; }
+.part-fiche-stat-val{ font-family:'Playfair Display',serif; font-size:24px; font-weight:700; color:var(--rose2); }
+.part-fiche-stat-lbl{ font-size:9px; opacity:.6; text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
+.part-kpi-6{ display:grid; grid-template-columns:repeat(6,1fr); gap:12px; }
+.pv-up { color:var(--grn); font-weight:700; }
+.pv-dn { color:var(--red); font-weight:700; }
+
 /* ══ FOOTER ══════════════════════════════════════════ */
 .footer{
   background:var(--teal); border-top:none;
@@ -515,6 +542,9 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 <!-- ═══ FICHE PROJET ══════════════════════════════════ -->
 <div id="projectView" style="padding:24px 40px 40px;display:flex;flex-direction:column;gap:24px"></div>
 
+<!-- ═══ FICHE PARTICIPATION ════════════════════════════ -->
+<div id="partView" style="padding:24px 40px 40px;display:none;flex-direction:column;gap:24px"></div>
+
 <!-- ═══ MAIN ══════════════════════════════════════════ -->
 <main class="main">
 
@@ -694,6 +724,63 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
         <div class="alert-box">⚠️ Anticiper le pic de trésorerie T3 2027 (−95 M MAD) et réduire la concentration immobilier (67% > seuil 60%).</div>
       </div>
 
+    </div>
+  </div>
+
+
+  <!-- ══ PARTICIPATIONS GROUPE ══════════════════════════ -->
+  <div id="participationsSection">
+    <div class="s-title"><span class="s-dot" style="background:var(--teal3)"></span>Portefeuille Participations Family Office</div>
+
+    <!-- KPI Participations -->
+    <div class="part-kpi-strip" id="partKpiStrip">
+      <div class="kpi-card accent">
+        <div class="kpi-label">Total Investi</div>
+        <div class="kpi-value" id="pk-cout">— M</div>
+        <div class="kpi-sub">MAD — Coût d'acquisition</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Valeur Actuelle</div>
+        <div class="kpi-value" id="pk-val">— M</div>
+        <div class="kpi-sub">NAV estimée</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Plus-value Latente</div>
+        <div class="kpi-value" id="pk-pv">— M</div>
+        <div class="kpi-sub">MAD non réalisée</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">Dividendes Reçus</div>
+        <div class="kpi-value" id="pk-div">— M</div>
+        <div class="kpi-sub">MAD cumulés</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">MOIC Moyen</div>
+        <div class="kpi-value" id="pk-moic">—×</div>
+        <div class="kpi-sub">Multiplicateur moyen</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-label">TRI Moyen</div>
+        <div class="kpi-value" id="pk-tri">—%</div>
+        <div class="kpi-sub">Pondéré par coût</div>
+      </div>
+    </div>
+
+    <!-- Table participations -->
+    <div class="card" style="margin-top:14px;padding:0;overflow:hidden">
+      <div style="padding:16px 20px 0"><div class="card-title"><div class="card-title-dot" style="background:var(--teal3)"></div>Détail des Participations</div></div>
+      <table class="part-tbl">
+        <thead>
+          <tr>
+            <th>Société / Fonds</th><th>Type</th><th>Secteur</th>
+            <th class="n">% Déten.</th><th class="n">Coût (MAD)</th>
+            <th class="n">Valeur Act. (MAD)</th><th class="n">Plus-value (MAD)</th>
+            <th class="n">Dividendes (MAD)</th><th class="n">MOIC</th>
+            <th class="n">TRI</th><th>Horizon</th><th>Statut</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyPart"></tbody>
+      </table>
     </div>
   </div>
 
@@ -1044,15 +1131,165 @@ function exportPDF() {
   setTimeout(()=>{ window.print(); setTimeout(()=>{btn.textContent='↓ Export PDF';},1500); },400);
 }
 
+// ── PARTICIPATIONS DATA ───────────────────────────────
+const GS_PARTICIPATIONS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?gid=1856476348&single=true&output=csv';
+
+const DEFAULT_PARTICIPATIONS = [
+  {nom:'ABC Holding SA',          type:'Participation opérationnelle',sect:'Immobilier', pct:0.25,cout:15000000,val:22000000, pv:7000000,  div:1200000,moic:1.55,tri:0.18,horizon:'2028',statut:'Actif'},
+  {nom:'XYZ Renewable Fund',      type:'Fonds PE / OPCI',             sect:'Énergie',    pct:0.10,cout:8000000, val:10500000, pv:2500000,  div:500000, moic:1.38,tri:0.15,horizon:'2027',statut:'Actif'},
+  {nom:'Immo Club Deal Marrakech',type:'Club Deal immobilier',         sect:'Immobilier', pct:0.33,cout:5000000, val:6200000,  pv:1200000,  div:200000, moic:1.28,tri:0.14,horizon:'2026',statut:'En cours de cession'},
+  {nom:'DEF Industrie SARL',      type:'Participation opérationnelle',sect:'Industrie',  pct:0.40,cout:12000000,val:14000000, pv:2000000,  div:800000, moic:1.23,tri:0.12,horizon:'2029',statut:'Actif'},
+  {nom:'Obligations Privées GHI', type:'Dette privée / Obligations',  sect:'Services',   pct:1.00,cout:6000000, val:6300000,  pv:300000,   div:420000, moic:1.12,tri:0.07,horizon:'2027',statut:'Actif'},
+];
+let currentParticipations = DEFAULT_PARTICIPATIONS;
+
+async function fetchParticipations() {
+  const enc = encodeURIComponent(GS_PARTICIPATIONS);
+  const proxies = [`https://corsproxy.io/?${enc}`,`https://api.allorigins.win/raw?url=${enc}`,GS_PARTICIPATIONS];
+  let csv = null;
+  for(const p of proxies){
+    try{ const r=await fetch(p,{cache:'no-store'}); if(r.ok){const t=await r.text();if(t.length>10){csv=t;break;}} }catch(e){continue;}
+  }
+  if(!csv) return;
+  const rows = csv.split('\n').map(r=>r.split(',').map(c=>c.replace(/^"|"$/g,'').trim()));
+  const parts = [];
+  for(let i=2;i<rows.length;i++){
+    const r=rows[i];
+    if(!r[0]||r[0].toUpperCase().includes('TOTAL')||r[0]==='') continue;
+    const cout = parseFloat(String(r[4]).replace(/[\s,]/g,''))||0;
+    if(cout===0) continue;
+    parts.push({
+      nom:    r[0]||'—',
+      type:   r[1]||'—',
+      sect:   r[2]||'—',
+      pct:    parseFloat(String(r[3]).replace(/[%\s,]/g,''))/100||0,
+      cout:   cout,
+      val:    parseFloat(String(r[5]).replace(/[\s,]/g,''))||0,
+      pv:     parseFloat(String(r[6]).replace(/[\s,]/g,''))||0,
+      div:    parseFloat(String(r[7]).replace(/[\s,]/g,''))||0,
+      moic:   parseFloat(String(r[8]).replace(/[\s,]/g,''))||0,
+      tri:    parseFloat(String(r[9]).replace(/[%\s,]/g,''))/100||0,
+      horizon:r[10]||'—',
+      statut: r[11]||'—',
+    });
+  }
+  if(parts.length>0){ currentParticipations=parts; renderParticipations(parts); buildTabs(allProjects, parts); }
+}
+
+function renderParticipations(parts) {
+  const totCout = parts.reduce((a,p)=>a+p.cout,0);
+  const totVal  = parts.reduce((a,p)=>a+p.val,0);
+  const totPv   = parts.reduce((a,p)=>a+p.pv,0);
+  const totDiv  = parts.reduce((a,p)=>a+p.div,0);
+  const moicMoy = totVal/totCout||0;
+  const triMoy  = parts.reduce((a,p)=>a+p.tri*p.cout,0)/totCout||0;
+
+  document.getElementById('pk-cout').textContent = fmtM(totCout);
+  document.getElementById('pk-val').textContent  = fmtM(totVal);
+  document.getElementById('pk-pv').textContent   = fmtM(totPv);
+  document.getElementById('pk-div').textContent  = fmtM(totDiv);
+  document.getElementById('pk-moic').textContent = moicMoy.toFixed(2)+'×';
+  document.getElementById('pk-tri').textContent  = fmtP(triMoy);
+
+  // Couleur plus-value
+  const pvEl = document.getElementById('pk-pv');
+  pvEl.className = 'kpi-value '+(totPv>=0?'pv-up':'pv-dn');
+
+  // Table
+  const statutCls = {
+    'Actif':                'badge-grn',
+    'En cours de cession':  'badge-gold',
+    'Sorti':                'badge-gry',
+    'En discussion':        'badge-gold',
+  };
+  document.getElementById('tbodyPart').innerHTML = parts.map((p,i)=>`
+    <tr style="cursor:pointer" onclick="switchTab('part',null,${i})">
+      <td class="nm">${p.nom}</td>
+      <td><span class="type-badge">${p.type.split('/')[0].trim()}</span></td>
+      <td style="color:var(--g4)">${p.sect}</td>
+      <td class="n">${(p.pct*100).toFixed(0)}%</td>
+      <td class="n">${fmtM(p.cout)}</td>
+      <td class="n" style="font-weight:700;color:var(--teal)">${fmtM(p.val)}</td>
+      <td class="n ${p.pv>=0?'pv-up':'pv-dn'}">${p.pv>=0?'+':''}${fmtM(p.pv)}</td>
+      <td class="n">${fmtM(p.div)}</td>
+      <td class="n" style="font-weight:700">${p.moic.toFixed(2)}×</td>
+      <td class="n" style="color:var(--grn);font-weight:700">${fmtP(p.tri)}</td>
+      <td style="color:var(--g4);font-size:10px">${p.horizon}</td>
+      <td><span class="badge ${statutCls[p.statut]||'badge-gry'}">${p.statut}</span></td>
+    </tr>`).join('')+`
+    <tr class="part-tot">
+      <td colspan="4">TOTAL PARTICIPATIONS</td>
+      <td class="n">${fmtM(totCout)}</td>
+      <td class="n">${fmtM(totVal)}</td>
+      <td class="n ${totPv>=0?'pv-up':'pv-dn'}">${totPv>=0?'+':''}${fmtM(totPv)}</td>
+      <td class="n">${fmtM(totDiv)}</td>
+      <td class="n">${moicMoy.toFixed(2)}×</td>
+      <td class="n">${fmtP(triMoy)}</td>
+      <td colspan="2"></td>
+    </tr>`;
+}
+
+function renderPartFiche(p) {
+  const pv = document.getElementById('partView');
+  const pvCls = p.pv>=0?'pv-up':'pv-dn';
+  pv.innerHTML = `
+  <div class="part-fiche-hdr">
+    <div>
+      <h2>${p.nom}</h2>
+      <p>${p.type} &nbsp;·&nbsp; ${p.sect} &nbsp;·&nbsp; ${(p.pct*100).toFixed(0)}% de détention &nbsp;·&nbsp; <span style="background:rgba(255,255,255,.15);padding:2px 10px;border-radius:10px">${p.statut}</span></p>
+    </div>
+    <div class="part-fiche-stats">
+      <div><div class="part-fiche-stat-val">${fmtM(p.cout)}</div><div class="part-fiche-stat-lbl">Coût Acquisition</div></div>
+      <div><div class="part-fiche-stat-val">${fmtM(p.val)}</div><div class="part-fiche-stat-lbl">Valeur Actuelle</div></div>
+      <div><div class="part-fiche-stat-val">${p.moic.toFixed(2)}×</div><div class="part-fiche-stat-lbl">MOIC</div></div>
+      <div><div class="part-fiche-stat-val">${fmtP(p.tri)}</div><div class="part-fiche-stat-lbl">TRI Estimé</div></div>
+    </div>
+  </div>
+
+  <div class="part-kpi-6">
+    <div class="kpi-card accent"><div class="kpi-label">Coût d'Acquisition</div><div class="kpi-value">${fmtM(p.cout)}</div><div class="kpi-sub">MAD</div></div>
+    <div class="kpi-card"><div class="kpi-label">Valeur Actuelle (NAV)</div><div class="kpi-value">${fmtM(p.val)}</div><div class="kpi-sub">Estimation manuelle</div></div>
+    <div class="kpi-card ${p.pv>=0?'green':''}"><div class="kpi-label">Plus-value Latente</div><div class="kpi-value ${pvCls}">${p.pv>=0?'+':''}${fmtM(p.pv)}</div><div class="kpi-sub">Non réalisée</div></div>
+    <div class="kpi-card green"><div class="kpi-label">Dividendes Reçus</div><div class="kpi-value">${fmtM(p.div)}</div><div class="kpi-sub">MAD cumulés</div></div>
+    <div class="kpi-card green"><div class="kpi-label">MOIC</div><div class="kpi-value">${p.moic.toFixed(2)}×</div><div class="kpi-sub">Multiplicateur</div></div>
+    <div class="kpi-card green"><div class="kpi-label">TRI Estimé</div><div class="kpi-value">${fmtP(p.tri)}</div><div class="kpi-sub">Annualisé</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot"></div>Détail Valorisation</div>
+      <div class="fin-kpis">
+        <div class="fin-kpi-row"><span class="fin-kpi-label">Coût d'acquisition</span><div class="pil-bar-wrap"><div class="pil-bar" style="width:100%;background:var(--teal)"></div></div><span class="fin-kpi-val">${fmtM(p.cout)}</span><span class="fin-kpi-stat stat-bon">BASE</span></div>
+        <div class="fin-kpi-row"><span class="fin-kpi-label">Valeur actuelle estimée</span><div class="pil-bar-wrap"><div class="pil-bar" style="width:${Math.min(100,p.val/p.cout*80)}%;background:var(--grn)"></div></div><span class="fin-kpi-val">${fmtM(p.val)}</span><span class="fin-kpi-stat ${p.val>=p.cout?'stat-bon':'stat-risk'}">${p.val>=p.cout?'GAIN':'PERTE'}</span></div>
+        <div class="fin-kpi-row"><span class="fin-kpi-label">Plus-value latente</span><div class="pil-bar-wrap"><div class="pil-bar" style="width:${Math.min(100,Math.abs(p.pv)/p.cout*100)}%;background:${p.pv>=0?'var(--grn)':'var(--red)'}"></div></div><span class="fin-kpi-val ${pvCls}">${p.pv>=0?'+':''}${fmtM(p.pv)}</span><span class="fin-kpi-stat ${p.pv>=0?'stat-bon':'stat-risk'}">${((p.pv/p.cout)*100).toFixed(1)}%</span></div>
+        <div class="fin-kpi-row"><span class="fin-kpi-label">Dividendes reçus</span><div class="pil-bar-wrap"><div class="pil-bar" style="width:${Math.min(100,p.div/p.cout*200)}%;background:var(--teal3)"></div></div><span class="fin-kpi-val">${fmtM(p.div)}</span><span class="fin-kpi-stat stat-bon">CASH</span></div>
+        <div class="fin-kpi-row"><span class="fin-kpi-label">Retour total (val+div)</span><div class="pil-bar-wrap"><div class="pil-bar" style="width:${Math.min(100,(p.val+p.div)/p.cout*70)}%;background:var(--grn)"></div></div><span class="fin-kpi-val pv-up">${fmtM(p.val+p.div)}</span><span class="fin-kpi-stat stat-bon">${p.moic.toFixed(2)}×</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot"></div>Informations & Sortie</div>
+      <div class="fin-kpis">
+        <div class="fin-kpi-row"><span class="fin-kpi-label">Type</span><span class="fin-kpi-val" style="font-size:11px;text-align:right">${p.type}</span></div>
+        <div class="fin-kpi-row"><span class="fin-kpi-label">Secteur</span><span class="fin-kpi-val" style="font-size:11px">${p.sect}</span></div>
+        <div class="fin-kpi-row"><span class="fin-kpi-label">% de Détention</span><span class="fin-kpi-val">${(p.pct*100).toFixed(0)}%</span></div>
+        <div class="fin-kpi-row"><span class="fin-kpi-label">Horizon de sortie</span><span class="fin-kpi-val">${p.horizon}</span><span class="fin-kpi-stat stat-surv">CIBLE</span></div>
+        <div class="fin-kpi-row"><span class="fin-kpi-label">Statut</span><span class="badge ${p.statut==='Actif'?'badge-grn':p.statut.includes('cession')?'badge-gold':'badge-gry'}">${p.statut}</span></div>
+        <div class="fin-kpi-row"><span class="fin-kpi-label">Rendement annuel div.</span><span class="fin-kpi-val pv-up">${fmtP(p.div/p.cout)}</span><span class="fin-kpi-stat stat-bon">YIELD</span></div>
+      </div>
+    </div>
+  </div>`;
+}
+
 // ── TABS ─────────────────────────────────────────────
 let allProjects = DEFAULT_PROJECTS;
 let projChartCF = null, projChartInv = null;
 
-function buildTabs(projects) {
+function buildTabs(projects, parts) {
   allProjects = projects;
+  if(parts) currentParticipations = parts;
   const nav = document.getElementById('tabNav');
-  // Supprimer anciens onglets projets (garder Vue Groupe)
-  [...nav.querySelectorAll('.tab-btn[data-proj]')].forEach(b => b.remove());
+  // Supprimer anciens onglets projets + séparateur + onglets participations
+  [...nav.querySelectorAll('.tab-btn[data-proj], .tab-btn[data-part], .tab-sep')].forEach(b => b.remove());
   projects.forEach((p, i) => {
     const btn = document.createElement('button');
     btn.className = 'tab-btn';
@@ -1065,27 +1302,46 @@ function buildTabs(projects) {
     btn.onclick = function(){ switchTab('projet', this, i); };
     nav.appendChild(btn);
   });
+  // Séparateur + onglets participations
+  const sep = document.createElement('span');
+  sep.className = 'tab-sep';
+  sep.textContent = '|';
+  nav.appendChild(sep);
+  currentParticipations.forEach((p, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn';
+    btn.setAttribute('data-part', i);
+    btn.innerHTML = `<span class="tab-dot" style="background:var(--teal3)"></span>📊 ${p.nom.split(' ').slice(0,3).join(' ')}`;
+    btn.onclick = function(){ switchTab('part', this, i); };
+    nav.appendChild(btn);
+  });
 }
 
-function switchTab(type, btn, projIdx) {
-  // Mettre à jour boutons actifs
+function switchTab(type, btn, idx) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const main = document.querySelector('.main');
-  const footer = document.querySelector('.footer');
+  if(btn) btn.classList.add('active');
+  const main     = document.querySelector('.main');
   const projView = document.getElementById('projectView');
-  const bc = document.getElementById('bcLabel');
+  const partView = document.getElementById('partView');
+  const bc       = document.getElementById('bcLabel');
+
+  main.style.display     = 'none';
+  projView.style.display = 'none';
+  partView.style.display = 'none';
 
   if (type === 'groupe') {
     main.style.display = 'flex';
-    projView.style.display = 'none';
     bc.textContent = 'Tableau de Bord Groupe';
-  } else {
-    main.style.display = 'none';
+  } else if (type === 'projet') {
     projView.style.display = 'flex';
-    const p = allProjects[projIdx];
+    const p = allProjects[idx];
     bc.textContent = p.name;
-    renderProjectFiche(p, projIdx);
+    renderProjectFiche(p, idx);
+  } else if (type === 'part') {
+    partView.style.display = 'flex';
+    const p = currentParticipations[idx];
+    bc.textContent = p.nom;
+    renderPartFiche(p);
   }
 }
 
@@ -1296,12 +1552,15 @@ function computeFluxSingle(p) {
 
 // ── INIT ────────────────────────────────────────────
 renderAll(DEFAULT_PROJECTS, DEFAULT_FLUX, DEFAULT_ENG);
-buildTabs(DEFAULT_PROJECTS);
+renderParticipations(DEFAULT_PARTICIPATIONS);
+buildTabs(DEFAULT_PROJECTS, DEFAULT_PARTICIPATIONS);
 fetchSheet(gsUrl).then(()=>startAutoRefresh(gsUrl));
 fetchRoadmap();
 fetchEngagements();
+fetchParticipations();
 setInterval(fetchRoadmap, 30000);
 setInterval(fetchEngagements, 30000);
+setInterval(fetchParticipations, 60000);
 </script>
 </body>
 </html>
