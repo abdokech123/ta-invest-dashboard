@@ -1239,16 +1239,24 @@ async function fetchParticipations() {
     const toPct  = v => { const s=String(v).replace(/[%\s]/g,'').replace(',','.'); const n=parseFloat(s)||0; return n>1?n/100:n; };
     const cout   = toMAD(r[4]);
     if(cout===0) continue;
+    const coutM = cout/1e6;
+    const valM  = toM(r[5]);
+    const pvM   = toM(r[6]);
+    // MOIC : calculé depuis val/cout si formule cassée (#ERROR!) ou absent
+    const moicRaw = toNum(r[8]);
+    const moic = moicRaw > 0 ? moicRaw : (coutM > 0 ? valM/coutM : 0);
+    // PV : calculé si absent
+    const pv = pvM !== 0 ? pvM : (valM - coutM);
     parts.push({
-      nom:    r[0]||'—',
+      nom:    r[0].trim()||'—',
       type:   r[1]||'—',
       sect:   r[2]||'—',
       pct:    toPct(r[3]),
-      cout:   cout/1e6,
-      val:    toM(r[5]),
-      pv:     toM(r[6]),
+      cout:   coutM,
+      val:    valM,
+      pv:     pv,
       div:    toM(r[7]),
-      moic:   toNum(r[8]),
+      moic:   moic,
       tri:    toPct(r[9]),
       horizon:r[10]||'—',
       statut: r[11]||'—',
