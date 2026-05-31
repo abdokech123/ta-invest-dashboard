@@ -1218,20 +1218,24 @@ async function fetchParticipations() {
   for(let i=2;i<rows.length;i++){
     const r=rows[i];
     if(!r[0]||r[0].toUpperCase().includes('TOTAL')||r[0]==='') continue;
-    const cout = parseFloat(String(r[4]).replace(/[\s,]/g,''))||0;
+    // Parsing robuste : gère espaces comme séparateurs de milliers + virgule décimale
+    const toNum  = v => parseFloat(String(v).replace(/\s/g,'').replace(',','.'))||0;
+    const toMAD  = v => { const s=String(v).replace(/\s/g,''); return parseFloat(s.replace(',','.'))||0; };
+    const toM    = v => toMAD(v)/1e6;
+    const toPct  = v => { const s=String(v).replace(/[%\s]/g,'').replace(',','.'); const n=parseFloat(s)||0; return n>1?n/100:n; };
+    const cout   = toMAD(r[4]);
     if(cout===0) continue;
-    const toM = v => parseFloat(String(v).replace(/[\s,]/g,''))/1e6||0;
     parts.push({
       nom:    r[0]||'—',
       type:   r[1]||'—',
       sect:   r[2]||'—',
-      pct:    parseFloat(String(r[3]).replace(/[%\s,]/g,''))/100||0,
+      pct:    toPct(r[3]),
       cout:   cout/1e6,
       val:    toM(r[5]),
       pv:     toM(r[6]),
       div:    toM(r[7]),
-      moic:   parseFloat(String(r[8]).replace(/[\s,]/g,''))||0,
-      tri:    parseFloat(String(r[9]).replace(/[%\s,]/g,''))/100||0,
+      moic:   toNum(r[8]),
+      tri:    toPct(r[9]),
       horizon:r[10]||'—',
       statut: r[11]||'—',
     });
