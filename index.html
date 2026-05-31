@@ -1016,22 +1016,36 @@ function renderEngagements(engs) {
 // ── DATA LOADERS ──────────────────────────────────
 function parseRows(rows){
   const out=[];
+  // Helpers robustes : gère espaces milliers, virgule décimale, format %
+  const toN   = v => parseFloat(String(v).replace(/\s/g,'').replace(',','.'))||0;
+  const toMAD = v => toN(v);
+  const toM   = v => toMAD(v)/1e6;
+  const toPct = v => { const s=String(v).replace(/[%\s]/g,'').replace(',','.'); const n=parseFloat(s)||0; return n>1?n/100:n; };
+
   let start=1;
   for(let i=1;i<rows.length;i++){
-    if(rows[i][0]&&rows[i][0]!=='Projet'&&rows[i][0]!==''&&!isNaN(parseFloat(String(rows[i][2]).replace(/\s/g,'')))){start=i;break;}
+    if(rows[i][0]&&rows[i][0]!=='Projet'&&rows[i][0]!==''){
+      const bTest=toN(rows[i][2]);
+      if(!isNaN(bTest)&&bTest>0){start=i;break;}
+    }
   }
   for(let i=start;i<rows.length;i++){
     const r=rows[i];
-    const b=parseFloat(String(r[2]).replace(/\s/g,''));
-    if(!r[0]||isNaN(b)||r[0]==='TOTAL'||r[0]==='') continue;
-    out.push({name:String(r[0]),sector:String(r[1]||'—'),
-      budget:b/1e6,engage:parseFloat(String(r[3]).replace(/\s/g,''))/1e6||0,
-      reste:parseFloat(String(r[4]).replace(/\s/g,''))/1e6||0,
-      besoin:parseFloat(String(r[5]).replace(/\s/g,''))/1e6||0,
-      tri:parseFloat(String(r[6]).replace(/[%\s]/g,''))||0,
+    if(!r[0]||r[0]==='TOTAL'||r[0]==='') continue;
+    const b=toN(r[2]);
+    if(isNaN(b)||b===0) continue;
+    out.push({
+      name:   String(r[0]).trim(),
+      sector: String(r[1]||'—').trim(),
+      budget: b/1e6,
+      engage: toM(r[3]),
+      reste:  toM(r[4]),
+      besoin: toM(r[5]),
+      tri:    toPct(r[6]),
       payback:String(r[7]||'—'),
-      marge:parseFloat(String(r[8]).replace(/[%\s]/g,''))||0,
-      statut:String(r[9]||'À définir')});
+      marge:  toPct(r[8]),
+      statut: String(r[9]||'À définir')
+    });
   }
   return out;
 }
