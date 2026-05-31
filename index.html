@@ -320,6 +320,14 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 .tab-proj.active{ color:#fff; background:var(--teal); border-color:var(--teal); }
 .tab-proj .tab-dot{ display:none; }
 
+/* ══ BLOC KPI GROUPE CONSOLIDÉ ═══════════════════════ */
+.kpi-groupe-bloc{ display:flex; flex-direction:column; gap:10px; }
+.kpi-bloc-header{ display:flex; align-items:center; justify-content:space-between; padding:0 2px; }
+.kpi-bloc-label{ font-size:10px; font-weight:700; color:var(--teal); text-transform:uppercase;
+                 letter-spacing:1.5px; }
+.kpi-bloc-count{ font-size:10px; color:var(--g4); font-weight:500; }
+.kpi-bloc-sep{ height:1px; background:var(--g2); margin:4px 0; }
+
 /* ══ FICHE PROJET ════════════════════════════════════ */
 #projectView{ display:none; }
 .proj-header{
@@ -584,9 +592,14 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 <!-- ═══ MAIN ══════════════════════════════════════════ -->
 <main class="main">
 
-  <!-- KPI PRINCIPAUX -->
-  <div>
-    <div class="s-title"><span class="s-dot"></span>Indicateurs Clés Groupe</div>
+  <!-- ══ BLOC KPI GROUPE CONSOLIDÉ ══════════════════════ -->
+  <div class="kpi-groupe-bloc">
+
+    <!-- Ligne 1 : Portefeuille Projets -->
+    <div class="kpi-bloc-header">
+      <span class="kpi-bloc-label">Portefeuille Projets</span>
+      <span class="kpi-bloc-count" id="kpi-nb-projets">10 projets</span>
+    </div>
     <div class="kpi-strip">
       <div class="kpi-card accent">
         <div class="kpi-label">Budget Total</div>
@@ -604,26 +617,72 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
         <div class="kpi-sub">MAD</div>
       </div>
       <div class="kpi-card amber">
-        <div class="kpi-label">Besoin Net Groupe</div>
+        <div class="kpi-label">Besoin Net</div>
         <div class="kpi-value" id="kpi-besoin">83 M</div>
         <div class="kpi-sub">MAD Fonds Propres</div>
       </div>
       <div class="kpi-card green">
-        <div class="kpi-label">TRI Moyen Pondéré</div>
+        <div class="kpi-label">TRI Moyen</div>
         <div class="kpi-value" id="kpi-tri">16.0%</div>
         <div class="kpi-sub">Objectif ≥ 15%</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Payback Moyen</div>
+        <div class="kpi-label">Payback</div>
         <div class="kpi-value" id="kpi-payback">2028</div>
-        <div class="kpi-sub">Fin 2028 prévu</div>
+        <div class="kpi-sub">Horizon moyen</div>
       </div>
       <div class="kpi-card green">
-        <div class="kpi-label">Marge Opér. Moy.</div>
+        <div class="kpi-label">Marge Moy.</div>
         <div class="kpi-value" id="kpi-marge">20.7%</div>
         <div class="kpi-sub">Objectif ≥ 20%</div>
       </div>
     </div>
+
+    <div class="kpi-bloc-sep"></div>
+
+    <!-- Ligne 2 : Participations -->
+    <div class="kpi-bloc-header">
+      <span class="kpi-bloc-label" style="color:var(--teal3)">Participations Family Office</span>
+      <span class="kpi-bloc-count" id="kpi-nb-parts">5 participations</span>
+    </div>
+    <div class="kpi-strip">
+      <div class="kpi-card accent" style="border-top:3px solid var(--teal3)">
+        <div class="kpi-label">Total Investi</div>
+        <div class="kpi-value" id="pk-cout">— M</div>
+        <div class="kpi-sub">MAD — Coût acq.</div>
+      </div>
+      <div class="kpi-card" style="border-top:3px solid var(--teal3)">
+        <div class="kpi-label">Valeur Actuelle (NAV)</div>
+        <div class="kpi-value" id="pk-val">— M</div>
+        <div class="kpi-sub">Estimation</div>
+      </div>
+      <div class="kpi-card green" style="border-top:3px solid var(--teal3)">
+        <div class="kpi-label">Plus-value Latente</div>
+        <div class="kpi-value" id="pk-pv">— M</div>
+        <div class="kpi-sub">Non réalisée</div>
+      </div>
+      <div class="kpi-card green" style="border-top:3px solid var(--teal3)">
+        <div class="kpi-label">Dividendes Reçus</div>
+        <div class="kpi-value" id="pk-div">— M</div>
+        <div class="kpi-sub">MAD cumulés</div>
+      </div>
+      <div class="kpi-card green" style="border-top:3px solid var(--teal3)">
+        <div class="kpi-label">MOIC Moyen</div>
+        <div class="kpi-value" id="pk-moic">—×</div>
+        <div class="kpi-sub">Multiplicateur</div>
+      </div>
+      <div class="kpi-card green" style="border-top:3px solid var(--teal3)">
+        <div class="kpi-label">TRI Moyen</div>
+        <div class="kpi-value" id="pk-tri">—%</div>
+        <div class="kpi-sub">Pondéré coût</div>
+      </div>
+      <div class="kpi-card" style="border-top:3px solid var(--teal3)">
+        <div class="kpi-label">Actifs Totaux Groupe</div>
+        <div class="kpi-value" id="pk-total">— M</div>
+        <div class="kpi-sub">Projets + Participations</div>
+      </div>
+    </div>
+
   </div>
 
   <!-- KPI STRATÉGIQUES -->
@@ -763,31 +822,6 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
     </div>
   </div>
 
-  <!-- ══ PARTICIPATIONS GROUPE ══════════════════════════ -->
-  <div>
-    <div class="s-title"><span class="s-dot" style="background:var(--teal3)"></span>Portefeuille Participations Family Office</div>
-    <div class="part-kpi-strip" style="margin-top:10px">
-      <div class="kpi-card accent"><div class="kpi-label">Total Investi</div><div class="kpi-value" id="pk-cout">— M</div><div class="kpi-sub">MAD</div></div>
-      <div class="kpi-card"><div class="kpi-label">Valeur Actuelle (NAV)</div><div class="kpi-value" id="pk-val">— M</div><div class="kpi-sub">Estimation</div></div>
-      <div class="kpi-card green"><div class="kpi-label">Plus-value Latente</div><div class="kpi-value" id="pk-pv">— M</div><div class="kpi-sub">Non réalisée</div></div>
-      <div class="kpi-card green"><div class="kpi-label">Dividendes Reçus</div><div class="kpi-value" id="pk-div">— M</div><div class="kpi-sub">MAD cumulés</div></div>
-      <div class="kpi-card green"><div class="kpi-label">MOIC Moyen</div><div class="kpi-value" id="pk-moic">—×</div><div class="kpi-sub">Multiplicateur</div></div>
-      <div class="kpi-card green"><div class="kpi-label">TRI Moyen</div><div class="kpi-value" id="pk-tri">—%</div><div class="kpi-sub">Pondéré coût</div></div>
-    </div>
-    <div class="card" style="margin-top:14px;padding:0;overflow:hidden">
-      <div style="padding:14px 20px 0"><div class="card-title"><div class="card-title-dot" style="background:var(--teal3)"></div>Détail des Participations — cliquer une ligne pour la fiche</div></div>
-      <table class="part-tbl">
-        <thead><tr>
-          <th>Société / Fonds</th><th>Type</th><th>Sect.</th>
-          <th class="n">%</th><th class="n">Coût (M)</th>
-          <th class="n">NAV (M)</th><th class="n">PV (M)</th>
-          <th class="n">Div. (M)</th><th class="n">MOIC</th>
-          <th class="n">TRI</th><th>Horizon</th><th>Statut</th>
-        </tr></thead>
-        <tbody id="tbodyPartG"></tbody>
-      </table>
-    </div>
-  </div>
 
 </main>
 
@@ -923,6 +957,9 @@ function renderAll(projects, flux, engs) {
   const tot = v=>projects.reduce((a,p)=>a+p[v],0);
   const budg = tot('budget');
   const wtd  = k=>projects.reduce((a,p)=>a+p[k]*p.budget,0)/budg;
+
+  const nbEl = document.getElementById('kpi-nb-projets');
+  if(nbEl) nbEl.textContent = projects.length + ' projet' + (projects.length>1?'s':'');
 
   document.getElementById('kpi-budget').textContent = fmtM(budg);
   document.getElementById('kpi-engage').textContent = fmtM(tot('engage'));
@@ -1210,12 +1247,17 @@ function renderParticipations(parts) {
   const moicMoy = totVal/totCout||0;
   const triMoy  = parts.reduce((a,p)=>a+p.tri*p.cout,0)/totCout||0;
 
-  document.getElementById('pk-cout').textContent = fmtM(totCout);
-  document.getElementById('pk-val').textContent  = fmtM(totVal);
-  document.getElementById('pk-pv').textContent   = fmtM(totPv);
-  document.getElementById('pk-div').textContent  = fmtM(totDiv);
-  document.getElementById('pk-moic').textContent = moicMoy.toFixed(2)+'×';
-  document.getElementById('pk-tri').textContent  = fmtP(triMoy);
+  // KPI budget projets pour calcul actifs totaux
+  const budgetProj = parseFloat(document.getElementById('kpi-budget').textContent)||0;
+
+  document.getElementById('pk-cout').textContent  = fmtM(totCout);
+  document.getElementById('pk-val').textContent   = fmtM(totVal);
+  document.getElementById('pk-pv').textContent    = fmtM(totPv);
+  document.getElementById('pk-div').textContent   = fmtM(totDiv);
+  document.getElementById('pk-moic').textContent  = moicMoy.toFixed(2)+'×';
+  document.getElementById('pk-tri').textContent   = fmtP(triMoy);
+  document.getElementById('pk-total').textContent = fmtM(budgetProj + totVal);
+  document.getElementById('kpi-nb-parts').textContent = parts.length + ' participation' + (parts.length>1?'s':'');
 
   // Couleur plus-value
   const pvEl = document.getElementById('pk-pv');
@@ -1254,8 +1296,7 @@ function renderParticipations(parts) {
       <td class="n">${fmtP(triMoy)}</td>
       <td colspan="2"></td>
     </tr>`;
-  document.getElementById('tbodyPart').innerHTML  = rowsHtml + totRow;
-  document.getElementById('tbodyPartG').innerHTML = rowsHtml + totRow;
+  document.getElementById('tbodyPart').innerHTML = rowsHtml + totRow;
 }
 
 function renderPartFiche(p) {
