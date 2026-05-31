@@ -396,6 +396,69 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 .pv-up { color:var(--grn); font-weight:700; }
 .pv-dn { color:var(--red); font-weight:700; }
 
+/* ══ BADGE LIVE / EXEMPLE ════════════════════════════ */
+.live-badge{
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:9px; font-weight:700; letter-spacing:.5px; text-transform:uppercase;
+  padding:3px 9px; border-radius:20px; flex-shrink:0;
+}
+.live-badge.live{ background:rgba(46,125,85,.12); color:var(--grn); border:1px solid rgba(46,125,85,.25); }
+.live-badge.demo{ background:rgba(196,146,10,.12); color:var(--amb); border:1px solid rgba(196,146,10,.25); }
+.live-badge::before{ content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
+
+/* ══ BOUTON RETOUR ════════════════════════════════════ */
+.back-btn{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:10px; font-weight:600; color:var(--teal); letter-spacing:.3px;
+  background:var(--teal4); border:1px solid var(--teal3); border-radius:6px;
+  padding:6px 14px; cursor:pointer; transition:all .2s; align-self:flex-start;
+}
+.back-btn:hover{ background:var(--teal3); color:#fff; }
+
+/* ══ CARTE CONSOLIDÉE GROUPE ═════════════════════════ */
+.consol-banner{
+  background:linear-gradient(135deg,var(--teal) 0%,var(--teal2) 50%,#2D6A62 100%);
+  border-radius:12px; padding:24px 28px; color:#fff;
+  display:grid; grid-template-columns:1fr auto; align-items:center;
+  box-shadow:var(--sh2); gap:20px;
+}
+.consol-title{ font-family:'Playfair Display',serif; font-size:13px; font-weight:700;
+               letter-spacing:1px; text-transform:uppercase; opacity:.7; margin-bottom:16px; }
+.consol-kpis{ display:flex; gap:36px; flex-wrap:wrap; }
+.consol-kpi-val{ font-family:'Playfair Display',serif; font-size:28px; font-weight:700; color:var(--rose2); }
+.consol-kpi-lbl{ font-size:9px; opacity:.55; text-transform:uppercase; letter-spacing:1.2px; margin-top:3px; }
+.consol-right{ display:flex; flex-direction:column; gap:8px; align-items:flex-end; }
+.consol-badge{ font-size:10px; font-weight:700; letter-spacing:.5px; padding:5px 14px;
+               border-radius:20px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2);
+               color:rgba(255,255,255,.85); }
+.consol-date{ font-size:9px; opacity:.45; }
+
+/* ══ CHART ALLOCATION ════════════════════════════════ */
+.alloc-row{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+@media(max-width:900px){ .alloc-row{ grid-template-columns:1fr!important; } }
+
+/* ══ KPI STATUS PILL ═════════════════════════════════ */
+.kpi-status{ font-size:8px; font-weight:700; letter-spacing:.5px; padding:2px 7px;
+             border-radius:10px; margin-top:4px; display:inline-block; }
+.kpi-status.bon{ background:var(--grn2); color:var(--grn); }
+.kpi-status.surv{ background:var(--amb2); color:var(--amb); }
+.kpi-status.risk{ background:var(--red2); color:var(--red); }
+
+/* ══ TABLE PROJETS AMÉLIORÉE ════════════════════════ */
+.proj-tbl{ width:100%; border-collapse:collapse; font-size:11.5px; }
+.proj-tbl thead tr{ background:var(--g1); }
+.proj-tbl th{ padding:9px 10px; text-align:left; color:var(--g4); font-weight:600;
+              font-size:9px; text-transform:uppercase; letter-spacing:1px; border-bottom:2px solid var(--teal); }
+.proj-tbl td{ padding:9px 10px; border-bottom:1px solid var(--g1); vertical-align:middle; }
+.proj-tbl tr:hover td{ background:var(--teal4); cursor:pointer; }
+.proj-tbl .n{ text-align:right; font-variant-numeric:tabular-nums; }
+.proj-tbl .nm{ font-weight:700; color:var(--teal); }
+.proj-tbl .tot td{ font-weight:700; color:var(--teal); background:rgba(30,74,68,.05)!important;
+                   border-top:1.5px solid var(--teal); }
+.tri-mini{ display:flex; align-items:center; gap:6px; }
+.tri-bar-track{ width:50px; height:5px; background:var(--g2); border-radius:3px; overflow:hidden; }
+.tri-bar-fill{ height:100%; border-radius:3px; background:var(--grn); }
+
 /* ══ FOOTER ══════════════════════════════════════════ */
 .footer{
   background:var(--teal); border-top:none;
@@ -592,6 +655,26 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 <!-- ═══ MAIN ══════════════════════════════════════════ -->
 <main class="main">
 
+  <!-- ══ BANNIÈRE CONSOLIDÉE ════════════════════════════ -->
+  <div class="consol-banner">
+    <div>
+      <div class="consol-title">T.A Invest Holding — Vision Groupe Consolidée 2026–2030</div>
+      <div class="consol-kpis">
+        <div><div class="consol-kpi-val" id="cg-total">— M</div><div class="consol-kpi-lbl">Actifs Totaux Groupe (MAD)</div></div>
+        <div><div class="consol-kpi-val" id="cg-deploy">— M</div><div class="consol-kpi-lbl">Capital Déployé</div></div>
+        <div><div class="consol-kpi-val" id="cg-pv">— M</div><div class="consol-kpi-lbl">Valeur Créée (PV latente)</div></div>
+        <div><div class="consol-kpi-val" id="cg-tri">—%</div><div class="consol-kpi-lbl">TRI Consolidé Pondéré</div></div>
+        <div><div class="consol-kpi-val" id="cg-projets">—</div><div class="consol-kpi-lbl">Projets actifs</div></div>
+        <div><div class="consol-kpi-val" id="cg-parts">—</div><div class="consol-kpi-lbl">Participations</div></div>
+      </div>
+    </div>
+    <div class="consol-right">
+      <span class="consol-badge" id="cg-status">Chargement...</span>
+      <span class="consol-date" id="cg-date">—</span>
+      <span class="live-badge demo" id="badge-global">Données exemple</span>
+    </div>
+  </div>
+
   <!-- ══ BLOC KPI GROUPE CONSOLIDÉ ══════════════════════ -->
   <div class="kpi-groupe-bloc">
 
@@ -702,15 +785,22 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 
   <!-- GRAPHIQUES -->
   <div>
-    <div class="s-title"><span class="s-dot"></span>Analyse Financière</div>
-    <div class="charts-row">
+    <div class="s-title" style="display:flex;align-items:center;justify-content:space-between">
+      <span><span class="s-dot"></span>Analyse Financière Groupe</span>
+      <span class="live-badge demo" id="badge-projets">Données exemple</span>
+    </div>
+    <div class="alloc-row">
       <div class="card">
-        <div class="card-title"><div class="card-title-dot"></div>Évolution des Flux Nets Groupe (M MAD)</div>
+        <div class="card-title"><div class="card-title-dot"></div>Flux Nets Groupe (M MAD)</div>
         <div class="chart-wrap" style="height:200px"><canvas id="chartFlux"></canvas></div>
       </div>
       <div class="card">
-        <div class="card-title"><div class="card-title-dot"></div>Répartition Budget par Secteur</div>
+        <div class="card-title"><div class="card-title-dot"></div>Budget par Secteur</div>
         <div class="chart-wrap" style="height:200px"><canvas id="chartSecteur"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-title-dot" style="background:var(--teal3)"></div>Allocation Actifs Groupe</div>
+        <div class="chart-wrap" style="height:200px"><canvas id="chartAlloc"></canvas></div>
       </div>
     </div>
   </div>
@@ -720,14 +810,21 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
     <div class="s-title"><span class="s-dot"></span>Synthèse Portefeuille Groupe</div>
     <div class="tables-row">
       <div class="card" style="padding:0;overflow:hidden">
-        <div style="padding:16px 20px 0"><div class="card-title"><div class="card-title-dot"></div>Portefeuille Projets</div></div>
-        <table class="data-table">
-          <thead><tr><th>Projet</th><th>Secteur</th><th class="num">Budget M</th><th class="num">Engagé M</th><th class="num">Reste M</th><th class="num">TRI</th><th class="num">Marge</th><th>Statut</th></tr></thead>
+        <div style="padding:14px 20px 0;display:flex;align-items:center;justify-content:space-between">
+          <div class="card-title"><div class="card-title-dot"></div>Portefeuille Projets — cliquer une ligne pour la fiche</div>
+        </div>
+        <table class="proj-tbl">
+          <thead><tr>
+            <th>Projet</th><th>Secteur</th>
+            <th class="n">Budget M</th><th class="n">Engagé M</th>
+            <th class="n">Reste M</th><th class="n">TRI</th>
+            <th class="n">Marge</th><th>Statut</th>
+          </tr></thead>
           <tbody id="tbodyPortefeuille"></tbody>
         </table>
       </div>
       <div class="card">
-        <div class="card-title"><div class="card-title-dot"></div>TRI par Projet</div>
+        <div class="card-title"><div class="card-title-dot"></div>TRI par Projet (%)</div>
         <div class="chart-wrap" style="height:260px"><canvas id="chartTri"></canvas></div>
       </div>
     </div>
@@ -827,7 +924,10 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 
 <!-- ═══ VUE PARTICIPATIONS ════════════════════════════ -->
 <div id="participationsSection" style="display:none;padding:24px 40px 40px;flex-direction:column;gap:20px">
-  <div class="s-title"><span class="s-dot" style="background:var(--teal3)"></span>Portefeuille Participations — Détail Complet</div>
+  <div class="s-title" style="display:flex;align-items:center;justify-content:space-between">
+    <span><span class="s-dot" style="background:var(--teal3)"></span>Portefeuille Participations — Détail Complet</span>
+    <span class="live-badge demo" id="badge-parts">Données exemple</span>
+  </div>
   <div class="card" style="padding:0;overflow:hidden">
     <div style="padding:16px 20px 0"><div class="card-title"><div class="card-title-dot" style="background:var(--teal3)"></div>Toutes les Participations — cliquer une ligne pour la fiche détail</div></div>
     <table class="part-tbl">
@@ -887,6 +987,7 @@ Chart.defaults.font.family = "'Inter',system-ui,sans-serif";
 Chart.defaults.borderColor = '#E0DDD8';
 Chart.defaults.backgroundColor = 'transparent';
 let cFlux, cSect, cTri;
+// cAlloc déclaré dans updateAllocChart
 
 function initCharts(projects, flux) {
   if(cFlux) cFlux.destroy();
@@ -953,49 +1054,127 @@ function badge(s){
 function engBarCls(s){return{'Engagé':'var(--grn)','En cours':'var(--amb)','Non engagé':'var(--red)','À définir':'var(--g2)'}[s]||'var(--g2)';}
 function dotCls(s){return{'Engagé':'dot-grn','En cours':'dot-gold','Non engagé':'dot-red','À définir':'dot-gry'}[s]||'dot-gry';}
 
+// ── HELPERS LIVE BADGE ────────────────────────────────
+function setLive(id, isLive) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.className = 'live-badge ' + (isLive ? 'live' : 'demo');
+  el.textContent = isLive ? 'Live Google Sheet' : 'Données exemple';
+}
+
+// ── BANNIÈRE CONSOLIDÉE ───────────────────────────────
+function renderConsolidated(projects, parts) {
+  const budg    = projects.reduce((a,p)=>a+p.budget,0);
+  const engage  = projects.reduce((a,p)=>a+p.engage,0);
+  const navPart = parts.reduce((a,p)=>a+p.val,0);
+  const pvPart  = parts.reduce((a,p)=>a+p.pv,0);
+  const triProj = budg>0 ? projects.reduce((a,p)=>a+p.tri*p.budget,0)/budg : 0;
+  const totCout = parts.reduce((a,p)=>a+p.cout,0);
+  const triPart = totCout>0 ? parts.reduce((a,p)=>a+p.tri*p.cout,0)/totCout : 0;
+  const triCons = (budg+totCout)>0 ? (triProj*budg + triPart*totCout)/(budg+totCout) : 0;
+
+  const $ = id => document.getElementById(id);
+  if($('cg-total'))   $('cg-total').textContent  = fmtM(budg + navPart);
+  if($('cg-deploy'))  $('cg-deploy').textContent = fmtM(engage + totCout);
+  if($('cg-pv'))      $('cg-pv').textContent     = fmtM(pvPart);
+  if($('cg-tri'))     $('cg-tri').textContent     = fmtP(triCons);
+  if($('cg-projets')) $('cg-projets').textContent = projects.length;
+  if($('cg-parts'))   $('cg-parts').textContent   = parts.length;
+  if($('cg-date'))    $('cg-date').textContent    = new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+  const statut = triCons >= 0.15 ? 'TRI Objectif ✓' : triCons > 0 ? 'TRI En construction' : '— En cours de saisie';
+  if($('cg-status'))  $('cg-status').textContent  = statut;
+}
+
+// ── GRAPHIQUE ALLOCATION ──────────────────────────────
+let cAlloc = null;
+function updateAllocChart(projects, parts) {
+  const budg   = projects.reduce((a,p)=>a+p.budget,0);
+  const navP   = parts.reduce((a,p)=>a+p.val,0);
+  const total  = budg + navP;
+  if(total === 0 || !document.getElementById('chartAlloc')) return;
+
+  // Répartition par secteur (projets + participations)
+  const sectors = {};
+  projects.forEach(p=>{ sectors[p.sector]=(sectors[p.sector]||0)+p.budget; });
+  parts.forEach(p=>{ sectors[p.sect]=(sectors[p.sect]||0)+p.val; });
+
+  const labels = Object.keys(sectors);
+  const values = labels.map(k=>sectors[k]);
+  const colors = ['#1E4A44','#2D6A62','#4A8C84','#C49878','#D4AA8A','#7B4A00','#4A90D9'];
+
+  if(cAlloc) cAlloc.destroy();
+  cAlloc = new Chart(document.getElementById('chartAlloc'),{
+    type:'doughnut',
+    data:{
+      labels,
+      datasets:[{data:values,backgroundColor:colors.slice(0,labels.length),
+                 borderWidth:2,borderColor:'#fff'}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,cutout:'55%',
+      plugins:{
+        legend:{position:'bottom',labels:{font:{size:10},padding:8,boxWidth:10}},
+        tooltip:{callbacks:{label:c=>`${c.label}: ${fmtM(c.parsed)} (${Math.round(c.parsed/total*100)}%)`}}
+      }
+    }
+  });
+}
+
+
 function renderAll(projects, flux, engs) {
-  const tot = v=>projects.reduce((a,p)=>a+p[v],0);
+  const tot  = v => projects.reduce((a,p)=>a+p[v],0);
   const budg = tot('budget');
-  const wtd  = k=>projects.reduce((a,p)=>a+p[k]*p.budget,0)/budg;
+  const wtd  = k => budg>0 ? projects.reduce((a,p)=>a+p[k]*p.budget,0)/budg : 0;
+  const txEng = budg>0 ? tot('engage')/budg : 0;
 
-  const nbEl = document.getElementById('kpi-nb-projets');
-  if(nbEl) nbEl.textContent = projects.length + ' projet' + (projects.length>1?'s':'');
+  const $ = id => document.getElementById(id);
+  if($('kpi-nb-projets')) $('kpi-nb-projets').textContent = projects.length + ' projet' + (projects.length>1?'s':'');
+  $('kpi-budget').textContent = fmtM(budg);
+  $('kpi-engage').textContent = fmtM(tot('engage'));
+  $('kpi-reste').textContent  = fmtM(tot('reste'));
+  $('kpi-besoin').textContent = fmtM(tot('besoin'));
+  $('kpi-tri').textContent    = fmtP(wtd('tri'));
+  $('kpi-marge').textContent  = fmtP(wtd('marge'));
+  if($('p-tri'))   $('p-tri').textContent   = fmtP(wtd('tri'));
+  if($('p-marge')) $('p-marge').textContent = fmtP(wtd('marge'));
+  if($('p-txeng')) $('p-txeng').textContent = fmtP(txEng);
+  if($('ekpi-txeng')) $('ekpi-txeng').textContent = fmtP(txEng);
+  $('dateLabel').textContent = new Date().toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
 
-  document.getElementById('kpi-budget').textContent = fmtM(budg);
-  document.getElementById('kpi-engage').textContent = fmtM(tot('engage'));
-  document.getElementById('kpi-reste').textContent  = fmtM(tot('reste'));
-  document.getElementById('kpi-besoin').textContent = fmtM(tot('besoin'));
-  document.getElementById('kpi-tri').textContent    = fmtP(wtd('tri'));
-  document.getElementById('kpi-marge').textContent  = fmtP(wtd('marge'));
-  document.getElementById('p-tri').textContent      = fmtP(wtd('tri'));
-  document.getElementById('p-marge').textContent    = fmtP(wtd('marge'));
-  document.getElementById('p-txeng').textContent    = fmtP(tot('engage')/budg);
-  if(document.getElementById('ekpi-txeng')) document.getElementById('ekpi-txeng').textContent = fmtP(tot('engage')/budg);
-  document.getElementById('dateLabel').textContent  =
-    new Date().toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+  // Pilotage bars dynamiques
+  const triPct   = Math.min(100, wtd('tri')*500);
+  const margePct = Math.min(100, wtd('marge')*400);
+  const engPct   = Math.min(100, txEng*300);
+  document.querySelectorAll('.pil-bar').forEach((bar,i)=>{
+    const pcts = [triPct, margePct, 70, 65, engPct, 92, 100, 60];
+    if(pcts[i]!==undefined) bar.style.width = pcts[i]+'%';
+  });
 
-  const tb = document.getElementById('tbodyPortefeuille');
-  tb.innerHTML = projects.map(p=>`
-    <tr>
-      <td style="font-weight:600;color:var(--teal)">${p.name}</td>
-      <td style="color:var(--g4)">${p.sector}</td>
-      <td class="num">${fmtM(p.budget)}</td>
-      <td class="num">${fmtM(p.engage)}</td>
-      <td class="num">${fmtM(p.reste)}</td>
-      <td class="num" style="font-weight:700;color:var(--grn)">${fmtP(p.tri)}</td>
-      <td class="num">${fmtP(p.marge)}</td>
+  // Table projets cliquable
+  const tb = $('tbodyPortefeuille');
+  const triMax = Math.max(...projects.map(p=>p.tri), 0.01);
+  tb.innerHTML = projects.map((p,i)=>{
+    const triW = Math.round((p.tri/triMax)*100);
+    const triCol = p.tri>=0.15?'var(--grn)':p.tri>=0.12?'var(--amb)':'var(--red)';
+    return `<tr onclick="switchTab('projet',document.querySelector('.tab-proj[data-proj=\\'${i}\\']'),${i})" style="cursor:pointer">
+      <td class="nm">${p.name}</td>
+      <td style="color:var(--g4);font-size:11px">${p.sector}</td>
+      <td class="n">${fmtM(p.budget)}</td>
+      <td class="n">${fmtM(p.engage)}</td>
+      <td class="n">${fmtM(p.reste)}</td>
+      <td class="n"><div class="tri-mini"><div class="tri-bar-track"><div class="tri-bar-fill" style="width:${triW}%;background:${triCol}"></div></div><span style="color:${triCol};font-weight:700">${fmtP(p.tri)}</span></div></td>
+      <td class="n">${fmtP(p.marge)}</td>
       <td>${badge(p.statut)}</td>
-    </tr>`).join('')+`
-    <tr class="total-row">
-      <td colspan="2">TOTAL GROUPE</td>
-      <td class="num">${fmtM(budg)}</td>
-      <td class="num">${fmtM(tot('engage'))}</td>
-      <td class="num">${fmtM(tot('reste'))}</td>
-      <td class="num">${fmtP(wtd('tri'))}</td>
-      <td class="num">${fmtP(wtd('marge'))}</td>
-      <td></td>
     </tr>`;
+  }).join('')+`<tr class="tot"><td colspan="2" style="font-weight:700;color:var(--teal);background:rgba(30,74,68,.05);border-top:1.5px solid var(--teal);padding:9px 10px">TOTAL GROUPE</td>
+    <td class="n" style="font-weight:700;background:rgba(30,74,68,.05);border-top:1.5px solid var(--teal);padding:9px 10px">${fmtM(budg)}</td>
+    <td class="n" style="font-weight:700;background:rgba(30,74,68,.05);border-top:1.5px solid var(--teal);padding:9px 10px">${fmtM(tot('engage'))}</td>
+    <td class="n" style="font-weight:700;background:rgba(30,74,68,.05);border-top:1.5px solid var(--teal);padding:9px 10px">${fmtM(tot('reste'))}</td>
+    <td class="n" style="font-weight:700;background:rgba(30,74,68,.05);border-top:1.5px solid var(--teal);padding:9px 10px">${fmtP(wtd('tri'))}</td>
+    <td class="n" style="font-weight:700;background:rgba(30,74,68,.05);border-top:1.5px solid var(--teal);padding:9px 10px">${fmtP(wtd('marge'))}</td>
+    <td style="background:rgba(30,74,68,.05);border-top:1.5px solid var(--teal)"></td></tr>`;
 
+  renderConsolidated(projects, currentParticipations);
   renderEngagements(engs);
   buildTabs(projects);
   initCharts(projects, flux);
@@ -1124,6 +1303,8 @@ async function fetchSheet(url) {
   if(p.length>0){
     renderAll(p, computeFlux(p), currentEngs);
     lastUpdated = new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    setLive('badge-projets', true);
+    setLive('badge-global', true);
   }
 }
 
@@ -1277,7 +1458,15 @@ async function fetchParticipations() {
       statut: r[11]||'—',
     });
   }
-  if(parts.length>0){ currentParticipations=parts; renderParticipations(parts); buildTabs(allProjects, parts); }
+  if(parts.length>0){
+    currentParticipations=parts;
+    renderParticipations(parts);
+    buildTabs(allProjects, parts);
+    setLive('badge-parts', true);
+    setLive('badge-global', true);
+    renderConsolidated(allProjects, parts);
+    updateAllocChart(allProjects, parts);
+  }
 }
 
 function renderParticipations(parts) {
@@ -1338,12 +1527,15 @@ function renderParticipations(parts) {
       <td colspan="2"></td>
     </tr>`;
   document.getElementById('tbodyPart').innerHTML = rowsHtml + totRow;
+  renderConsolidated(allProjects, parts);
+  updateAllocChart(allProjects, parts);
 }
 
 function renderPartFiche(p) {
   const pv = document.getElementById('partView');
   const pvCls = p.pv>=0?'pv-up':'pv-dn';
   pv.innerHTML = `
+  <button class="back-btn" onclick="switchTab('partlist',document.getElementById('tabPartList'))">← Retour Participations</button>
   <div class="part-fiche-hdr">
     <div>
       <h2>${p.nom}</h2>
@@ -1508,6 +1700,7 @@ function renderProjectFiche(p, idx) {
   ];
 
   pv.innerHTML = `
+  <button class="back-btn" onclick="switchTab('groupe',document.getElementById('tabGroupe'))">← Vue Globale</button>
   <!-- HEADER PROJET -->
   <div class="proj-header">
     <div class="proj-header-left">
