@@ -563,14 +563,17 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 <!-- ═══ NAV PRINCIPALE ════════════════════════════════ -->
 <nav class="tab-nav-main">
   <button class="tab-btn tab-main active" id="tabGroupe" onclick="switchTab('groupe',this)">
-    <span class="tab-dot"></span>Vue Groupe
+    <span class="tab-dot"></span>Vue Globale
+  </button>
+  <button class="tab-btn tab-main" id="tabProjets" onclick="switchTab('projets',this)">
+    <span class="tab-dot" style="background:var(--rose)"></span>Projets
   </button>
   <button class="tab-btn tab-main" id="tabPartList" onclick="switchTab('partlist',this)">
-    <span class="tab-dot" style="background:var(--teal3)"></span>📊 Participations
+    <span class="tab-dot" style="background:var(--teal3)"></span>Participations
   </button>
 </nav>
-<!-- ═══ NAV PROJETS ═══════════════════════════════════ -->
-<nav class="tab-nav-proj" id="tabNav"></nav>
+<!-- sous-nav projets — visible uniquement dans l'onglet Projets -->
+<nav class="tab-nav-proj" id="tabNav" style="display:none"></nav>
 
 <!-- ═══ FICHE PROJET ══════════════════════════════════ -->
 <div id="projectView" style="padding:24px 40px 40px;display:flex;flex-direction:column;gap:24px"></div>
@@ -1328,39 +1331,65 @@ function buildTabs(projects, parts) {
 }
 
 function switchTab(type, btn, idx) {
-  // Retirer actif sur les boutons du même groupe
-  if(btn){
-    const isMain = btn.classList.contains('tab-main');
-    if(isMain) document.querySelectorAll('.tab-main').forEach(b=>b.classList.remove('active'));
-    else        document.querySelectorAll('.tab-proj').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-  }
   const main     = document.querySelector('.main');
   const projView = document.getElementById('projectView');
   const partView = document.getElementById('partView');
   const partList = document.getElementById('participationsSection');
+  const subNav   = document.getElementById('tabNav');
   const bc       = document.getElementById('bcLabel');
 
+  // Masquer tout
   main.style.display     = 'none';
   projView.style.display = 'none';
   partView.style.display = 'none';
   partList.style.display = 'none';
+  subNav.style.display   = 'none';
 
   if (type === 'groupe') {
-    main.style.display = 'flex';
-    bc.textContent = 'Tableau de Bord Groupe';
-    document.querySelectorAll('.tab-proj').forEach(b=>b.classList.remove('active'));
-  } else if (type === 'partlist') {
-    partList.style.display = 'flex';
-    bc.textContent = 'Portefeuille Participations';
-    document.querySelectorAll('.tab-proj').forEach(b=>b.classList.remove('active'));
-  } else if (type === 'projet') {
-    projView.style.display = 'flex';
     document.querySelectorAll('.tab-main').forEach(b=>b.classList.remove('active'));
+    document.getElementById('tabGroupe').classList.add('active');
+    document.querySelectorAll('.tab-proj').forEach(b=>b.classList.remove('active'));
+    main.style.display = 'flex';
+    bc.textContent = 'Vue Globale — T.A Invest Holding';
+
+  } else if (type === 'projets') {
+    document.querySelectorAll('.tab-main').forEach(b=>b.classList.remove('active'));
+    document.getElementById('tabProjets').classList.add('active');
+    subNav.style.display = 'flex';
+    // Ouvrir le premier projet par défaut si aucun actif
+    const firstActive = subNav.querySelector('.tab-proj.active');
+    if (!firstActive && allProjects.length > 0) {
+      const firstBtn = subNav.querySelector('.tab-proj');
+      if (firstBtn) { firstBtn.classList.add('active'); }
+      renderProjectFiche(allProjects[0], 0);
+      bc.textContent = allProjects[0].name;
+    } else {
+      projView.style.display = 'flex';
+      if(firstActive) bc.textContent = allProjects[parseInt(firstActive.dataset.proj)].name;
+    }
+    projView.style.display = 'flex';
+
+  } else if (type === 'projet') {
+    document.querySelectorAll('.tab-main').forEach(b=>b.classList.remove('active'));
+    document.getElementById('tabProjets').classList.add('active');
+    document.querySelectorAll('.tab-proj').forEach(b=>b.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+    subNav.style.display   = 'flex';
+    projView.style.display = 'flex';
     const p = allProjects[idx];
     bc.textContent = p.name;
     renderProjectFiche(p, idx);
+
+  } else if (type === 'partlist') {
+    document.querySelectorAll('.tab-main').forEach(b=>b.classList.remove('active'));
+    document.getElementById('tabPartList').classList.add('active');
+    document.querySelectorAll('.tab-proj').forEach(b=>b.classList.remove('active'));
+    partList.style.display = 'flex';
+    bc.textContent = 'Portefeuille Participations';
+
   } else if (type === 'part') {
+    document.querySelectorAll('.tab-main').forEach(b=>b.classList.remove('active'));
+    document.getElementById('tabPartList').classList.add('active');
     partView.style.display = 'flex';
     const p = currentParticipations[idx];
     bc.textContent = p.nom;
