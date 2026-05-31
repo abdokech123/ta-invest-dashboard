@@ -537,6 +537,11 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
   <button class="tab-btn active" onclick="switchTab('groupe',this)">
     <span class="tab-dot"></span>Vue Groupe
   </button>
+  <span class="tab-sep"></span>
+  <button class="tab-btn" id="tabPartList" onclick="switchTab('partlist',this)">
+    <span class="tab-dot" style="background:var(--teal3)"></span>📊 Participations
+  </button>
+  <span class="tab-sep"></span>
 </nav>
 
 <!-- ═══ FICHE PROJET ══════════════════════════════════ -->
@@ -728,63 +733,64 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
   </div>
 
 
-  <!-- ══ PARTICIPATIONS GROUPE ══════════════════════════ -->
-  <div id="participationsSection">
-    <div class="s-title"><span class="s-dot" style="background:var(--teal3)"></span>Portefeuille Participations Family Office</div>
 
-    <!-- KPI Participations -->
-    <div class="part-kpi-strip" id="partKpiStrip">
-      <div class="kpi-card accent">
-        <div class="kpi-label">Total Investi</div>
-        <div class="kpi-value" id="pk-cout">— M</div>
-        <div class="kpi-sub">MAD — Coût d'acquisition</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Valeur Actuelle</div>
-        <div class="kpi-value" id="pk-val">— M</div>
-        <div class="kpi-sub">NAV estimée</div>
-      </div>
-      <div class="kpi-card green">
-        <div class="kpi-label">Plus-value Latente</div>
-        <div class="kpi-value" id="pk-pv">— M</div>
-        <div class="kpi-sub">MAD non réalisée</div>
-      </div>
-      <div class="kpi-card green">
-        <div class="kpi-label">Dividendes Reçus</div>
-        <div class="kpi-value" id="pk-div">— M</div>
-        <div class="kpi-sub">MAD cumulés</div>
-      </div>
-      <div class="kpi-card green">
-        <div class="kpi-label">MOIC Moyen</div>
-        <div class="kpi-value" id="pk-moic">—×</div>
-        <div class="kpi-sub">Multiplicateur moyen</div>
-      </div>
-      <div class="kpi-card green">
-        <div class="kpi-label">TRI Moyen</div>
-        <div class="kpi-value" id="pk-tri">—%</div>
-        <div class="kpi-sub">Pondéré par coût</div>
-      </div>
+</main>
+
+<!-- ═══ VUE PARTICIPATIONS ════════════════════════════ -->
+<div id="participationsSection" style="display:none;padding:24px 40px 40px;flex-direction:column;gap:24px">
+  <div class="s-title"><span class="s-dot" style="background:var(--teal3)"></span>Portefeuille Participations Family Office</div>
+
+  <!-- KPI Participations -->
+  <div class="part-kpi-strip" id="partKpiStrip">
+    <div class="kpi-card accent">
+      <div class="kpi-label">Total Investi</div>
+      <div class="kpi-value" id="pk-cout">— M</div>
+      <div class="kpi-sub">MAD — Coût d'acquisition</div>
     </div>
-
-    <!-- Table participations -->
-    <div class="card" style="margin-top:14px;padding:0;overflow:hidden">
-      <div style="padding:16px 20px 0"><div class="card-title"><div class="card-title-dot" style="background:var(--teal3)"></div>Détail des Participations</div></div>
-      <table class="part-tbl">
-        <thead>
-          <tr>
-            <th>Société / Fonds</th><th>Type</th><th>Secteur</th>
-            <th class="n">% Déten.</th><th class="n">Coût (MAD)</th>
-            <th class="n">Valeur Act. (MAD)</th><th class="n">Plus-value (MAD)</th>
-            <th class="n">Dividendes (MAD)</th><th class="n">MOIC</th>
-            <th class="n">TRI</th><th>Horizon</th><th>Statut</th>
-          </tr>
-        </thead>
-        <tbody id="tbodyPart"></tbody>
-      </table>
+    <div class="kpi-card">
+      <div class="kpi-label">Valeur Actuelle</div>
+      <div class="kpi-value" id="pk-val">— M</div>
+      <div class="kpi-sub">NAV estimée</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Plus-value Latente</div>
+      <div class="kpi-value" id="pk-pv">— M</div>
+      <div class="kpi-sub">MAD non réalisée</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Dividendes Reçus</div>
+      <div class="kpi-value" id="pk-div">— M</div>
+      <div class="kpi-sub">MAD cumulés</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">MOIC Moyen</div>
+      <div class="kpi-value" id="pk-moic">—×</div>
+      <div class="kpi-sub">Multiplicateur moyen</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">TRI Moyen</div>
+      <div class="kpi-value" id="pk-tri">—%</div>
+      <div class="kpi-sub">Pondéré par coût</div>
     </div>
   </div>
 
-</main>
+  <!-- Table participations -->
+  <div class="card" style="padding:0;overflow:hidden">
+    <div style="padding:16px 20px 0"><div class="card-title"><div class="card-title-dot" style="background:var(--teal3)"></div>Détail des Participations</div></div>
+    <table class="part-tbl">
+      <thead>
+        <tr>
+          <th>Société / Fonds</th><th>Type</th><th>Secteur</th>
+          <th class="n">% Déten.</th><th class="n">Coût (M MAD)</th>
+          <th class="n">Valeur Act. (M MAD)</th><th class="n">Plus-value (M MAD)</th>
+          <th class="n">Dividendes (M MAD)</th><th class="n">MOIC</th>
+          <th class="n">TRI</th><th>Horizon</th><th>Statut</th>
+        </tr>
+      </thead>
+      <tbody id="tbodyPart"></tbody>
+    </table>
+  </div>
+</div>
 
 <!-- ═══ FOOTER ════════════════════════════════════════ -->
 <footer class="footer">
@@ -1135,11 +1141,11 @@ function exportPDF() {
 const GS_PARTICIPATIONS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?gid=1856476348&single=true&output=csv';
 
 const DEFAULT_PARTICIPATIONS = [
-  {nom:'ABC Holding SA',          type:'Participation opérationnelle',sect:'Immobilier', pct:0.25,cout:15000000,val:22000000, pv:7000000,  div:1200000,moic:1.55,tri:0.18,horizon:'2028',statut:'Actif'},
-  {nom:'XYZ Renewable Fund',      type:'Fonds PE / OPCI',             sect:'Énergie',    pct:0.10,cout:8000000, val:10500000, pv:2500000,  div:500000, moic:1.38,tri:0.15,horizon:'2027',statut:'Actif'},
-  {nom:'Immo Club Deal Marrakech',type:'Club Deal immobilier',         sect:'Immobilier', pct:0.33,cout:5000000, val:6200000,  pv:1200000,  div:200000, moic:1.28,tri:0.14,horizon:'2026',statut:'En cours de cession'},
-  {nom:'DEF Industrie SARL',      type:'Participation opérationnelle',sect:'Industrie',  pct:0.40,cout:12000000,val:14000000, pv:2000000,  div:800000, moic:1.23,tri:0.12,horizon:'2029',statut:'Actif'},
-  {nom:'Obligations Privées GHI', type:'Dette privée / Obligations',  sect:'Services',   pct:1.00,cout:6000000, val:6300000,  pv:300000,   div:420000, moic:1.12,tri:0.07,horizon:'2027',statut:'Actif'},
+  {nom:'ABC Holding SA',          type:'Participation opérationnelle',sect:'Immobilier', pct:0.25,cout:15,val:22,  pv:7,   div:1.2, moic:1.55,tri:0.18,horizon:'2028',statut:'Actif'},
+  {nom:'XYZ Renewable Fund',      type:'Fonds PE / OPCI',             sect:'Énergie',    pct:0.10,cout:8, val:10.5,pv:2.5, div:0.5, moic:1.38,tri:0.15,horizon:'2027',statut:'Actif'},
+  {nom:'Immo Club Deal Marrakech',type:'Club Deal immobilier',         sect:'Immobilier', pct:0.33,cout:5, val:6.2, pv:1.2, div:0.2, moic:1.28,tri:0.14,horizon:'2026',statut:'En cours de cession'},
+  {nom:'DEF Industrie SARL',      type:'Participation opérationnelle',sect:'Industrie',  pct:0.40,cout:12,val:14,  pv:2,   div:0.8, moic:1.23,tri:0.12,horizon:'2029',statut:'Actif'},
+  {nom:'Obligations Privées GHI', type:'Dette privée / Obligations',  sect:'Services',   pct:1.00,cout:6, val:6.3, pv:0.3, div:0.42,moic:1.12,tri:0.07,horizon:'2027',statut:'Actif'},
 ];
 let currentParticipations = DEFAULT_PARTICIPATIONS;
 
@@ -1158,15 +1164,16 @@ async function fetchParticipations() {
     if(!r[0]||r[0].toUpperCase().includes('TOTAL')||r[0]==='') continue;
     const cout = parseFloat(String(r[4]).replace(/[\s,]/g,''))||0;
     if(cout===0) continue;
+    const toM = v => parseFloat(String(v).replace(/[\s,]/g,''))/1e6||0;
     parts.push({
       nom:    r[0]||'—',
       type:   r[1]||'—',
       sect:   r[2]||'—',
       pct:    parseFloat(String(r[3]).replace(/[%\s,]/g,''))/100||0,
-      cout:   cout,
-      val:    parseFloat(String(r[5]).replace(/[\s,]/g,''))||0,
-      pv:     parseFloat(String(r[6]).replace(/[\s,]/g,''))||0,
-      div:    parseFloat(String(r[7]).replace(/[\s,]/g,''))||0,
+      cout:   cout/1e6,
+      val:    toM(r[5]),
+      pv:     toM(r[6]),
+      div:    toM(r[7]),
       moic:   parseFloat(String(r[8]).replace(/[\s,]/g,''))||0,
       tri:    parseFloat(String(r[9]).replace(/[%\s,]/g,''))/100||0,
       horizon:r[10]||'—',
@@ -1288,8 +1295,9 @@ function buildTabs(projects, parts) {
   allProjects = projects;
   if(parts) currentParticipations = parts;
   const nav = document.getElementById('tabNav');
-  // Supprimer anciens onglets projets + séparateur + onglets participations
-  [...nav.querySelectorAll('.tab-btn[data-proj], .tab-btn[data-part], .tab-sep')].forEach(b => b.remove());
+  [...nav.querySelectorAll('.tab-btn[data-proj]')].forEach(b => b.remove());
+  // Insérer les onglets projets avant le séparateur #tabPartList
+  const tabPart = document.getElementById('tabPartList');
   projects.forEach((p, i) => {
     const btn = document.createElement('button');
     btn.className = 'tab-btn';
@@ -1300,20 +1308,7 @@ function buildTabs(projects, parts) {
     }[p.sector] || '📁';
     btn.innerHTML = `<span class="tab-dot"></span>${sectorIcon} ${p.name.split('–')[0].trim().split(' ').slice(0,3).join(' ')}`;
     btn.onclick = function(){ switchTab('projet', this, i); };
-    nav.appendChild(btn);
-  });
-  // Séparateur + onglets participations
-  const sep = document.createElement('span');
-  sep.className = 'tab-sep';
-  sep.textContent = '|';
-  nav.appendChild(sep);
-  currentParticipations.forEach((p, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'tab-btn';
-    btn.setAttribute('data-part', i);
-    btn.innerHTML = `<span class="tab-dot" style="background:var(--teal3)"></span>📊 ${p.nom.split(' ').slice(0,3).join(' ')}`;
-    btn.onclick = function(){ switchTab('part', this, i); };
-    nav.appendChild(btn);
+    nav.insertBefore(btn, tabPart.previousElementSibling);
   });
 }
 
@@ -1323,15 +1318,20 @@ function switchTab(type, btn, idx) {
   const main     = document.querySelector('.main');
   const projView = document.getElementById('projectView');
   const partView = document.getElementById('partView');
+  const partList = document.getElementById('participationsSection');
   const bc       = document.getElementById('bcLabel');
 
   main.style.display     = 'none';
   projView.style.display = 'none';
   partView.style.display = 'none';
+  partList.style.display = 'none';
 
   if (type === 'groupe') {
     main.style.display = 'flex';
     bc.textContent = 'Tableau de Bord Groupe';
+  } else if (type === 'partlist') {
+    partList.style.display = 'flex';
+    bc.textContent = 'Portefeuille Participations';
   } else if (type === 'projet') {
     projView.style.display = 'flex';
     const p = allProjects[idx];
