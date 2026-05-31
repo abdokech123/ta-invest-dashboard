@@ -760,16 +760,9 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
     </div>
   </div>
 
-  <!-- ══ SYNTHÈSE PARTICIPATIONS ════════════════════════ -->
+  <!-- ══ PARTICIPATIONS GROUPE ══════════════════════════ -->
   <div>
-    <div class="s-title" style="display:flex;align-items:center;justify-content:space-between">
-      <span><span class="s-dot" style="background:var(--teal3)"></span>Participations — Synthèse Groupe</span>
-      <button onclick="switchTab('partlist',document.getElementById('tabPartList'))"
-        style="font-size:10px;font-weight:600;color:var(--teal);background:none;border:1px solid var(--teal3);
-               border-radius:4px;padding:4px 12px;cursor:pointer;letter-spacing:.3px">
-        Détail complet →
-      </button>
-    </div>
+    <div class="s-title"><span class="s-dot" style="background:var(--teal3)"></span>Portefeuille Participations Family Office</div>
     <div class="part-kpi-strip" style="margin-top:10px">
       <div class="kpi-card accent"><div class="kpi-label">Total Investi</div><div class="kpi-value" id="pk-cout">— M</div><div class="kpi-sub">MAD</div></div>
       <div class="kpi-card"><div class="kpi-label">Valeur Actuelle (NAV)</div><div class="kpi-value" id="pk-val">— M</div><div class="kpi-sub">Estimation</div></div>
@@ -777,6 +770,19 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
       <div class="kpi-card green"><div class="kpi-label">Dividendes Reçus</div><div class="kpi-value" id="pk-div">— M</div><div class="kpi-sub">MAD cumulés</div></div>
       <div class="kpi-card green"><div class="kpi-label">MOIC Moyen</div><div class="kpi-value" id="pk-moic">—×</div><div class="kpi-sub">Multiplicateur</div></div>
       <div class="kpi-card green"><div class="kpi-label">TRI Moyen</div><div class="kpi-value" id="pk-tri">—%</div><div class="kpi-sub">Pondéré coût</div></div>
+    </div>
+    <div class="card" style="margin-top:14px;padding:0;overflow:hidden">
+      <div style="padding:14px 20px 0"><div class="card-title"><div class="card-title-dot" style="background:var(--teal3)"></div>Détail des Participations — cliquer une ligne pour la fiche</div></div>
+      <table class="part-tbl">
+        <thead><tr>
+          <th>Société / Fonds</th><th>Type</th><th>Sect.</th>
+          <th class="n">%</th><th class="n">Coût (M)</th>
+          <th class="n">NAV (M)</th><th class="n">PV (M)</th>
+          <th class="n">Div. (M)</th><th class="n">MOIC</th>
+          <th class="n">TRI</th><th>Horizon</th><th>Statut</th>
+        </tr></thead>
+        <tbody id="tbodyPartG"></tbody>
+      </table>
     </div>
   </div>
 
@@ -1219,7 +1225,7 @@ function renderParticipations(parts) {
     'Sorti':                'badge-gry',
     'En discussion':        'badge-gold',
   };
-  document.getElementById('tbodyPart').innerHTML = parts.map((p,i)=>`
+  const rowsHtml = parts.map((p,i)=>`
     <tr style="cursor:pointer" onclick="switchTab('part',null,${i})">
       <td class="nm">${p.nom}</td>
       <td><span class="type-badge">${p.type.split('/')[0].trim()}</span></td>
@@ -1233,7 +1239,8 @@ function renderParticipations(parts) {
       <td class="n" style="color:var(--grn);font-weight:700">${fmtP(p.tri)}</td>
       <td style="color:var(--g4);font-size:10px">${p.horizon}</td>
       <td><span class="badge ${statutCls[p.statut]||'badge-gry'}">${p.statut}</span></td>
-    </tr>`).join('')+`
+    </tr>`).join('');
+  const totRow = `
     <tr class="part-tot">
       <td colspan="4">TOTAL PARTICIPATIONS</td>
       <td class="n">${fmtM(totCout)}</td>
@@ -1244,6 +1251,8 @@ function renderParticipations(parts) {
       <td class="n">${fmtP(triMoy)}</td>
       <td colspan="2"></td>
     </tr>`;
+  document.getElementById('tbodyPart').innerHTML  = rowsHtml + totRow;
+  document.getElementById('tbodyPartG').innerHTML = rowsHtml + totRow;
 }
 
 function renderPartFiche(p) {
