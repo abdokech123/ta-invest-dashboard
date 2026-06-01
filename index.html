@@ -370,6 +370,16 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 .type-badge{ display:inline-block; padding:2px 8px; border-radius:3px; font-size:9px; font-weight:700; letter-spacing:.3px;
              background:var(--teal4); color:var(--teal); }
 .tab-sep{ width:1px; height:20px; background:var(--g3); margin:0 6px; flex-shrink:0; align-self:center; }
+/* ══ COMMERCIAL ══════════════════════════════════════ */
+.unit-filter-btn{
+  padding:4px 12px; font-size:10px; font-weight:600;
+  border:1px solid var(--g2); background:var(--white);
+  border-radius:20px; cursor:pointer; color:var(--g4);
+  letter-spacing:.3px; transition:all .2s;
+}
+.unit-filter-btn:hover{ border-color:var(--amb); color:var(--amb); }
+.unit-filter-btn.active{ background:var(--amb); color:#fff; border-color:var(--amb); }
+
 /* ══ RESPONSIVE ══════════════════════════════════════ */
 @media(max-width:900px){
   .tab-nav-main,.tab-nav-proj{ padding-left:12px; padding-right:12px; }
@@ -641,6 +651,9 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
   </button>
   <button class="tab-btn tab-main" id="tabPartList" onclick="switchTab('partlist',this)">
     <span class="tab-dot" style="background:var(--teal3)"></span>Participations
+  </button>
+  <button class="tab-btn tab-main" id="tabCommercial" onclick="switchTab('commercial',this)">
+    <span class="tab-dot" style="background:var(--amb)"></span>Suivi Commercial
   </button>
 </nav>
 <!-- sous-nav projets — visible uniquement dans l'onglet Projets -->
@@ -921,6 +934,115 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 
 
 </main>
+
+<!-- ═══ VUE COMMERCIAL ════════════════════════════════ -->
+<div id="commercialView" style="display:none;padding:24px 40px 40px;flex-direction:column;gap:24px">
+
+  <!-- HEADER -->
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div class="s-title"><span class="s-dot" style="background:var(--amb)"></span>Suivi Commercial Groupe</div>
+    <span class="live-badge demo" id="badge-commercial">Données exemple</span>
+  </div>
+
+  <!-- KPI COMMERCIAUX -->
+  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px">
+    <div class="kpi-card accent" style="border-top:3px solid var(--amb)">
+      <div class="kpi-label">CA Signé</div>
+      <div class="kpi-value" id="com-ca-signe">— M</div>
+      <div class="kpi-sub">MAD — Actes + Compromis</div>
+    </div>
+    <div class="kpi-card" style="border-top:3px solid var(--amb)">
+      <div class="kpi-label">CA Prévisionnel</div>
+      <div class="kpi-value" id="com-ca-prev">— M</div>
+      <div class="kpi-sub">MAD — Total portefeuille</div>
+    </div>
+    <div class="kpi-card green" style="border-top:3px solid var(--grn)">
+      <div class="kpi-label">Unités Vendues</div>
+      <div class="kpi-value" id="com-vendu">—</div>
+      <div class="kpi-sub">Actes signés</div>
+    </div>
+    <div class="kpi-card" style="border-top:3px solid var(--amb)">
+      <div class="kpi-label">En Négociation</div>
+      <div class="kpi-value" id="com-nego">—</div>
+      <div class="kpi-sub">Compromis + Options</div>
+    </div>
+    <div class="kpi-card" style="border-top:3px solid var(--g3)">
+      <div class="kpi-label">Disponibles</div>
+      <div class="kpi-value" id="com-dispo">—</div>
+      <div class="kpi-sub">Unités à vendre</div>
+    </div>
+    <div class="kpi-card green" style="border-top:3px solid var(--grn)">
+      <div class="kpi-label">Taux de Vente</div>
+      <div class="kpi-value" id="com-taux">—%</div>
+      <div class="kpi-sub">Vendues / Total</div>
+    </div>
+  </div>
+
+  <!-- PIPELINE + GRAPHIQUE -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+    <!-- Entonnoir commercial -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot" style="background:var(--amb)"></div>Pipeline Commercial</div>
+      <div id="pipelineList" style="display:flex;flex-direction:column;gap:8px;margin-top:8px"></div>
+    </div>
+
+    <!-- Graphique ventes -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-dot" style="background:var(--amb)"></div>Évolution des Ventes (M MAD)</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="chartVentes"></canvas></div>
+    </div>
+  </div>
+
+  <!-- TABLEAU UNITÉS -->
+  <div class="card" style="padding:0;overflow:hidden">
+    <div style="padding:16px 20px 0;display:flex;align-items:center;justify-content:space-between">
+      <div class="card-title"><div class="card-title-dot" style="background:var(--amb)"></div>Suivi des Unités par Projet</div>
+      <div style="display:flex;gap:8px" id="unitFilterBtns">
+        <button onclick="filterUnites('all',this)" class="unit-filter-btn active">Toutes</button>
+        <button onclick="filterUnites('Disponible',this)" class="unit-filter-btn">Disponibles</button>
+        <button onclick="filterUnites('Option',this)" class="unit-filter-btn">En Option</button>
+        <button onclick="filterUnites('Compromis',this)" class="unit-filter-btn">Compromis</button>
+        <button onclick="filterUnites('Vendu',this)" class="unit-filter-btn">Vendus</button>
+      </div>
+    </div>
+    <table class="part-tbl" id="unitesTable">
+      <thead><tr>
+        <th>Projet</th><th>Référence</th><th>Type</th>
+        <th class="n">Surface (m²)</th><th class="n">Prix (M MAD)</th>
+        <th>Client</th><th>Date</th><th>Statut</th>
+      </tr></thead>
+      <tbody id="tbodyUnites"></tbody>
+    </table>
+  </div>
+
+  <!-- PROSPECTS + ÉCHÉANCIER -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+    <!-- Prospects actifs -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:16px 20px 0"><div class="card-title"><div class="card-title-dot" style="background:var(--amb)"></div>Prospects Actifs</div></div>
+      <table class="part-tbl">
+        <thead><tr>
+          <th>Prospect</th><th>Projet</th><th class="n">Budget (M)</th><th>Statut</th><th>Dernière action</th>
+        </tr></thead>
+        <tbody id="tbodyProspects"></tbody>
+      </table>
+    </div>
+
+    <!-- Échéancier paiements -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:16px 20px 0"><div class="card-title"><div class="card-title-dot" style="background:var(--grn)"></div>Échéancier Paiements</div></div>
+      <table class="part-tbl">
+        <thead><tr>
+          <th>Référence</th><th>Client</th><th class="n">Montant (M)</th><th>Échéance</th><th>Statut</th>
+        </tr></thead>
+        <tbody id="tbodyEcheancier"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
 
 <!-- ═══ VUE PARTICIPATIONS ════════════════════════════ -->
 <div id="participationsSection" style="display:none;padding:24px 40px 40px;flex-direction:column;gap:20px">
@@ -1583,6 +1705,156 @@ function renderPartFiche(p) {
   </div>`;
 }
 
+// ── COMMERCIAL DATA ──────────────────────────────────
+const GS_COMMERCIAL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?gid=COMMERCIAL_GID&single=true&output=csv';
+
+const DEFAULT_UNITES = [
+  {projet:'Saraya Villas', ref:'SV-01', type:'Villa Premium', surf:450, prix:8.5, client:'M. Al-Rashidi', date:'Jan 2026', statut:'Vendu'},
+  {projet:'Saraya Villas', ref:'SV-02', type:'Villa Premium', surf:420, prix:8.0, client:'Famille Benali', date:'Fév 2026', statut:'Vendu'},
+  {projet:'Saraya Villas', ref:'SV-03', type:'Villa Signature', surf:520, prix:10.5, client:'En cours', date:'Mar 2026', statut:'Compromis'},
+  {projet:'Saraya Villas', ref:'SV-04', type:'Villa Signature', surf:500, prix:10.0, client:'M. Tahiri', date:'Avr 2026', statut:'Compromis'},
+  {projet:'Saraya Villas', ref:'SV-05', type:'Villa Premium', surf:440, prix:8.2, client:'—', date:'—', statut:'Option'},
+  {projet:'Saraya Villas', ref:'SV-06', type:'Villa Prestige', surf:600, prix:14.0, client:'—', date:'—', statut:'Option'},
+  {projet:'Saraya Villas', ref:'SV-07', type:'Villa Premium', surf:430, prix:8.0, client:'—', date:'—', statut:'Disponible'},
+  {projet:'Saraya Villas', ref:'SV-08', type:'Villa Premium', surf:435, prix:8.1, client:'—', date:'—', statut:'Disponible'},
+  {projet:'Saraya Villas', ref:'SV-09', type:'Villa Signature', surf:510, prix:10.2, client:'—', date:'—', statut:'Disponible'},
+  {projet:'Saraya Villas', ref:'SV-10', type:'Villa Prestige', surf:650, prix:15.0, client:'—', date:'—', statut:'Disponible'},
+];
+const DEFAULT_PROSPECTS = [
+  {nom:'Famille Al-Mansouri', projet:'Saraya Villas', budget:10.0, statut:'Visite programmée', action:'Relance J+3'},
+  {nom:'M. Chraibi', projet:'Saraya Villas', budget:8.5, statut:'Offre remise', action:'Négociation prix'},
+  {nom:'Family Office Dubaï', projet:'Saraya Villas', budget:14.0, statut:'Due diligence', action:'Docs juridiques'},
+  {nom:'M. Bakkali', projet:'Saraya Villas', budget:8.0, statut:'Premier contact', action:'Visite à planifier'},
+  {nom:'Groupe Kettani', projet:'Proj B', budget:25.0, statut:'Étude intérêt', action:'Présentation BP'},
+];
+const DEFAULT_ECHEANCIER = [
+  {ref:'SV-01', client:'M. Al-Rashidi', montant:2.5, echeance:'30 Jun 2026', statut:'À venir'},
+  {ref:'SV-02', client:'Famille Benali', montant:2.0, echeance:'15 Jul 2026', statut:'À venir'},
+  {ref:'SV-03', client:'En cours', montant:3.0, echeance:'31 Jul 2026', statut:'En attente'},
+  {ref:'SV-01', client:'M. Al-Rashidi', montant:4.0, echeance:'30 Sep 2026', statut:'À venir'},
+  {ref:'SV-04', client:'M. Tahiri', montant:3.5, echeance:'15 Oct 2026', statut:'À venir'},
+];
+
+let currentUnites = DEFAULT_UNITES;
+let currentProspects = DEFAULT_PROSPECTS;
+let currentEcheancier = DEFAULT_ECHEANCIER;
+let cVentes = null;
+
+function renderCommercial(unites, prospects, echeancier) {
+  // KPIs
+  const vendu   = unites.filter(u=>u.statut==='Vendu');
+  const nego    = unites.filter(u=>u.statut==='Compromis'||u.statut==='Option');
+  const dispo   = unites.filter(u=>u.statut==='Disponible');
+  const caSigne = vendu.reduce((a,u)=>a+u.prix,0) + unites.filter(u=>u.statut==='Compromis').reduce((a,u)=>a+u.prix,0);
+  const caPrev  = unites.reduce((a,u)=>a+u.prix,0);
+  const taux    = unites.length>0 ? vendu.length/unites.length*100 : 0;
+
+  document.getElementById('com-ca-signe').textContent = fmtM(caSigne);
+  document.getElementById('com-ca-prev').textContent  = fmtM(caPrev);
+  document.getElementById('com-vendu').textContent    = vendu.length;
+  document.getElementById('com-nego').textContent     = nego.length;
+  document.getElementById('com-dispo').textContent    = dispo.length;
+  document.getElementById('com-taux').textContent     = Math.round(taux)+'%';
+
+  // Pipeline
+  const pipeline = [
+    {label:'Prospects identifiés', count:prospects.length, color:'var(--g3)', pct:100},
+    {label:'Visites / Présentations', count:prospects.filter(p=>p.statut.includes('Visite')||p.statut.includes('contact')).length+3, color:'var(--amb)', pct:70},
+    {label:'Offres remises', count:prospects.filter(p=>p.statut.includes('Offre')||p.statut.includes('diligence')).length+1, color:'#E8961A', pct:45},
+    {label:'Compromis signés', count:unites.filter(u=>u.statut==='Compromis').length, color:'var(--teal3)', pct:28},
+    {label:'Actes signés (Vendus)', count:vendu.length, color:'var(--grn)', pct:18},
+  ];
+  document.getElementById('pipelineList').innerHTML = pipeline.map(p=>`
+    <div style="display:grid;grid-template-columns:200px 1fr 40px;align-items:center;gap:12px">
+      <span style="font-size:11px;color:var(--g5)">${p.label}</span>
+      <div style="height:8px;background:var(--g2);border-radius:4px;overflow:hidden">
+        <div style="width:${p.pct}%;height:100%;background:${p.color};border-radius:4px"></div>
+      </div>
+      <span style="font-size:12px;font-weight:700;color:var(--teal);text-align:right">${p.count}</span>
+    </div>`).join('');
+
+  // Tableau unités
+  renderUnites(unites, 'all');
+
+  // Prospects
+  const statPros = {'Visite programmée':'badge-gold','Offre remise':'badge-gold','Due diligence':'badge-grn','Premier contact':'badge-gry','Étude intérêt':'badge-gry'};
+  document.getElementById('tbodyProspects').innerHTML = prospects.map(p=>`
+    <tr>
+      <td class="nm">${p.nom}</td>
+      <td style="color:var(--g4);font-size:11px">${p.projet}</td>
+      <td class="n">${p.budget.toFixed(1)} M</td>
+      <td><span class="badge ${statPros[p.statut]||'badge-gry'}">${p.statut}</span></td>
+      <td style="font-size:11px;color:var(--g4)">${p.action}</td>
+    </tr>`).join('');
+
+  // Échéancier
+  document.getElementById('tbodyEcheancier').innerHTML = echeancier.map(e=>`
+    <tr>
+      <td style="font-weight:600;color:var(--teal)">${e.ref}</td>
+      <td style="font-size:12px">${e.client}</td>
+      <td class="n" style="font-weight:700">${e.montant.toFixed(1)} M</td>
+      <td style="font-size:11px;color:var(--g4)">${e.echeance}</td>
+      <td><span class="badge ${e.statut==='Payé'?'badge-grn':e.statut==='En retard'?'badge-red':'badge-gold'}">${e.statut}</span></td>
+    </tr>`).join('');
+
+  // Graphique ventes cumulées
+  if(cVentes) cVentes.destroy();
+  const mois = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  const caParMois = [0,0,0,0,0,0,0,0,0,0,0,0];
+  vendu.forEach(u=>{
+    const m = mois.findIndex(m=>u.date.startsWith(m)); if(m>=0) caParMois[m]+=u.prix;
+  });
+  const caCumul = caParMois.reduce((acc,v,i)=>{acc.push((acc[i-1]||0)+v);return acc;},[]);
+  cVentes = new Chart(document.getElementById('chartVentes'),{
+    type:'bar',
+    data:{
+      labels:mois,
+      datasets:[
+        {label:'CA mensuel (M MAD)',data:caParMois,backgroundColor:'rgba(196,152,120,.5)',borderColor:'var(--gold)',borderWidth:1,yAxisID:'y'},
+        {label:'CA cumulé (M MAD)',data:caCumul,type:'line',borderColor:'var(--teal)',borderWidth:2,pointRadius:3,fill:false,tension:.3,yAxisID:'y'}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{font:{size:10}}}},
+      scales:{y:{beginAtZero:true,ticks:{callback:v=>v+'M',font:{size:10}}}}}
+  });
+}
+
+function renderUnites(unites, filtre) {
+  const statutCfg = {
+    'Vendu':      ['badge-grn',  'var(--grn2)'],
+    'Compromis':  ['badge-gold', 'var(--amb2)'],
+    'Option':     ['badge-gold', '#FFF8EE'],
+    'Disponible': ['badge-gry',  'var(--white)'],
+  };
+  const data = filtre==='all' ? unites : unites.filter(u=>u.statut===filtre);
+  document.getElementById('tbodyUnites').innerHTML = data.map(u=>{
+    const [bc, bg] = statutCfg[u.statut]||['badge-gry','var(--white)'];
+    return `<tr style="background:${bg}">
+      <td class="nm">${u.projet}</td>
+      <td style="font-weight:600;color:var(--teal)">${u.ref}</td>
+      <td style="color:var(--g4);font-size:11px">${u.type}</td>
+      <td class="n">${u.surf} m²</td>
+      <td class="n" style="font-weight:700">${u.prix.toFixed(1)} M</td>
+      <td style="font-size:11px">${u.client}</td>
+      <td style="font-size:11px;color:var(--g4)">${u.date}</td>
+      <td><span class="badge ${bc}">${u.statut}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterUnites(filtre, btn) {
+  document.querySelectorAll('.unit-filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderUnites(currentUnites, filtre);
+}
+
+async function fetchCommercial() {
+  // À connecter quand l'onglet GSheet Commercial est prêt
+  // Pour l'instant on utilise les données par défaut
+  renderCommercial(DEFAULT_UNITES, DEFAULT_PROSPECTS, DEFAULT_ECHEANCIER);
+}
+
 // ── TABS ─────────────────────────────────────────────
 let allProjects = DEFAULT_PROJECTS;
 let projChartCF = null, projChartInv = null;
@@ -1607,16 +1879,18 @@ function buildTabs(projects, parts) {
 function switchTab(type, btn, idx) {
   const main     = document.querySelector('.main');
   const projView = document.getElementById('projectView');
-  const partView = document.getElementById('partView');
-  const partList = document.getElementById('participationsSection');
-  const subNav   = document.getElementById('tabNav');
-  const bc       = document.getElementById('bcLabel');
+  const partView   = document.getElementById('partView');
+  const partList   = document.getElementById('participationsSection');
+  const comView    = document.getElementById('commercialView');
+  const subNav     = document.getElementById('tabNav');
+  const bc         = document.getElementById('bcLabel');
 
   // Masquer tout
   main.style.display     = 'none';
   projView.style.display = 'none';
   partView.style.display = 'none';
   partList.style.display = 'none';
+  comView.style.display  = 'none';
   subNav.style.display   = 'none';
 
   if (type === 'groupe') {
@@ -1668,6 +1942,14 @@ function switchTab(type, btn, idx) {
     const p = currentParticipations[idx];
     bc.textContent = p.nom;
     renderPartFiche(p);
+
+  } else if (type === 'commercial') {
+    document.querySelectorAll('.tab-main').forEach(b=>b.classList.remove('active'));
+    document.getElementById('tabCommercial').classList.add('active');
+    document.querySelectorAll('.tab-proj').forEach(b=>b.classList.remove('active'));
+    comView.style.display = 'flex';
+    bc.textContent = 'Suivi Commercial';
+    renderCommercial(currentUnites, currentProspects, currentEcheancier);
   }
 }
 
@@ -1888,6 +2170,7 @@ fetchParticipations();
 setInterval(fetchRoadmap, 30000);
 setInterval(fetchEngagements, 30000);
 setInterval(fetchParticipations, 60000);
+fetchCommercial();
 </script>
 </body>
 </html>
