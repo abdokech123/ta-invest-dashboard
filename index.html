@@ -1849,10 +1849,29 @@ function renderCommercial(unites, prospects, echeancier) {
   // Graphique ventes cumulées
   if(cVentes) cVentes.destroy();
   const mois = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  // Variantes de mois pour robustesse (français complet, numérique)
+  const moisAlt = [
+    ['jan'],['fev','fév','février'],['mar','mars'],['avr','avril'],
+    ['mai'],['jun','juin'],['jul','juil','juillet'],['aou','aoû','août'],
+    ['sep','sept','septembre'],['oct','octobre'],['nov','novembre'],['dec','déc','décembre']
+  ];
   const caParMois = [0,0,0,0,0,0,0,0,0,0,0,0];
+  const moisSansDate = []; // unités vendues sans date valide
   vendu.forEach(u=>{
-    const m = mois.findIndex(m=>u.date.startsWith(m)); if(m>=0) caParMois[m]+=u.prix;
+    const d = (u.date||'').toLowerCase().trim();
+    let idx = -1;
+    if(d && d !== '—' && d !== '') {
+      // Chercher correspondance par abréviation ou nom complet
+      idx = moisAlt.findIndex(alts => alts.some(a => d.startsWith(a)));
+      // Chercher par numéro (01/2026 ou 01-2026)
+      if(idx < 0) { const m = parseInt(d); if(m>=1&&m<=12) idx = m-1; }
+    }
+    if(idx >= 0) caParMois[idx] += u.prix;
+    else moisSansDate.push(u); // vendu sans date → mois courant
   });
+  // Unités vendues sans date → mois en cours
+  const moisCourant = new Date().getMonth();
+  moisSansDate.forEach(u => caParMois[moisCourant] += u.prix);
   const caCumul = caParMois.reduce((acc,v,i)=>{acc.push((acc[i-1]||0)+v);return acc;},[]);
   cVentes = new Chart(document.getElementById('chartVentes'),{
     type:'bar',
