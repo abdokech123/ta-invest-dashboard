@@ -371,6 +371,14 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
              background:var(--teal4); color:var(--teal); }
 .tab-sep{ width:1px; height:20px; background:var(--g3); margin:0 6px; flex-shrink:0; align-self:center; }
 /* ══ COMMERCIAL ══════════════════════════════════════ */
+.com-proj-btn{
+  padding:6px 16px; font-size:11px; font-weight:600;
+  border:1px solid var(--g2); background:var(--white);
+  border-radius:20px; cursor:pointer; color:var(--g5);
+  letter-spacing:.3px; transition:all .2s; white-space:nowrap;
+}
+.com-proj-btn:hover{ border-color:var(--amb); color:var(--amb); }
+.com-proj-btn.active{ background:var(--teal); color:#fff; border-color:var(--teal); }
 .unit-filter-btn{
   padding:4px 12px; font-size:10px; font-weight:600;
   border:1px solid var(--g2); background:var(--white);
@@ -939,9 +947,19 @@ body{ font-family:'Inter',system-ui,sans-serif; background:var(--cream); color:#
 <div id="commercialView" style="display:none;padding:24px 40px 40px;flex-direction:column;gap:24px">
 
   <!-- HEADER -->
-  <div style="display:flex;align-items:center;justify-content:space-between">
-    <div class="s-title"><span class="s-dot" style="background:var(--amb)"></span>Suivi Commercial Groupe</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <div class="s-title"><span class="s-dot" style="background:var(--amb)"></span>Suivi Commercial — <span id="com-projet-label">Tous les projets</span></div>
     <span class="live-badge demo" id="badge-commercial">Données exemple</span>
+  </div>
+
+  <!-- SÉLECTEUR PROJET -->
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:16px 20px;background:var(--white);border-radius:8px;border:1px solid var(--g2)">
+    <span style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--g4);margin-right:4px">Projet :</span>
+    <div id="comProjetBtns" style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="com-proj-btn active" onclick="selectComProjet('all',this)">
+        🏠 Tous les projets
+      </button>
+    </div>
   </div>
 
   <!-- KPI COMMERCIAUX -->
@@ -1790,11 +1808,21 @@ let currentEcheancier = DEFAULT_ECHEANCIER;
 let cVentes = null;
 
 function renderCommercial(unites, prospects, echeancier) {
+  // Construire les boutons projet
+  buildComProjetBtns(unites, prospects);
+  // Appliquer le filtre actif
+  const u = currentComProjet==='all' ? unites : unites.filter(x=>x.projet===currentComProjet);
+  const p = currentComProjet==='all' ? prospects : prospects.filter(x=>x.projet===currentComProjet);
+  const e = currentComProjet==='all' ? echeancier : echeancier.filter(x=>u.some(un=>un.ref===x.ref));
+  renderCommercialData(u, p, e);
+}
+
+function renderCommercialData(unites, prospects, echeancier) {
   // KPIs
-  const vendu   = unites.filter(u=>u.statut==='Vendu');
-  const nego    = unites.filter(u=>u.statut==='Compromis'||u.statut==='Option');
-  const dispo   = unites.filter(u=>u.statut==='Disponible');
-  const caSigne = vendu.reduce((a,u)=>a+u.prix,0) + unites.filter(u=>u.statut==='Compromis').reduce((a,u)=>a+u.prix,0);
+  const vendu   = unites.filter(u=>canonStatut(u.statut)==='Vendu');
+  const nego    = unites.filter(u=>canonStatut(u.statut)==='Compromis'||canonStatut(u.statut)==='Option');
+  const dispo   = unites.filter(u=>canonStatut(u.statut)==='Disponible');
+  const caSigne = vendu.reduce((a,u)=>a+u.prix,0) + unites.filter(u=>canonStatut(u.statut)==='Compromis').reduce((a,u)=>a+u.prix,0);
   const caPrev  = unites.reduce((a,u)=>a+u.prix,0);
   const taux    = unites.length>0 ? vendu.length/unites.length*100 : 0;
 
@@ -1886,6 +1914,43 @@ function renderCommercial(unites, prospects, echeancier) {
       plugins:{legend:{labels:{font:{size:10}}}},
       scales:{y:{beginAtZero:true,ticks:{callback:v=>v+'M',font:{size:10}}}}}
   });
+}
+
+// ── FILTRE PROJET COMMERCIAL ─────────────────────────
+let currentComProjet = 'all';
+
+function buildComProjetBtns(unites, prospects) {
+  // Extraire projets uniques depuis unités + prospects
+  const projets = [...new Set([
+    ...unites.map(u=>u.projet),
+    ...prospects.map(p=>p.projet)
+  ])].filter(p=>p&&p!=='—');
+
+  const container = document.getElementById('comProjetBtns');
+  if(!container) return;
+  container.innerHTML = `<button class="com-proj-btn${currentComProjet==='all'?' active':''}" onclick="selectComProjet('all',this)">🏠 Tous les projets</button>`;
+  projets.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'com-proj-btn' + (currentComProjet===p?' active':'');
+    btn.textContent = p;
+    btn.onclick = function(){ selectComProjet(p, this); };
+    container.appendChild(btn);
+  });
+}
+
+function selectComProjet(projet, btn) {
+  currentComProjet = projet;
+  document.querySelectorAll('.com-proj-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const lbl = document.getElementById('com-projet-label');
+  if(lbl) lbl.textContent = projet==='all' ? 'Tous les projets' : projet;
+  // Filtrer et re-render
+  const u = projet==='all' ? currentUnites     : currentUnites.filter(x=>x.projet===projet);
+  const p = projet==='all' ? currentProspects  : currentProspects.filter(x=>x.projet===projet);
+  const e = projet==='all' ? currentEcheancier : currentEcheancier.filter(x=>
+    u.some(un=>un.ref===x.ref) || projet==='all'
+  );
+  renderCommercialData(u, p, e);
 }
 
 // ── STATUTS COMMERCIAUX ───────────────────────────────
