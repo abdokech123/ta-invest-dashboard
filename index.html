@@ -1888,16 +1888,27 @@ function renderCommercial(unites, prospects, echeancier) {
   });
 }
 
+// ── STATUTS COMMERCIAUX ───────────────────────────────
+const STATUT_CFG = {
+  'Vendu':      ['badge-grn',  'var(--grn2)'],
+  'Compromis':  ['badge-gold', 'var(--amb2)'],
+  'Option':     ['badge-gold', '#FFF8EE'],
+  'Disponible': ['badge-gry',  'var(--white)'],
+};
+function canonStatut(s) {
+  const t = String(s||'').toLowerCase().trim();
+  if(t.includes('vendu') || t.includes('vente'))              return 'Vendu';
+  if(t.includes('compromis'))                                  return 'Compromis';
+  if(t.includes('option') || t.includes('réserv') || t.includes('reserv')) return 'Option';
+  if(t.includes('dispo'))                                      return 'Disponible';
+  return String(s||'—').trim();
+}
+
 function renderUnites(unites, filtre) {
-  const statutCfg = {
-    'Vendu':      ['badge-grn',  'var(--grn2)'],
-    'Compromis':  ['badge-gold', 'var(--amb2)'],
-    'Option':     ['badge-gold', '#FFF8EE'],
-    'Disponible': ['badge-gry',  'var(--white)'],
-  };
-  const data = filtre==='all' ? unites : unites.filter(u=>u.statut===filtre);
+  const data = filtre === 'all' ? unites : unites.filter(u => canonStatut(u.statut) === filtre);
   document.getElementById('tbodyUnites').innerHTML = data.map(u=>{
-    const [bc, bg] = statutCfg[u.statut]||['badge-gry','var(--white)'];
+    const canon = canonStatut(u.statut);
+    const [bc, bg] = STATUT_CFG[canon] || ['badge-gry','var(--white)'];
     return `<tr style="background:${bg}">
       <td class="nm">${u.projet}</td>
       <td style="font-weight:600;color:var(--teal)">${u.ref}</td>
@@ -1908,7 +1919,7 @@ function renderUnites(unites, filtre) {
       <td style="font-size:11px;color:var(--g4)">${u.date}</td>
       <td><span class="badge ${bc}">${u.statut}</span></td>
     </tr>`;
-  }).join('');
+  }).join('') || '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--g4);font-style:italic">Aucune unité dans ce statut</td></tr>';
 }
 
 function filterUnites(filtre, btn) {
