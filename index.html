@@ -1378,10 +1378,59 @@ function computeFlux(p){
 }
 
 // ── AUTO-REFRESH GOOGLE SHEETS ─────────────────────
+// ── API GOOGLE APPS SCRIPT (remplace tous les CSV/proxies) ──
+// Coller l'URL de déploiement ici après avoir déployé gas_script.js
+let GAS_URL = localStorage.getItem('gasUrl') || '';
+
+// URLs CSV de secours (si GAS non configuré)
 const GS_DEFAULT     = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?gid=538592023&single=true&output=csv';
 const GS_ROADMAP     = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?gid=1401549304&single=true&output=csv';
 const GS_ENGAGEMENTS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?gid=623335287&single=true&output=csv';
 let gsUrl = localStorage.getItem('gsUrl') || GS_DEFAULT;
+
+// ── FETCH VIA GAS (JSON direct, zéro proxy, zéro CORS) ──
+async function fetchAllFromGAS() {
+  if (!GAS_URL) return false;
+  try {
+    const r = await fetch(GAS_URL + '?action=all', { cache: 'no-store' });
+    if (!r.ok) return false;
+    const d = await r.json();
+    if (d.status !== 'ok') return false;
+
+    if (d.projets?.length > 0) {
+      renderAll(d.projets, computeFlux(d.projets), d.engagements || currentEngs);
+      setLive('badge-projets', true);
+      setLive('badge-global', true);
+    }
+    if (d.engagements?.length > 0) {
+      currentEngs = d.engagements;
+      renderEngagements(d.engagements);
+    }
+    if (d.participations?.length > 0) {
+      currentParticipations = d.participations;
+      renderParticipations(d.participations);
+      buildTabs(allProjects, d.participations);
+      setLive('badge-parts', true);
+    }
+    if (d.roadmap?.bars?.length > 0) {
+      renderRoadmap(d.roadmap.bars, d.roadmap.etapes || []);
+    }
+    if (d.commercial) {
+      currentUnites      = d.commercial.unites      || currentUnites;
+      currentProspects   = d.commercial.prospects   || currentProspects;
+      currentEcheancier  = d.commercial.echeancier  || currentEcheancier;
+      setLive('badge-commercial', true);
+    }
+    lastUpdated = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    return true;
+  } catch(e) { return false; }
+}
+
+function setGasUrl(url) {
+  GAS_URL = url.trim();
+  localStorage.setItem('gasUrl', GAS_URL);
+  fetchAllFromGAS();
+}
 let refreshTimer = null;
 const REFRESH_MS = 15000;
 
@@ -2163,7 +2212,14 @@ function computeFluxSingle(p) {
 renderAll(DEFAULT_PROJECTS, DEFAULT_FLUX, DEFAULT_ENG);
 renderParticipations(DEFAULT_PARTICIPATIONS);
 buildTabs(DEFAULT_PROJECTS, DEFAULT_PARTICIPATIONS);
-fetchSheet(gsUrl).then(()=>startAutoRefresh(gsUrl));
+// Essayer GAS d'abord (JSON direct), fallback CSV si non configuré
+fetchAllFromGAS().then(ok => {
+  if (!ok) {
+    fetchSheet(gsUrl).then(()=>startAutoRefresh(gsUrl));
+  } else {
+    setInterval(fetchAllFromGAS, 30000); // refresh toutes les 30s via GAS
+  }
+});
 fetchRoadmap();
 fetchEngagements();
 fetchParticipations();
