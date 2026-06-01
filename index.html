@@ -1953,7 +1953,11 @@ async function fetchCommercial() {
     currentProspects  = prospects.length>0  ? prospects  : DEFAULT_PROSPECTS;
     currentEcheancier = echeancier.length>0 ? echeancier : DEFAULT_ECHEANCIER;
     setLive('badge-commercial', true);
+    // Rafraîchir le graphique seulement si l'onglet commercial est visible
+    const comVisible = document.getElementById('commercialView').style.display !== 'none';
+    if(comVisible){ if(cVentes){cVentes.destroy();cVentes=null;} }
     renderCommercial(currentUnites, currentProspects, currentEcheancier);
+    if(comVisible) setTimeout(()=>{ if(cVentes) cVentes.resize(); }, 50);
   } else {
     renderCommercial(DEFAULT_UNITES, DEFAULT_PROSPECTS, DEFAULT_ECHEANCIER);
   }
@@ -2053,7 +2057,11 @@ function switchTab(type, btn, idx) {
     document.querySelectorAll('.tab-proj').forEach(b=>b.classList.remove('active'));
     comView.style.display = 'flex';
     bc.textContent = 'Suivi Commercial';
+    // Détruire le graphique existant avant de le recréer (canvas visible)
+    if(cVentes){ cVentes.destroy(); cVentes = null; }
     renderCommercial(currentUnites, currentProspects, currentEcheancier);
+    // Resize après affichage pour Chart.js
+    setTimeout(()=>{ if(cVentes) cVentes.resize(); }, 50);
   }
 }
 
