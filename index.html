@@ -1755,7 +1755,7 @@ function renderPartFiche(p) {
 }
 
 // ── COMMERCIAL DATA ──────────────────────────────────
-const GS_COMMERCIAL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?gid=COMMERCIAL_GID&single=true&output=csv';
+const GS_COMMERCIAL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub?gid=325123769&single=true&output=csv';
 
 const DEFAULT_UNITES = [
   {projet:'Saraya Villas', ref:'SV-01', type:'Villa Premium', surf:450, prix:8.5, client:'M. Al-Rashidi', date:'Jan 2026', statut:'Vendu'},
@@ -1899,9 +1899,64 @@ function filterUnites(filtre, btn) {
 }
 
 async function fetchCommercial() {
-  // À connecter quand l'onglet GSheet Commercial est prêt
-  // Pour l'instant on utilise les données par défaut
-  renderCommercial(DEFAULT_UNITES, DEFAULT_PROSPECTS, DEFAULT_ECHEANCIER);
+  const enc = encodeURIComponent(GS_COMMERCIAL);
+  const proxies = [`https://corsproxy.io/?${enc}`,`https://api.allorigins.win/raw?url=${enc}`,GS_COMMERCIAL];
+  let csv = null;
+  for(const p of proxies){
+    try{ const r=await fetch(p,{cache:'no-store'}); if(r.ok){const t=await r.text();if(t.length>10){csv=t;break;}} }catch(e){continue;}
+  }
+  if(!csv){ renderCommercial(DEFAULT_UNITES,DEFAULT_PROSPECTS,DEFAULT_ECHEANCIER); return; }
+
+  const rows = parseCSV(csv);
+  const unites=[], prospects=[], echeancier=[];
+  // Parser robuste — gère "8,5 M", "8.5", "8,5"
+  const toPrice = v => parseFloat(String(v).replace(/[M\s]/gi,'').replace(',','.'))||0;
+
+  for(let i=1; i<rows.length; i++){
+    const r = rows[i];
+    const type = String(r[0]||'').trim().toUpperCase();
+    if(!type || type.startsWith('▸') || type==='TYPE') continue;
+
+    if(type==='U'){
+      unites.push({
+        projet: String(r[1]||'—').trim(),
+        ref:    String(r[2]||'—').trim(),
+        type:   String(r[3]||'—').trim(),
+        surf:   parseFloat(String(r[4]).replace(/[\s,]/g,''))||0,
+        prix:   toPrice(r[5]),
+        client: String(r[6]||'—').trim(),
+        date:   String(r[7]||'—').trim(),
+        statut: String(r[8]||'Disponible').trim()
+      });
+    }
+    if(type==='P'){
+      prospects.push({
+        nom:    String(r[1]||'—').trim(),
+        projet: String(r[2]||'—').trim(),
+        budget: toPrice(r[3]),
+        statut: String(r[4]||'—').trim(),
+        action: String(r[5]||'—').trim()
+      });
+    }
+    if(type==='E'){
+      echeancier.push({
+        ref:      String(r[1]||'—').trim(),
+        client:   String(r[2]||'—').trim(),
+        montant:  toPrice(r[3]),
+        echeance: String(r[4]||'—').trim(),
+        statut:   String(r[5]||'À venir').trim()
+      });
+    }
+  }
+  if(unites.length>0||prospects.length>0){
+    currentUnites     = unites.length>0     ? unites     : DEFAULT_UNITES;
+    currentProspects  = prospects.length>0  ? prospects  : DEFAULT_PROSPECTS;
+    currentEcheancier = echeancier.length>0 ? echeancier : DEFAULT_ECHEANCIER;
+    setLive('badge-commercial', true);
+    renderCommercial(currentUnites, currentProspects, currentEcheancier);
+  } else {
+    renderCommercial(DEFAULT_UNITES, DEFAULT_PROSPECTS, DEFAULT_ECHEANCIER);
+  }
 }
 
 // ── TABS ─────────────────────────────────────────────
