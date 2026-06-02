@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -1378,7 +1378,8 @@ function parseRows(rows){
       tri:    toPct(r[6]),
       payback:String(r[7]||'—'),
       marge:  toPct(r[8]),
-      statut: String(r[9]||'À définir')
+      statut: String(r[9]||'À définir'),
+      cf_gid: String(r[10]||'').trim()
     });
   }
   return out;
@@ -1520,7 +1521,88 @@ async function fetchEngagements() {
   if(engs.length>0){ currentEngs=engs; renderEngagements(engs); }
 }
 
-// ── ROADMAP DYNAMIQUE ──────────────────────────────
+// ── BP COMPLET PAR PROJET & PARTICIPATION ──────────
+const GS_BASE = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LWbcwQh6FLr7QVWRUfiWw9WIg9NHGQ-MO5zmus-Ued1uj0LRLdXDW1SMHBzG3VY6ZDW47khvdIVd/pub';
+
+async function _fetchGidCSV(gid) {
+  if(!gid) return null;
+  const url = `${GS_BASE}?gid=${gid}&single=true&output=csv`;
+  const enc = encodeURIComponent(url);
+  const proxies = [`https://corsproxy.io/?${enc}`,`https://api.allorigins.win/raw?url=${enc}`,url];
+  for(const p of proxies){
+    try{ const r=await fetch(p,{cache:'no-store'}); if(r.ok){const t=await r.text();if(t.length>10) return t;} }catch(e){continue;}
+  }
+  return null;
+}
+
+async function fetchProjectBP(gid) {
+  const csv = await _fetchGidCSV(gid);
+  if(!csv) return null;
+  const rows = parseCSV(csv);
+  const toM  = v => { const n=parseFloat(String(v).replace(/[\s ]/g,'').replace(',','.')); return isNaN(n)?0:n/1e6; };
+  const toPct= v => { const s=String(v).replace(/[%\s]/g,'').replace(',','.'); const n=parseFloat(s)||0; return n>1?n/100:n; };
+  const COLORS=['#1E4A44','#2B5F58','#C49878','#C4920A','#4A8C84','#9A9490','#B04040','#2E7D55'];
+
+  // Découpe par sections ##MARQUEUR
+  const sections={};
+  let curr=null;
+  rows.forEach(row=>{ const l=(row[0]||'').trim(); if(l.startsWith('##')){curr=l.slice(2);sections[curr]=[];}else if(curr&&l) sections[curr].push(row); });
+
+  // CF — section C ou scan global
+  let coRow=null,ciRow=null;
+  const cfSrc=[...(sections['C_CASHFLOW']||[]),...rows];
+  cfSrc.forEach(r=>{ const l=(r[0]||'').toLowerCase(); if(!coRow&&(l.includes('caissement')&&l.includes('d'))) coRow=r; if(!ciRow&&l.includes('encaissement')) ciRow=r; });
+  let cf=null;
+  if(coRow&&ciRow){
+    const cashOut=[1,2,3,4,5].map(i=>Math.round(toM(coRow[i])));
+    const cashIn =[1,2,3,4,5].map(i=>Math.round(toM(ciRow[i])));
+    cf={labels:['2026','2027','2028','2029','2030'],cashOut,cashIn,fluxNet:cashOut.map((v,i)=>v+cashIn[i])};
+  }
+
+  // Investissement §B
+  const invest=[];
+  (sections['B_INVEST']||[]).forEach((r,i)=>{ const l=(r[0]||'').trim(); if(!l||l.startsWith('Poste')||l.startsWith('TOTAL')) return; const m=toM(r[1]); if(m===0) return; invest.push({lbl:l,montant:m,color:COLORS[i%COLORS.length]}); });
+
+  // Financement §D
+  const financement=[];
+  (sections['D_FINANCEMENT']||[]).forEach(r=>{ const s=(r[0]||'').trim(); if(!s||s.startsWith('Source')||s.startsWith('TOTAL')) return; const m=toM(r[1]); if(m===0) return; financement.push({src:s,montant:m,pct:toPct(r[2]),conditions:r[3]||''}); });
+
+  // P&L §E
+  const resultat=[];
+  (sections['E_RESULTAT']||[]).forEach(r=>{ const a=(r[0]||'').trim(); if(!a||isNaN(parseInt(a))) return; resultat.push({annee:a,ca:toM(r[1]),charges:toM(r[2]),ebitda:toM(r[3]),rn:toM(r[4])}); });
+
+  // Rentabilité §F
+  const rentabilite=[];
+  (sections['F_RENTABILITE']||[]).forEach(r=>{ const k=(r[0]||'').trim(); if(!k||k.startsWith('Indicateur')) return; rentabilite.push({ind:k,valeur:r[1]||'—',objectif:r[2]||'—',statut:r[3]||'—'}); });
+
+  return{cf,invest,financement,resultat,rentabilite};
+}
+
+async function fetchParticipationBP(gid) {
+  const csv = await _fetchGidCSV(gid);
+  if(!csv) return null;
+  const rows = parseCSV(csv);
+  const toM = v => { const n=parseFloat(String(v).replace(/[\s ]/g,'').replace(',','.')); return isNaN(n)?0:n/1e6; };
+  const sections={};
+  let curr=null;
+  rows.forEach(row=>{ const l=(row[0]||'').trim(); if(l.startsWith('##')){curr=l.slice(2);sections[curr]=[];}else if(curr&&l) sections[curr].push(row); });
+
+  const fluxHist=[];
+  (sections['B_FLUX_HIST']||[]).forEach(r=>{ const a=(r[0]||'').trim(); if(!a||isNaN(parseInt(a))) return; fluxHist.push({annee:a,div:toM(r[1]),nav:toM(r[2])}); });
+
+  let dividendes=null;
+  (sections['C_DIVIDENDES']||[]).forEach(r=>{ if((r[0]||'').toLowerCase().includes('dividend')){ const v=[1,2,3,4,5].map(i=>Math.round(toM(r[i])*10)/10); dividendes={labels:['2026','2027','2028','2029','2030'],values:v}; } });
+
+  const sortie={};
+  (sections['D_SORTIE']||[]).forEach(r=>{ const k=(r[0]||'').trim(); if(!k) return; sortie[k]=r[1]||''; });
+
+  return{fluxHist,dividendes,sortie};
+}
+
+// Alias backward compat
+async function fetchCashFlowForProject(gid){ const bp=await fetchProjectBP(gid); return bp?bp.cf:null; }
+
+// ── ROADMAP DYNAMIQUE ─────────────────────────────
 const AXE_ICONS = {
   'Acquisitions Foncieres':'🏠','Etudes et Autorisations':'📄',
   'Developpement Construction':'🏗️','Commercialisation':'⭐',
@@ -1645,6 +1727,7 @@ async function fetchParticipations() {
       tri:    toPct(r[9]),
       horizon:r[10]||'—',
       statut: r[11]||'—',
+      bp_gid: String(r[12]||'').trim()
     });
   }
   if(parts.length>0){
@@ -1770,6 +1853,9 @@ function renderPartFiche(p) {
       </div>
     </div>
   </div>`;
+
+  // Fetch BP participation depuis Google Sheets
+  if(p.bp_gid) fetchParticipationBP(p.bp_gid).then(bp=>{ renderBPPartSections(pv, bp); });
 }
 
 // ── COMMERCIAL DATA ──────────────────────────────────
@@ -2302,6 +2388,20 @@ function renderProjectFiche(p, idx) {
     }
   });
 
+  // Fetch BP complet depuis Google Sheets (CF + invest + financement + P&L + rentabilité)
+  if(p.cf_gid) fetchProjectBP(p.cf_gid).then(bp=>{
+    if(!bp) return;
+    // Mise à jour CF chart
+    if(bp.cf && projChartCF){
+      projChartCF.data.datasets[0].data = bp.cf.cashOut;
+      projChartCF.data.datasets[1].data = bp.cf.cashIn;
+      projChartCF.data.datasets[2].data = bp.cf.fluxNet;
+      projChartCF.update();
+    }
+    // Rendu sections BP (financement, P&L, rentabilité)
+    renderBPProjectSections(pv, bp);
+  });
+
   // Chart Investissement Donut
   if(projChartInv) projChartInv.destroy();
   projChartInv = new Chart(document.getElementById('projChartInv'), {
@@ -2350,6 +2450,148 @@ function renderProjectFiche(p, idx) {
       </div>`).join('');
   } else {
     el.innerHTML = '<div style="color:var(--g4);font-size:11px;font-style:italic;padding:12px 0">Aucun engagement enregistré pour ce projet</div>';
+  }
+}
+
+// ── RENDU BP PROJET ─────────────────────────────────
+function renderBPProjectSections(pv, bp) {
+  if(!bp) return;
+  const statCls = s => s==='BON'?'stat-bon':s==='SURVEILLER'?'stat-surv':'stat-risk';
+
+  // Mise à jour donut investissement si données réelles
+  if(bp.invest && bp.invest.length>0 && projChartInv){
+    projChartInv.data.labels = bp.invest.map(i=>i.lbl);
+    projChartInv.data.datasets[0].data = bp.invest.map(i=>i.montant);
+    projChartInv.data.datasets[0].backgroundColor = bp.invest.map(i=>i.color);
+    projChartInv.update();
+  }
+
+  let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">';
+
+  // Plan de Financement
+  if(bp.financement && bp.financement.length>0){
+    const tot = bp.financement.reduce((a,f)=>a+f.montant,0);
+    html += `<div class="card">
+      <div class="card-title"><div class="card-title-dot"></div>D. Plan de Financement</div>
+      <div class="fin-kpis">
+        ${bp.financement.map(f=>{
+          const pct = tot>0?Math.round(f.montant/tot*100):0;
+          return `<div class="fin-kpi-row">
+            <span class="fin-kpi-label">${f.src}</span>
+            <div class="pil-bar-wrap"><div class="pil-bar" style="width:${pct}%;background:var(--teal)"></div></div>
+            <span class="fin-kpi-val">${fmtM(f.montant)}</span>
+            <span class="fin-kpi-stat stat-bon">${pct}%</span>
+          </div>`;
+        }).join('')}
+        ${bp.financement[0]?.conditions?`<div style="font-size:9px;color:var(--g4);margin-top:8px;font-style:italic">Conditions : ${bp.financement.map(f=>f.src+' — '+f.conditions).join(' | ')}</div>`:''}
+      </div></div>`;
+  }
+
+  // Analyse Rentabilité
+  if(bp.rentabilite && bp.rentabilite.length>0){
+    html += `<div class="card">
+      <div class="card-title"><div class="card-title-dot"></div>F. Analyse de Rentabilité</div>
+      <div class="fin-kpis">
+        ${bp.rentabilite.map(r=>`
+          <div class="fin-kpi-row">
+            <span class="fin-kpi-label" style="font-weight:600">${r.ind}</span>
+            <span class="fin-kpi-val" style="color:var(--teal);font-weight:700">${r.valeur}</span>
+            <span style="font-size:10px;color:var(--g4)">obj. ${r.objectif}</span>
+            <span class="fin-kpi-stat ${statCls(r.statut)}">${r.statut}</span>
+          </div>`).join('')}
+      </div></div>`;
+  }
+
+  html += '</div>';
+
+  // Compte de Résultat — pleine largeur
+  if(bp.resultat && bp.resultat.length>0){
+    html += `<div class="card" style="overflow:hidden">
+      <div class="card-title"><div class="card-title-dot"></div>E. Compte de Résultat Prévisionnel (M MAD)</div>
+      <table class="proj-tbl">
+        <thead><tr>
+          <th>Exercice</th><th>CA</th><th>Charges</th><th>EBITDA</th><th>Résultat Net</th><th>Marge</th>
+        </tr></thead>
+        <tbody>
+          ${bp.resultat.map(r=>{
+            const marge = r.ca>0?r.rn/r.ca:0;
+            const cls = r.rn>=0?'color:var(--grn)':'color:var(--red)';
+            return `<tr>
+              <td><strong>${r.annee}</strong></td>
+              <td>${fmtM(r.ca)}</td>
+              <td>${fmtM(r.charges)}</td>
+              <td style="${r.ebitda>=0?'color:var(--grn)':'color:var(--red)'}">${r.ebitda>=0?'+':''}${fmtM(r.ebitda)}</td>
+              <td style="${cls}">${r.rn>=0?'+':''}${fmtM(r.rn)}</td>
+              <td style="${cls}">${(marge*100).toFixed(1)}%</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table></div>`;
+  }
+
+  if(html==='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px"></div>') return;
+  const div = document.createElement('div');
+  div.style.cssText='display:flex;flex-direction:column;gap:16px';
+  div.innerHTML = html;
+  pv.appendChild(div);
+}
+
+// ── RENDU BP PARTICIPATION ──────────────────────────
+function renderBPPartSections(pv, bp) {
+  if(!bp) return;
+  let html = '';
+
+  if(bp.fluxHist && bp.fluxHist.length>0){
+    html += `<div class="card" style="overflow:hidden">
+      <div class="card-title"><div class="card-title-dot"></div>B. Flux Historiques</div>
+      <table class="proj-tbl">
+        <thead><tr><th>Année</th><th>Dividendes</th><th>Variation NAV</th><th>Retour Total</th></tr></thead>
+        <tbody>${bp.fluxHist.map(f=>`<tr>
+          <td><strong>${f.annee}</strong></td>
+          <td style="color:var(--grn)">${fmtM(f.div)}</td>
+          <td style="${f.nav>=0?'color:var(--grn)':'color:var(--red)'}">${f.nav>=0?'+':''}${fmtM(f.nav)}</td>
+          <td style="font-weight:600">${fmtM(f.div+f.nav)}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>`;
+  }
+
+  if(bp.dividendes){
+    html += `<div class="card">
+      <div class="card-title"><div class="card-title-dot"></div>C. Prévision Dividendes 2026-2030 (M MAD)</div>
+      <div style="height:160px;position:relative"><canvas id="partChartDiv"></canvas></div>
+    </div>`;
+  }
+
+  if(bp.sortie && Object.keys(bp.sortie).length>0){
+    html += `<div class="card">
+      <div class="card-title"><div class="card-title-dot"></div>D. Stratégie de Sortie</div>
+      <div class="fin-kpis">
+        ${Object.entries(bp.sortie).filter(([k,v])=>v).map(([k,v])=>`
+          <div class="fin-kpi-row">
+            <span class="fin-kpi-label">${k}</span>
+            <span class="fin-kpi-val" style="font-size:11px;text-align:right">${v}</span>
+          </div>`).join('')}
+      </div></div>`;
+  }
+
+  if(!html) return;
+  const grid = document.createElement('div');
+  grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:16px';
+  grid.innerHTML = html;
+  pv.appendChild(grid);
+
+  if(bp.dividendes){
+    const ctx = document.getElementById('partChartDiv');
+    if(ctx) new Chart(ctx,{
+      type:'bar',
+      data:{labels:bp.dividendes.labels,datasets:[{
+        label:'Dividendes (M MAD)',data:bp.dividendes.values,
+        backgroundColor:'rgba(46,125,85,.15)',borderColor:'#2E7D55',borderWidth:1.5,borderRadius:4
+      }]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{x:{grid:{display:false},ticks:{color:'#9A9490'}},y:{ticks:{callback:v=>v+'M',color:'#9A9490'}}}}
+    });
   }
 }
 
