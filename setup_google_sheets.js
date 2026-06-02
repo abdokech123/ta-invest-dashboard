@@ -910,99 +910,144 @@ function createParticipationBPSheet(ss, nomPart, d) {
 function createAllBPs() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
-  // ── BPs Projets ───────────────────────────────────────────────────
-  const gidBPSaraya = createProjectBPSheet(ss, 'SARAYA VILLAS', {
-    avancement: 45,
-    budget: 750000000,
-    ca_prev: 975000000,
-    fp: 225000000,
-    moic: '1.50x',
-    livraison: 'T1 2029',
-    tri: '22%',
-    van: '95 M MAD',
-    payback: 'T4 2028',
-    marge: '30%',
-    cf: {
-      co: [-100000000, -300000000, -350000000, 0, 0],
-      ci: [ 25000000,  150000000,  500000000, 300000000, 0]
+  // ── Données 11 Projets ────────────────────────────────────────────
+  const PROJETS = [
+    {
+      nom: 'SARAYA VILLAS', avancement:45, budget:750000000, ca_prev:975000000,
+      fp:225000000, moic:'1.50x', livraison:'T1 2029', tri:'22%', van:'95 M MAD', payback:'T4 2028', marge:'30%',
+      cf:{ co:[-100000000,-300000000,-350000000,0,0], ci:[25000000,150000000,500000000,300000000,0] },
+      invest:[['Acquisition foncière',225000000,'30%'],['Études & conception',37500000,'5%'],['Travaux construction',337500000,'45%'],['Commercialisation',60000000,'8%'],['Frais financiers',52500000,'7%'],['Imprévus',37500000,'5%']],
+      financement:[['Fonds propres',225000000,'30%','Apport actionnaire'],['Crédit bancaire',400000000,'53%','Taux 5% / 7 ans'],['Préventes',125000000,'17%','Compromis signés']],
+      rentabilite:[['TRI','22%','≥ 15%','BON'],['VAN (10%)','95 M MAD','> 0','BON'],['MOIC','1.50x','≥ 1.30x','BON'],['Payback','T4 2028','< 4 ans','BON'],['Marge nette','30%','≥ 20%','BON']]
     },
-    invest: [
-      ['Acquisition foncière',  225000000, '30%'],
-      ['Études & conception',    37500000, '5%'],
-      ['Travaux construction',  337500000, '45%'],
-      ['Commercialisation',      60000000, '8%'],
-      ['Frais financiers',       52500000, '7%'],
-      ['Imprévus',               37500000, '5%'],
-    ],
-    financement: [
-      ['Fonds propres',   225000000, '30%', 'Apport actionnaire'],
-      ['Crédit bancaire', 400000000, '53%', 'Taux 5% / 7 ans'],
-      ['Préventes',       125000000, '17%', 'Compromis signés'],
-    ],
-    rentabilite: [
-      ['TRI',        '22%',       '≥ 15%',   'BON'],
-      ['VAN (10%)',  '95 M MAD',  '> 0',     'BON'],
-      ['MOIC',       '1.50x',     '≥ 1.30x', 'BON'],
-      ['Payback',    'T4 2028',   '< 4 ans', 'BON'],
-      ['Marge nette','30%',       '≥ 20%',   'BON'],
-    ]
-  });
+    {
+      nom: 'AZ SIGNATURE', avancement:5, budget:200000000, ca_prev:290000000,
+      fp:60000000, moic:'1.45x', livraison:'Fin 2029', tri:'18%', van:'À compléter', payback:'T2 2030', marge:'25%',
+      cf:{ co:[-70000000,-80000000,-50000000,0,0], ci:[0,0,100000000,160000000,30000000] }
+    },
+    {
+      nom: 'JARDINS DE MESNANA', avancement:5, budget:150000000, ca_prev:213000000,
+      fp:45000000, moic:'1.42x', livraison:'Fin 2029', tri:'17%', van:'À compléter', payback:'T3 2030', marge:'22%',
+      cf:{ co:[-50000000,-60000000,-40000000,0,0], ci:[0,0,80000000,100000000,33000000] }
+    },
+    {
+      nom: 'PROJET D', avancement:0, budget:120000000, ca_prev:156000000,
+      fp:36000000, moic:'1.30x', livraison:'Fin 2029', tri:'16%', van:'À compléter', payback:'Fin 2029', marge:'20%',
+      cf:{ co:[0,-40000000,-50000000,-30000000,0], ci:[0,0,0,80000000,76000000] }
+    },
+    {
+      nom: 'PROJET E', avancement:0, budget:80000000, ca_prev:112000000,
+      fp:24000000, moic:'1.40x', livraison:'Fin 2028', tri:'20%', van:'À compléter', payback:'Fin 2028', marge:'28%',
+      cf:{ co:[0,-30000000,-35000000,-15000000,0], ci:[0,0,50000000,50000000,12000000] }
+    },
+    {
+      nom: 'PROJET F', avancement:2, budget:200000000, ca_prev:290000000,
+      fp:60000000, moic:'1.45x', livraison:'Fin 2029', tri:'19%', van:'À compléter', payback:'Fin 2029', marge:'25%',
+      cf:{ co:[0,-60000000,-80000000,-60000000,0], ci:[0,0,0,150000000,140000000] }
+    },
+    {
+      nom: 'PROJET G', avancement:0, budget:45000000, ca_prev:63000000,
+      fp:13500000, moic:'1.40x', livraison:'Fin 2030', tri:'14%', van:'À compléter', payback:'Fin 2030', marge:'18%',
+      cf:{ co:[0,-15000000,-18000000,-12000000,0], ci:[0,0,0,30000000,33000000] }
+    },
+    {
+      nom: 'PROJET H', avancement:0, budget:30000000, ca_prev:40800000,
+      fp:9000000, moic:'1.36x', livraison:'Fin 2030', tri:'13%', van:'À compléter', payback:'Fin 2030', marge:'16%',
+      cf:{ co:[0,-10000000,-12000000,-8000000,0], ci:[0,0,0,20000000,20800000] }
+    },
+    {
+      nom: 'PROJET I', avancement:0, budget:25000000, ca_prev:34750000,
+      fp:7500000, moic:'1.39x', livraison:'Fin 2030', tri:'15%', van:'À compléter', payback:'Fin 2030', marge:'19%',
+      cf:{ co:[0,-8000000,-10000000,-7000000,0], ci:[0,0,0,17000000,17750000] }
+    },
+    {
+      nom: 'PROJET J', avancement:0, budget:70000000, ca_prev:98700000,
+      fp:21000000, moic:'1.41x', livraison:'Fin 2030', tri:'17%', van:'À compléter', payback:'Fin 2030', marge:'22%',
+      cf:{ co:[0,-25000000,-28000000,-17000000,0], ci:[0,0,0,50000000,48700000] }
+    },
+    {
+      nom: 'PROJET K', avancement:0, budget:50000000, ca_prev:72000000,
+      fp:15000000, moic:'1.44x', livraison:'À définir', tri:'À compléter', van:'À compléter', payback:'À définir', marge:'À compléter',
+      cf:{ co:[0,0,-20000000,-20000000,-10000000], ci:[0,0,0,35000000,37000000] }
+    }
+  ];
 
-  const gidBPAZ = createProjectBPSheet(ss, 'AZ SIGNATURE', {
-    avancement: 5, budget: 200000000, ca_prev: 290000000, fp: 60000000,
-    moic: '1.45x', livraison: 'Fin 2029', tri: '18%', van: '28 M MAD',
-    payback: 'T2 2030', marge: '25%',
-    cf: {
-      co: [-70000000, -80000000, -50000000, 0, 0],
-      ci: [0, 0, 100000000, 160000000, 30000000]
+  // ── Données 5 Participations ──────────────────────────────────────
+  const PARTICIPATIONS = [
+    {
+      nom:'ABC HOLDING SA', type:'Participation opérationnelle', secteur:'Immobilier',
+      pct:'25%', cout:15000000, val:22000000, pv:7000000, div:1200000,
+      moic:'1.55x', tri:'18%', horizon:'2028', statut:'Actif',
+      dividendes:[300000,400000,500000,0,0],
+      sortie:[['Type de sortie','Cession de parts'],['Horizon cible','2028'],['Prix cible','25 M MAD'],['Acquéreur potentiel','Partenaire stratégique identifié'],['Valorisation méthode','DCF + ANR'],['TRI sortie attendu','18%']]
+    },
+    {
+      nom:'XYZ RENEWABLE FUND', type:'Fonds PE / OPCI', secteur:'Énergie',
+      pct:'10%', cout:8000000, val:10500000, pv:2500000, div:500000,
+      moic:'1.38x', tri:'15%', horizon:'2027', statut:'Actif',
+      dividendes:[100000,200000,200000,0,0],
+      sortie:[['Type de sortie','Rachat par le fonds'],['Horizon cible','2027'],['Prix cible','12 M MAD'],['Valorisation méthode','NAV fonds'],['TRI sortie attendu','15%']]
+    },
+    {
+      nom:'IMMO CLUB DEAL MARRAKECH', type:'Club Deal immobilier', secteur:'Immobilier',
+      pct:'33%', cout:5000000, val:6200000, pv:1200000, div:200000,
+      moic:'1.28x', tri:'14%', horizon:'2026', statut:'En cours de cession',
+      dividendes:[200000,0,0,0,0],
+      sortie:[['Type de sortie','Cession club deal'],['Horizon cible','2026'],['Prix cible','7 M MAD'],['Acquéreur potentiel','Promoteur local'],['TRI sortie attendu','14%']]
+    },
+    {
+      nom:'DEF INDUSTRIE SARL', type:'Participation opérationnelle', secteur:'Industrie',
+      pct:'40%', cout:12000000, val:14000000, pv:2000000, div:800000,
+      moic:'1.23x', tri:'12%', horizon:'2029', statut:'Actif',
+      dividendes:[200000,250000,300000,50000,0],
+      sortie:[['Type de sortie','Cession à partenaire'],['Horizon cible','2029'],['Prix cible','18 M MAD'],['Valorisation méthode','EBE × 5'],['TRI sortie attendu','12%']]
+    },
+    {
+      nom:'OBLIGATIONS PRIVEES GHI', type:'Dette privée / Obligations', secteur:'Services',
+      pct:'100%', cout:6000000, val:6300000, pv:300000, div:420000,
+      moic:'1.12x', tri:'7%', horizon:'2027', statut:'Actif',
+      dividendes:[420000,420000,420000,0,0],
+      sortie:[['Type de sortie','Remboursement obligataire'],['Horizon cible','2027'],['Prix cible','6.3 M MAD'],['Conditions','Remboursement à l\'échéance'],['TRI sortie attendu','7%']]
+    }
+  ];
+
+  // ── Créer tous les BPs Projets ────────────────────────────────────
+  const gidsProj = {};
+  PROJETS.forEach(p => {
+    try {
+      gidsProj[p.nom] = createProjectBPSheet(ss, p.nom, p);
+      Utilities.sleep(500); // éviter les limites API
+    } catch(e) {
+      Logger.log('Erreur ' + p.nom + ': ' + e.message);
+      gidsProj[p.nom] = 'ERREUR';
     }
   });
 
-  const gidBPJardins = createProjectBPSheet(ss, 'JARDINS DE MESNANA', {
-    avancement: 5, budget: 150000000, ca_prev: 213000000, fp: 45000000,
-    moic: '1.42x', livraison: 'Fin 2029', tri: '17%', van: '20 M MAD',
-    payback: 'T3 2030', marge: '22%',
-    cf: {
-      co: [-50000000, -60000000, -40000000, 0, 0],
-      ci: [0, 0, 80000000, 100000000, 33000000]
+  // ── Créer tous les BPs Participations ─────────────────────────────
+  const gidsPart = {};
+  PARTICIPATIONS.forEach(p => {
+    try {
+      gidsPart[p.nom] = createParticipationBPSheet(ss, p.nom, p);
+      Utilities.sleep(500);
+    } catch(e) {
+      Logger.log('Erreur ' + p.nom + ': ' + e.message);
+      gidsPart[p.nom] = 'ERREUR';
     }
   });
 
-  // ── BPs Participations ────────────────────────────────────────────
-  const gidBPABC = createParticipationBPSheet(ss, 'ABC HOLDING SA', {
-    type:'Participation opérationnelle', secteur:'Immobilier',
-    pct:'25%', cout:15000000, val:22000000, pv:7000000,
-    div:1200000, moic:'1.55x', tri:'18%', horizon:'2028', statut:'Actif',
-    dividendes: [300000, 400000, 500000, 0, 0],
-    sortie: [
-      ['Type de sortie',       'Cession de parts'],
-      ['Horizon cible',        '2028'],
-      ['Prix cible',           '25 M MAD'],
-      ['Acquéreur potentiel',  'Partenaire stratégique identifié'],
-      ['Valorisation méthode', 'DCF + ANR'],
-      ['TRI sortie attendu',   '18%'],
-    ]
-  });
+  // ── Afficher le résumé des GIDs ───────────────────────────────────
+  let msg = '✅ ' + PROJETS.length + ' BPs Projets + ' + PARTICIPATIONS.length + ' BPs Participations créés !\n\n';
+  msg += '══ PROJETS → col K (cf_gid) de l\'onglet PROJETS ══\n';
+  Object.entries(gidsProj).forEach(([nom, gid]) => { msg += '• ' + nom.substring(0,22).padEnd(23) + ' → ' + gid + '\n'; });
+  msg += '\n══ PARTICIPATIONS → col M (bp_gid) de PARTICIPATIONS ══\n';
+  Object.entries(gidsPart).forEach(([nom, gid]) => { msg += '• ' + nom.substring(0,22).padEnd(23) + ' → ' + gid + '\n'; });
+  msg += '\n⚠️ Publie tous les onglets BP_* :\nFichier > Partager > Publier sur le web > CSV';
 
-  const gidBPXYZ = createParticipationBPSheet(ss, 'XYZ RENEWABLE FUND', {
-    type:'Fonds PE / OPCI', secteur:'Énergie',
-    pct:'10%', cout:8000000, val:10500000, pv:2500000,
-    div:500000, moic:'1.38x', tri:'15%', horizon:'2027', statut:'Actif',
-    dividendes: [100000, 200000, 200000, 0, 0],
-  });
+  SpreadsheetApp.getUi().alert(msg);
 
-  // Afficher les GIDs
-  const ui = SpreadsheetApp.getUi();
-  ui.alert(
-    '✅ BPs créés avec succès !\n\n' +
-    '── PROJETS (colonne K = cf_gid) ──\n' +
-    '• SARAYA VILLAS      → ' + gidBPSaraya + '\n' +
-    '• AZ SIGNATURE       → ' + gidBPAZ + '\n' +
-    '• JARDINS MESNANA    → ' + gidBPJardins + '\n\n' +
-    '── PARTICIPATIONS (colonne M = bp_gid) ──\n' +
-    '• ABC HOLDING SA     → ' + gidBPABC + '\n' +
-    '• XYZ RENEWABLE FUND → ' + gidBPXYZ + '\n\n' +
-    '⚠️ Copie ces GIDs dans les colonnes concernées,\n' +
-    'puis publie les onglets BP_* sur le web (CSV).'
-  );
+  // ── Log complet dans la console ───────────────────────────────────
+  Logger.log('=== GIDS PROJETS ===');
+  Object.entries(gidsProj).forEach(([n,g]) => Logger.log(n + ' → ' + g));
+  Logger.log('=== GIDS PARTICIPATIONS ===');
+  Object.entries(gidsPart).forEach(([n,g]) => Logger.log(n + ' → ' + g));
 }
